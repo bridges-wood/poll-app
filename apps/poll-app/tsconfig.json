@@ -16,7 +16,16 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ESNext",
+    "paths": {
+      "@poll-app/components/*": ["poll-app/src/components/*"],
+      "@poll-app/hooks/*": ["poll-app/src/hooks/*"],
+      "@poll-app/types/*": ["poll-app/src/types/*"],
+      "@poll-app/utils/*": ["poll-app/src/utils/*"],
+      "@poll-app/lib/*": ["poll-app/src/lib/*"],
+    }
   },
   "include": [
     "**/*.ts",

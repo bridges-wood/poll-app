@@ -1,5 +1,5 @@
 import { Theme } from '@radix-ui/themes';
-import '@radix-ui/themes/styles.css';
+import Providers from '../components/providers';
 import './global.css';
 
 export const metadata = {
@@ -13,11 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <Theme appearance="dark">
-          {children}
-        </Theme>
+        <Providers>
+          <Theme appearance="dark">{children}</Theme>
+        </Providers>
       </body>
     </html>
   );
