@@ -42,6 +42,9 @@
     "@nx/react": {
       "application": {
         "babel": true
+      },
+      "library": {
+        "unitTestRunner": "jest"
       }
     },
     "@nx/next": {
@@ -49,7 +52,9 @@
         "style": "css",
         "linter": "eslint"
       }
+    },
+    "@nx/workspace:move": {
+      "projectNameAndRootFormat": "as-provided"
     }
-  },
-  "nxCloudAccessToken": "YmZjMWY5M2YtOTcxOS00ZWI2LWI2NTQtMGMwYWZmYzExN2UxfHJlYWQtd3JpdGU="
+  }
 }

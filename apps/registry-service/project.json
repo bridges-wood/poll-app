@@ -1,0 +1,57 @@
+{
+  "name": "registry-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/registry-service/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/registry-service",
+        "main": "apps/registry-service/src/main.ts",
+        "tsConfig": "apps/registry-service/tsconfig.app.json",
+        "assets": ["apps/registry-service/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/registry-service/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "registry-service:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "registry-service:build:development"
+        },
+        "production": {
+          "buildTarget": "registry-service:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/registry-service/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/registry-service/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

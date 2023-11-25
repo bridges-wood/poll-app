@@ -1,6 +1,7 @@
-import { FirebaseOptions, initializeApp } from "firebase/app";
+import { FirebaseOptions, initializeApp } from 'firebase/app';
 import 'firebase/auth';
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider, getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -8,10 +9,11 @@ const firebaseConfig: FirebaseOptions = {
   projectId: process.env.FIREBASE_PROJECT_ID,
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.FIREBASE_MESSAGE_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID
+  appId: process.env.FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
+initializeApp(firebaseConfig);
 export const auth = getAuth();
 export const provider = new GoogleAuthProvider();
-export const app = initializeApp(firebaseConfig);
+export const database = getFirestore();

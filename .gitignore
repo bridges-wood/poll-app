@@ -46,3 +46,12 @@ Thumbs.db
 # Env
 **/.env*
 !**/.env.example
+
+# Generated files
+**/generated/*
+
+# Helm Dependencies
+charts/*/charts
+
+# Garden
+.garden

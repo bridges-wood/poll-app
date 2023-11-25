@@ -1,0 +1,23 @@
+{
+  "name": "graphql",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/graphql/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/graphql/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "generate": {
+      "inputs": ["{workspaceRoot}/generated/schema.gql"],
+      "outputs": ["{projectRoot}/src/generated/index.tsx"],
+      "command": "yarn graphql-codegen --config libs/graphql/codegen.yml",
+      "dependsOn": ["data-service:generate"],
+      "cache": true
+    }
+  }
+}

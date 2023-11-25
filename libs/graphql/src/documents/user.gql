@@ -1,0 +1,5 @@
+query getUserName($id: String!) {
+  user(id: $id) {
+    displayName
+  }
+}

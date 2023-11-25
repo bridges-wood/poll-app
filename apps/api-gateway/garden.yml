@@ -1,0 +1,49 @@
+kind: Build
+name: api-gateway-ts
+description: Use nx to build the api-gateway
+type: exec
+buildAtSource: true
+spec:
+  command: ["yarn", "nx", "run", "api-gateway:build:production"]
+
+---
+
+kind: Build
+name: api-gateway-container
+description: API Gateway service container image
+type: container
+dependencies:
+  - build.api-gateway-ts
+copyFrom:
+  - sourcePath: dist/apps/api-gateway
+    build: api-gateway-ts
+
+---
+
+kind: Deploy
+name: api-gateway
+description: The gateway to the api of the poll-app
+type: container
+
+build: api-gateway-container
+
+variables:
+  ingressPath: /graphql
+
+spec:
+  ports:
+    - name: http
+      containerPort: 3000
+      servicePort: 80
+  ingresses:
+    - path: ${var.ingressPath}
+      port: http
+
+---
+
+kind: Run
+name: api-gateway-run-task
+type: container
+build: api-gateway-container
+spec:
+  command: ["sh", "-c", "echo task output"]

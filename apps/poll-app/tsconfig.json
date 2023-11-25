@@ -20,11 +20,13 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "target": "ESNext",
     "paths": {
-      "@poll-app/components/*": ["poll-app/src/components/*"],
-      "@poll-app/hooks/*": ["poll-app/src/hooks/*"],
-      "@poll-app/types/*": ["poll-app/src/types/*"],
-      "@poll-app/utils/*": ["poll-app/src/utils/*"],
-      "@poll-app/lib/*": ["poll-app/src/lib/*"],
+      "@org/shared/data-access": ["libs/shared/data-access/src/index.ts"],
+      "@org/shared/data-access/server": ["libs/shared/data-access/src/server.ts"],
+      "@poll-app/components/*": ["apps/poll-app/src/components/*"],
+      "@poll-app/hooks/*": ["apps/poll-app/src/hooks/*"],
+      "@poll-app/types/*": ["apps/poll-app/src/types/*"],
+      "@poll-app/utils/*": ["apps/poll-app/src/utils/*"],
+      "@poll-app/lib/*": ["apps/poll-app/src/lib/*"],
     }
   },
   "include": [

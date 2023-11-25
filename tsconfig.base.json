@@ -13,8 +13,15 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": "apps",
-    "paths": {}
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@org/common": ["libs/common/src/index.ts"],
+      "@org/firebase": ["libs/firebase/src/index.ts"],
+      "@org/graphql": ["libs/graphql/src/index.ts"],
+      "@org/graphql/server": ["libs/graphql/src/server.ts"],
+      "@org/registration": ["libs/registration/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
