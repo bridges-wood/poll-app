@@ -4,20 +4,17 @@ description: Use nx to build the api-gateway
 type: exec
 buildAtSource: true
 spec:
-  command: ["yarn", "nx", "run", "api-gateway:build:production"]
+  command: [ls ..]
 
 ---
 
 kind: Build
 name: api-gateway-container
 description: API Gateway service container image
+buildAtSource: true
 type: container
-dependencies:
-  - build.api-gateway-ts
-copyFrom:
-  - sourcePath: dist/apps/api-gateway
-    build: api-gateway-ts
-
+spec:
+  buildArgs:
 ---
 
 kind: Deploy

@@ -4,7 +4,7 @@ FROM docker.io/node:lts-alpine as deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /usr/src/app
 COPY dist/apps/api-gateway/package*.json ./
-RUN npm install --only=productiæon
+RUN npm install --only=production
 
 # Production image, copy all the files and run nest
 FROM docker.io/node:lts-alpine as runner
