@@ -1,5 +1,6 @@
 import { Theme } from '@radix-ui/themes';
 import Providers from '../components/providers';
+import AppFooter from './footer';
 import './global.css';
 
 export const metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({
         <Providers>
           <Theme appearance="dark">{children}</Theme>
         </Providers>
+        <AppFooter />
       </body>
     </html>
   );

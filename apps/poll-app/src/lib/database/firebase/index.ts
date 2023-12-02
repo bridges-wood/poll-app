@@ -3,8 +3,6 @@ import 'firebase/auth';
 import { GoogleAuthProvider, getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// console.log('process.env', process.env);
-
 const firebaseConfig = {
   apiKey: "AIzaSyC7O50KA7DQbPl4KaNwbQfCEMGWpoIirZ0",
   authDomain: "poll-app-abd55.firebaseapp.com",
@@ -13,8 +11,6 @@ const firebaseConfig = {
   messagingSenderId: "762344533515",
   appId: "1:762344533515:web:56fca1a136378da2ce210e"
 };
-
-console.log('firebaseConfig.apiKey', firebaseConfig);
 
 // Initialize Firebase
 initializeApp(firebaseConfig);

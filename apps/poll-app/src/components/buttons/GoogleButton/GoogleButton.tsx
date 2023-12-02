@@ -41,25 +41,33 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
             const userCredential = await signInWithPopup(auth, provider);
 
             // Check if the user exists in the database
-            const user = await getUser({
+            const { data: user } = await getUser({
               variables: { id: userCredential.user.uid },
             });
+
             if (_.isNil(user)) {
-              // Check that the user credential has a display name
-              if (_.isNil(userCredential.user.displayName)) {
-                throw new Error('User does not have a display name');
+              // Check that the user credential has a display name and email
+              if (
+                _.isNil(userCredential.user.displayName) ||
+                _.isNil(userCredential.user.email)
+              ) {
+                throw new Error('User does not have a display name or email');
               }
 
               // Create the user
               await createUser({
                 variables: {
                   id: userCredential.user.uid,
-                  args: { displayName: userCredential.user.displayName },
+                  args: {
+                    displayName: userCredential.user.displayName,
+                    email: userCredential.user.email,
+                    photoURL: userCredential.user.photoURL,
+                  },
                 },
               });
             }
 
-            router.push('/polls');
+            router.push('/home');
           } catch (error) {
             const err = error as AuthError;
             switch (err.code) {

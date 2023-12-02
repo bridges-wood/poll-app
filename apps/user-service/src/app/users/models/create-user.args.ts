@@ -4,4 +4,8 @@ import { Field, InputType } from '@nestjs/graphql';
 export class CreateUserArgs {
   @Field()
   displayName: string;
+  @Field()
+  email: string;
+  @Field({ nullable: true })
+  photoURL: string | null;
 }
