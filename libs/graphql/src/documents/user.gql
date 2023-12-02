@@ -3,3 +3,9 @@ query getUserName($id: String!) {
     displayName
   }
 }
+
+mutation CreateUser($id: String!, $args: CreateUserArgs!) {
+  createUser(id: $id, args: $args) {
+    id
+  }
+}

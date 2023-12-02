@@ -3,14 +3,18 @@ import 'firebase/auth';
 import { GoogleAuthProvider, getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-const firebaseConfig: FirebaseOptions = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGE_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
+// console.log('process.env', process.env);
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC7O50KA7DQbPl4KaNwbQfCEMGWpoIirZ0",
+  authDomain: "poll-app-abd55.firebaseapp.com",
+  projectId: "poll-app-abd55",
+  storageBucket: "poll-app-abd55.appspot.com",
+  messagingSenderId: "762344533515",
+  appId: "1:762344533515:web:56fca1a136378da2ce210e"
 };
+
+console.log('firebaseConfig.apiKey', firebaseConfig);
 
 // Initialize Firebase
 initializeApp(firebaseConfig);

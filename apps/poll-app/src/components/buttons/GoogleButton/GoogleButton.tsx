@@ -1,7 +1,11 @@
 'use client';
+import { useCreateUserMutation, useGetUserNameLazyQuery } from '@org/graphql';
+import { auth, provider } from '@poll-app/lib/database/firebase';
+import { AuthError, signInWithPopup } from 'firebase/auth';
 import _ from 'lodash';
 import { useTheme } from 'next-themes';
 import Image, { ImageProps } from 'next/image';
+import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 
 // See https://developers.google.com/identity/branding-guidelines
@@ -16,7 +20,10 @@ export interface GoogleButtonProps
 }
 
 const GoogleButton: FC<GoogleButtonProps> = (props) => {
+  const [getUser, { data, error, loading }] = useGetUserNameLazyQuery();
+  const [createUser] = useCreateUserMutation();
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
 
   if (!_.isNil(resolvedTheme)) {
     const derivedProps = deriveProps(props, resolvedTheme);
@@ -28,6 +35,42 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
           props.className,
           ''
         )} cursor-pointer hover:opacity-80`}
+        onClick={async (event) => {
+          event.preventDefault();
+          try {
+            const userCredential = await signInWithPopup(auth, provider);
+
+            // Check if the user exists in the database
+            const user = await getUser({
+              variables: { id: userCredential.user.uid },
+            });
+            if (_.isNil(user)) {
+              // Check that the user credential has a display name
+              if (_.isNil(userCredential.user.displayName)) {
+                throw new Error('User does not have a display name');
+              }
+
+              // Create the user
+              await createUser({
+                variables: {
+                  id: userCredential.user.uid,
+                  args: { displayName: userCredential.user.displayName },
+                },
+              });
+            }
+
+            router.push('/polls');
+          } catch (error) {
+            const err = error as AuthError;
+            switch (err.code) {
+              case 'auth/popup-closed-by-user':
+                return;
+              default:
+                console.error(err);
+                return;
+            }
+          }
+        }}
       />
     );
   }

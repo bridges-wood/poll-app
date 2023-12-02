@@ -1,4 +1,3 @@
-'use client';
 import { GoogleButton } from '@poll-app/components/buttons';
 import {
   EnvelopeClosedIcon,
@@ -19,11 +18,7 @@ const Login = () => {
       <Heading size="8" className="mb-8">
         Log In
       </Heading>
-      <GoogleButton
-        shape="sq"
-        variant="ctn"
-        onClick={(event) => console.log(event)}
-      />
+      <GoogleButton shape="sq" variant="ctn" />
       <Text className="mt-2 mb-2">or</Text>
       <div id="login-form" className="w-full">
         <TextFieldRoot className="w-full">

@@ -62,7 +62,7 @@
     "build-generator": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
-      "inputs": ["{projectRoot}/src/scripts/*.ts"],
+      "inputs": ["{projectRoot}/src/*.ts"],
       "options": {
         "target": "node",
         "compiler": "tsc",

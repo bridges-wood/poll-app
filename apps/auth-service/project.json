@@ -31,10 +31,10 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "apps/auth-service:build:development"
+          "buildTarget": "auth-service:build:development"
         },
         "production": {
-          "buildTarget": "apps/auth-service:build:production"
+          "buildTarget": "auth-service:build:production"
         }
       }
     },

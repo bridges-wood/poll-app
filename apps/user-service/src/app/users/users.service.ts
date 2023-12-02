@@ -74,7 +74,8 @@ export class UsersService {
     const user: User = {
       id,
       ...details,
-      displayName: null,
+      firstName: null,
+      lastName: null,
       email: null,
       createdAt: new Date(),
       updatedAt: new Date(),
