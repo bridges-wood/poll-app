@@ -2,8 +2,7 @@ import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 import { User } from '../../users/models/user.model';
 
 @ObjectType({ description: 'post' })
-@Directive('@extends')
-@Directive('@key(fields: "id")')
+@Directive('@key(selectionSet: "{ id }")')
 export class Post {
   @Field((type) => ID)
   id: string;

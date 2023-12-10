@@ -77,11 +77,8 @@
       "cache": true
     },
     "generate": {
-      "inputs": ["{workspaceRoot}/dist/apps/user-service/scripts/*.js"],
       "dependsOn": ["build-generator"],
-      "command": "node dist/apps/user-service/scripts/generate-schema.js",
-      "outputs": ["{workspaceRoot}/generated/schema.gql"],
-      "cache": true
+      "command": "node dist/apps/user-service/scripts/generate-schema.js"
     }
   },
   "tags": []

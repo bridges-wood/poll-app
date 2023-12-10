@@ -20,6 +20,8 @@
       "@org/firebase": ["libs/firebase/src/index.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
       "@org/graphql/server": ["libs/graphql/src/server.ts"],
+      "@org/graphql/transformers": ["libs/graphql/src/transformers.ts"],
+      "@org/pubsub": ["libs/pubsub/src/index.ts"],
       "@org/registration": ["libs/registration/src/index.ts"]
     }
   },

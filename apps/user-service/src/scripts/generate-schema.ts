@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { stitchingDirectives } from '@graphql-tools/stitching-directives';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
@@ -7,16 +9,19 @@ import {
   GraphQLSchemaFactory,
 } from '@nestjs/graphql';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { printSchema } from 'graphql';
 import { join } from 'path';
 import { UsersResolver } from '../app/users/users.resolver';
 
+const { allStitchingDirectives } = stitchingDirectives();
+
 const RESOLVERS: Function[] = [UsersResolver];
 const SCALARS: Function[] = [];
-const OPTIONS: BuildSchemaOptions = {};
+const OPTIONS: BuildSchemaOptions = {
+  directives: allStitchingDirectives,
+};
 
 /**
- * Generate schema.gql file
+ * Generate GraphQL schema file
  */
 async function generateSchema() {
   const app = await NestFactory.create(GraphQLSchemaBuilderModule);
@@ -35,7 +40,7 @@ async function generateSchema() {
     targetFolder,
     process.env.SCHEMA_FILE || 'schema.gql'
   );
-  const schemaString = printSchema(schema);
+  const schemaString = printSchemaWithDirectives(schema);
 
   Logger.log(`Writing schema to ${targetFile}`);
 

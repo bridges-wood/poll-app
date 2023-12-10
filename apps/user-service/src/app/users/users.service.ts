@@ -1,15 +1,18 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { FirebaseTokens } from '@org/firebase';
+import { PubSubTokens } from '@org/pubsub';
 import {
   Firestore,
   collection,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
+import PubSub from 'graphql-firestore-subscriptions';
 import { NotFoundError } from '../utils/errors';
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
@@ -20,6 +23,7 @@ import { UserModelMapper } from './models/user.model-mapper';
 export class UsersService {
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
+    @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     private readonly userModelMapper: UserModelMapper
   ) {}
 
@@ -52,6 +56,22 @@ export class UsersService {
     }
   }
 
+  streamUser(id: string) {
+    this.pubSub.registerHandler(`userUpdated:${id}`, (broadcast) => {
+      const docRef = doc(this.database, 'users', id).withConverter(
+        this.userModelMapper
+      );
+
+      return onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          broadcast(docSnap.data() as User);
+        }
+      });
+    });
+
+    return this.pubSub.asyncIterator(`userUpdated:${id}`);
+  }
+
   /**
    * Creates a new user in the database
    * @param id The user's uid from Firebase Auth
@@ -70,6 +90,7 @@ export class UsersService {
           id,
           email: args.email,
           displayName: args.displayName,
+          profilePicture: args.photoURL,
           firstName: null,
           lastName: null,
           createdAt: new Date(),
@@ -87,7 +108,7 @@ export class UsersService {
 
         Logger.log(`Created user ${id}`);
 
-        return {id, ...user};
+        return { id, ...user };
       } else {
         throw error;
       }

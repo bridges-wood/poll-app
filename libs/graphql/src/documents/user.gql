@@ -4,6 +4,13 @@ query getUserName($id: String!) {
   }
 }
 
+query getProfile($id: String!) {
+  user(id: $id) {
+    displayName
+    profilePicture
+  }
+}
+
 mutation CreateUser($id: String!, $args: CreateUserArgs!) {
   createUser(id: $id, args: $args) {
     id

@@ -1,9 +1,7 @@
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
+import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { UsersModule } from './users/users.module';
@@ -13,17 +11,22 @@ import { ErrorFormatterModule } from './utils/error-formatter.module';
 @Module({
   imports: [
     UsersModule,
-    GraphQLModule.forRootAsync<ApolloFederationDriverConfig>({
+    GraphQLModule.forRootAsync<YogaDriverConfig>({
       imports: [ConfigModule, ErrorFormatterModule],
       inject: [ConfigService, ErrorFormatter],
-      driver: ApolloFederationDriver,
+      driver: YogaDriver,
       useFactory: (config: ConfigService, errorFormatter: ErrorFormatter) => {
         return {
           introspection: true,
-          playground: config.isDev(),
+          graphiql: config.isDev(),
           autoSchemaFile: { path: config.schemaFile, federation: 2 },
           sortSchema: true,
           formatError: errorFormatter.format,
+          subscriptions: {
+            'graphql-ws': true,
+          },
+          transformAutoSchemaFile: true,
+          transformSchema: prepareSchemaForFederation,
         };
       },
     }),

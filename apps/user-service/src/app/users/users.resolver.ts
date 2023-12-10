@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { CreateUserArgs } from './models/create-user.args';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
@@ -15,6 +15,11 @@ export class UsersResolver {
   @Query((returns) => [User])
   async users(): Promise<User[]> {
     return this.usersService.findAll();
+  }
+
+  @Subscription((returns) => User)
+  userUpdated(@Args('id') id: string) {
+    return this.usersService.streamUser(id);
   }
 
   @Mutation((returns) => User)
