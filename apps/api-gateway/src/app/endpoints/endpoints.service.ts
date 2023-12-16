@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { SchemaLoader } from '../schema/schema-loader';
+import { EndpointLoader } from './endpoint-loader';
 import { AddEndpointArgs } from './models/add-endpoint.args';
 import { AddEndpointResult } from './models/add-endpoint.result';
 import { LoadedEndpoint } from './models/loaded-endpoint.model';
@@ -10,18 +10,29 @@ import { RemoveEndpointResult } from './models/remove-endpoint.result';
 export class EndpointsService {
   private readonly logger = new Logger(EndpointsService.name);
 
-  constructor(private schemaLoader: SchemaLoader) {}
+  constructor(private endpointLoader: EndpointLoader) {}
 
   getAllLoadedEndpoints(): LoadedEndpoint[] {
-    const endpoints = this.schemaLoader.getEndpoints();
+    const endpoints = this.endpointLoader.getEndpoints();
     return endpoints;
   }
 
   async addEndpoint(args: AddEndpointArgs): Promise<AddEndpointResult> {
     try {
-      await this.schemaLoader.addEndpoint({ ...args }, true);
+      // Check if endpoint already exists with the same URL
+      const existingEndpoint = this.endpointLoader
+        .getEndpoints()
+        .find((e) => e.url === args.url);
+      if (existingEndpoint) {
+        return {
+          endpoint: existingEndpoint,
+          success: false,
+        };
+      }
+
+      await this.endpointLoader.addEndpoint({ ...args });
       return {
-        endpoint: this.schemaLoader
+        endpoint: this.endpointLoader
           .getEndpoints()
           .find((e) => e.url === args.url),
         success: true,
@@ -36,7 +47,7 @@ export class EndpointsService {
 
   async removeEndpoint(url: string): Promise<RemoveEndpointResult> {
     try {
-      await this.schemaLoader.removeEndpoint({ url }, true);
+      await this.endpointLoader.removeEndpoint({ url });
       return {
         success: true,
       };
@@ -50,7 +61,7 @@ export class EndpointsService {
 
   async reloadAllEndpoints(): Promise<ReloadAllEndpointsResult> {
     try {
-      await this.schemaLoader.reload();
+      await this.endpointLoader.reload();
       return {
         success: true,
       };

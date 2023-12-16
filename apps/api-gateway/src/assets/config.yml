@@ -2,5 +2,3 @@ endpoints:
   - name: users
     description: Users service
     url: http://localhost:3001/graphql
-  # - name: posts
-  #   path: localhost:3002
