@@ -2,14 +2,14 @@
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { BuildSchemaOptions } from '@nestjs/graphql';
 import { generateSchema } from '@org/graphql/scripts';
-import { UsersResolver } from '../app/users/users.resolver';
+import { AuthResolver } from '../app/auth/auth.resolver';
 
 const { allStitchingDirectives } = stitchingDirectives();
 
-const RESOLVERS: Function[] = [UsersResolver];
+const RESOLVERS: Function[] = [AuthResolver];
 const SCALARS: Function[] = [];
-const OPTIONS: BuildSchemaOptions = {
+const options: BuildSchemaOptions = {
   directives: allStitchingDirectives,
 };
 
-generateSchema(RESOLVERS, SCALARS, OPTIONS);
+generateSchema(RESOLVERS, SCALARS, options);

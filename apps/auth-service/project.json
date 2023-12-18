@@ -58,6 +58,27 @@
           "codeCoverage": true
         }
       }
+    },
+    "build-generator": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "inputs": ["{projectRoot}/src/*.ts"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/auth-service/scripts",
+        "main": "{projectRoot}/src/scripts/generate-schema.ts",
+        "outputFileName": "generate-schema.js",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "assets": ["{projectRoot}/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "{projectRoot}/webpack.config.js"
+      },
+      "cache": true
+    },
+    "generate": {
+      "dependsOn": ["build-generator"],
+      "command": "node dist/apps/auth-service/scripts/generate-schema.js"
     }
   },
   "tags": []

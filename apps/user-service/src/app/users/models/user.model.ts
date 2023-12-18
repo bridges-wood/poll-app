@@ -1,11 +1,6 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import { UserAuthData } from '@org/graphql/types';
 import { Post } from '../../posts/models/post.model';
-
-export interface UserAuthData {
-  id: string;
-  email: string | null;
-  displayName: string | null;
-}
 
 @ObjectType({ description: 'A user' })
 @Directive('@key(selectionSet: "{ id }")')

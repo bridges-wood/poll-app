@@ -3,9 +3,12 @@ import { Endpoint } from './endpoint.model';
 
 @ObjectType()
 export class AddEndpointResult {
-  @Field()
+  @Field({ description: 'Whether the endpoint was added successfully' })
   success: boolean;
 
-  @Field((type) => Endpoint, { nullable: true })
+  @Field((type) => Endpoint, {
+    nullable: true,
+    description: 'The endpoint that was added',
+  })
   endpoint?: Endpoint;
 }

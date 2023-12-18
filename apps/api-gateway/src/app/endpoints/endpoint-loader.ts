@@ -12,11 +12,8 @@ import { LoadedEndpoint } from '../endpoints/models/loaded-endpoint.model';
 @Injectable()
 export class EndpointLoader {
   private readonly logger = new Logger(EndpointLoader.name);
-  private endpoints$: BehaviorSubject<Endpoint[]> = new BehaviorSubject<
-    Endpoint[]
-  >([]);
-  public loadedEndpoints$: BehaviorSubject<LoadedEndpoint[]> =
-    new BehaviorSubject<LoadedEndpoint[]>([]);
+  private endpoints$ = new BehaviorSubject<Endpoint[]>([]);
+  public loadedEndpoints$ = new BehaviorSubject<LoadedEndpoint[]>([]);
 
   constructor(private configService: ConfigService) {
     this.endpoints$.next(this.configService.getEndpoints());
@@ -59,10 +56,10 @@ export class EndpointLoader {
       })
     );
 
-    this.loadedEndpoints$.next(loadedEndpoints);
     this.logger.log(
       `Successfully loaded ${loadedEndpoints.length} endpoint(s)`
     );
+    this.loadedEndpoints$.next(loadedEndpoints);
   }
 
   private async loadEndpoint(endpoint: Endpoint): Promise<string> {
@@ -81,7 +78,7 @@ export class EndpointLoader {
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   private async autoReload() {
-    this.logger.log('Auto-reloading schema');
+    this.logger.log('🤖 Auto-reloading schema');
     await this.reload(this.endpoints$.value);
   }
 }

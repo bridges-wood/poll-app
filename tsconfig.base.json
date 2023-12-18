@@ -17,10 +17,14 @@
     "baseUrl": ".",
     "paths": {
       "@org/common": ["libs/common/src/index.ts"],
+      "@org/config": ["libs/config/src/index.ts"],
+      "@org/errors": ["libs/errors/src/index.ts"],
       "@org/firebase": ["libs/firebase/src/index.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
+      "@org/graphql/scripts": ["libs/graphql/src/scripts/index.ts"],
       "@org/graphql/server": ["libs/graphql/src/server.ts"],
       "@org/graphql/transformers": ["libs/graphql/src/transformers.ts"],
+      "@org/graphql/types": ["libs/graphql/src/types.ts"],
       "@org/pubsub": ["libs/pubsub/src/index.ts"],
       "@org/registration": ["libs/registration/src/index.ts"]
     }

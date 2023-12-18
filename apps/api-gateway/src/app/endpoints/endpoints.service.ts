@@ -24,10 +24,8 @@ export class EndpointsService {
         .getEndpoints()
         .find((e) => e.url === args.url);
       if (existingEndpoint) {
-        return {
-          endpoint: existingEndpoint,
-          success: false,
-        };
+        // Overwrite the existing endpoint
+        await this.endpointLoader.removeEndpoint({ url: args.url });
       }
 
       await this.endpointLoader.addEndpoint({ ...args });

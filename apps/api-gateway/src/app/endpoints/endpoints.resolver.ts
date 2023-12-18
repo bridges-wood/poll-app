@@ -12,24 +12,37 @@ export class EndpointsResolver {
   private readonly logger = new Logger(EndpointsResolver.name);
   constructor(private endpointsService: EndpointsService) {}
 
-  @Query((returns) => [LoadedEndpoint])
+  @Query((returns) => [LoadedEndpoint], {
+    description: 'Get all endpoints currently loaded by the gateway',
+  })
   endpoints(): LoadedEndpoint[] {
     return this.endpointsService.getAllLoadedEndpoints();
   }
 
-  @Mutation((returns) => AddEndpointResult)
+  @Mutation((returns) => AddEndpointResult, {
+    description: 'Add a new endpoint to the gateway',
+  })
   addEndpoint(@Args('args') args: AddEndpointArgs): Promise<AddEndpointResult> {
     this.logger.debug(`Adding endpoint ${args.url}`);
     return this.endpointsService.addEndpoint(args);
   }
 
-  @Mutation((returns) => RemoveEndpointResult)
-  removeEndpoint(@Args('url') url: string): Promise<RemoveEndpointResult> {
+  @Mutation((returns) => RemoveEndpointResult, {
+    description: 'Remove an endpoint from the gateway',
+  })
+  removeEndpoint(
+    @Args('url', {
+      description: 'The url of the endpoint to remove from the gateway',
+    })
+    url: string
+  ): Promise<RemoveEndpointResult> {
     this.logger.debug(`Removing endpoint ${url}`);
     return this.endpointsService.removeEndpoint(url);
   }
 
-  @Mutation((returns) => ReloadAllEndpointsResult)
+  @Mutation((returns) => ReloadAllEndpointsResult, {
+    description: 'Reload the schema of all endpoints loaded by the gateway',
+  })
   reloadAllEndpoints(): Promise<ReloadAllEndpointsResult> {
     this.logger.debug(`Reloading all endpoints`);
     return this.endpointsService.reloadAllEndpoints();

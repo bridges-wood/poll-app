@@ -12,15 +12,44 @@
         "lintFilePatterns": ["libs/graphql/**/*.{ts,tsx,js,jsx}"]
       }
     },
+    "build-stitcher": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "inputs": ["{projectRoot}/src/scripts/stitch.ts"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/libs/graphql/scripts",
+        "main": "{projectRoot}/src/scripts/stitch.ts",
+        "outputFileName": "stitch.js",
+        "tsConfig": "{projectRoot}/tsconfig.json",
+        "webpackConfig": "{projectRoot}/webpack.config.js"
+      },
+      "cache": true
+    },
     "stitch": {
-      "inputs": ["{workspaceRoot}/generated/*.gql"],
-      "outputs": ["{projectRoot}/src/generated/schema.gql"]
+      "dependsOn": [
+        "build-stitcher",
+        "user-service:generate",
+        "auth-service:generate"
+      ],
+      "inputs": [
+        "{workspaceRoot}/generated/*.gql",
+        "{projectRoot}/dist/libs/graphql/scripts/stitch.js"
+      ],
+      "outputs": ["{projectRoot}/src/generated/schema.gql"],
+      "command": "node dist/libs/graphql/scripts/stitch.js",
+      "cache": true
     },
     "generate": {
-      "inputs": ["{workspaceRoot}/generated/schema.gql"],
-      "outputs": ["{projectRoot}/src/generated/index.tsx"],
+      "dependsOn": ["stitch"],
+      "inputs": [
+        "{workspaceRoot}/generated/schema.gql",
+        "{projectRoot}/codegen.yml"
+      ],
+      "outputs": ["{projectRoot}/src/generated/*.[ts,tsx]"],
       "command": "yarn graphql-codegen --config libs/graphql/codegen.yml",
-      "dependsOn": ["user-service:generate"]
+      "cache": true
     }
   }
 }

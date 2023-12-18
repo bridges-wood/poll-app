@@ -33,7 +33,6 @@ export class ConfigService {
       );
 
       this.endpoints = parsedConfig.endpoints;
-      this.logger.log(`Endpoints: ${this.endpoints.join(', ')}`);
     } catch (error) {
       throw new Error(`Invalid config: ${error.message}`);
     }

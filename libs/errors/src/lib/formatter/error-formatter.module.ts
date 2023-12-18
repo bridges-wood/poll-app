@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ErrorFormatter } from './error-formatter';
+import { ErrorFormatter } from './formatter';
 
 @Module({
   providers: [ErrorFormatter],

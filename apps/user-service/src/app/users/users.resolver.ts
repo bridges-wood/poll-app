@@ -7,32 +7,44 @@ import { UsersService } from './users.service';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query((returns) => User)
-  async user(@Args('id') id: string): Promise<User> {
+  @Query((returns) => User, { description: 'Get a user by id' })
+  async user(
+    @Args('id', { description: 'The id of the user to get' }) id: string
+  ): Promise<User> {
     return this.usersService.findOneById(id);
   }
 
-  @Query((returns) => [User])
+  @Query((returns) => [User], { description: 'Get all users' })
   async users(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
-  @Subscription((returns) => User)
-  userUpdated(@Args('id') id: string) {
+  @Subscription((returns) => User, {
+    description: 'Subscribe to all changes on a user by id',
+  })
+  userUpdated(
+    @Args('id', {
+      description: 'The id of the user to subscribe to changes on',
+    })
+    id: string
+  ) {
     return this.usersService.streamUser(id);
   }
 
-  @Mutation((returns) => User)
+  @Mutation((returns) => User, { description: 'Create a new user' })
   async createUser(
-    @Args('id') id: string,
+    @Args('id', { description: 'The id of the new user to create' }) id: string,
     @Args('args') args: CreateUserArgs
   ): Promise<User> {
     return this.usersService.createOne(id, args);
   }
 
-  @Mutation((returns) => Boolean!, { nullable: true })
+  @Mutation((returns) => Boolean!, {
+    nullable: true,
+    description: 'Update a user by id',
+  })
   async updateUser(
-    @Args('id') id: string,
+    @Args('id', { description: 'The id of the user to update' }) id: string,
     @Args('args') args: CreateUserArgs
   ): Promise<void> {
     return this.usersService.updateOne(id, args);

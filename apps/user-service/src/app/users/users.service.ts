@@ -13,7 +13,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import PubSub from 'graphql-firestore-subscriptions';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError } from '../../../../../libs/errors/src/lib/types';
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
 import { User } from './models/user.model';

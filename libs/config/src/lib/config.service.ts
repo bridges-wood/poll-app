@@ -7,10 +7,10 @@ export class ConfigService {
   private _schemaFile: string;
 
   constructor() {
-    this.environment = process.env.NODE_ENV || 'development';
+    this.environment = process.env['NODE_ENV'] || 'development';
     this._schemaFile = join(
       process.cwd(),
-      `generated/${process.env.SCHEMA_FILE || 'schema.gql'}`
+      `generated/${process.env['SCHEMA_FILE'] || 'schema.gql'}`
     );
   }
 
