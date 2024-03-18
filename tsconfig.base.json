@@ -22,6 +22,7 @@
       "@org/firebase": ["libs/firebase/src/index.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
       "@org/graphql/scripts": ["libs/graphql/src/scripts/index.ts"],
+      "@org/graphql/nest": ["libs/graphql/src/nest.ts"],
       "@org/graphql/server": ["libs/graphql/src/server.ts"],
       "@org/graphql/transformers": ["libs/graphql/src/transformers.ts"],
       "@org/graphql/types": ["libs/graphql/src/types.ts"],

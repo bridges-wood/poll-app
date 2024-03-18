@@ -45,11 +45,10 @@
       "dependsOn": ["stitch"],
       "inputs": [
         "{workspaceRoot}/generated/schema.gql",
-        "{projectRoot}/codegen.yml"
+        "{projectRoot}/codegen.ts"
       ],
       "outputs": ["{projectRoot}/src/generated/*.[ts,tsx]"],
-      "command": "yarn graphql-codegen --config libs/graphql/codegen.yml",
-      "cache": true
+      "command": "yarn graphql-codegen --config libs/graphql/codegen.ts",
     }
   }
 }
