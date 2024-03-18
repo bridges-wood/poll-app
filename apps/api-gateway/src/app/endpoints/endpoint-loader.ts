@@ -24,13 +24,16 @@ export class EndpointLoader {
     return this.loadedEndpoints$.value;
   }
 
-  async addEndpoint(endpoint: Endpoint): Promise<void> {
+  async addEndpoint(endpoint: Endpoint): Promise<Endpoint> {
+    // Attempt to load the endpoint
+    await this.loadEndpoint(endpoint);
     this.endpoints$.next([...this.endpoints$.value, endpoint]);
+    return endpoint;
   }
 
   async removeEndpoint(endpoint: Endpoint): Promise<void> {
     const index = this.endpoints$.value.findIndex(
-      (e) => e.url === endpoint.url
+      (e) => e.url === endpoint.url,
     );
     if (index > -1) {
       const endpoints = [...this.endpoints$.value];
@@ -53,11 +56,11 @@ export class EndpointLoader {
       endpoints.map(async (endpoint) => {
         const sdl = await this.loadEndpoint(endpoint);
         loadedEndpoints.push({ ...endpoint, sdl, lastReload: new Date() });
-      })
+      }),
     );
 
     this.logger.log(
-      `Successfully loaded ${loadedEndpoints.length} endpoint(s)`
+      `Successfully loaded ${loadedEndpoints.length} endpoint(s)`,
     );
     this.loadedEndpoints$.next(loadedEndpoints);
   }
@@ -73,7 +76,16 @@ export class EndpointLoader {
     if (isAsyncIterable(result)) {
       throw new Error('Expected executor to return a single result');
     }
-    return result.data._sdl;
+
+    const sdl = result?.data?._sdl;
+    if (!sdl) {
+      this.logger.error(`Failed to load endpoint ${endpoint.url}`);
+      this.logger.debug(`Received: ${JSON.stringify(result)}`);
+      throw new Error(
+        `Expected executor to return an SDL for the endpoint ${endpoint.url}`,
+      );
+    }
+    return sdl;
   }
 
   @Cron(CronExpression.EVERY_5_MINUTES)

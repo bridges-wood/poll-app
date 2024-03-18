@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { NotFoundError } from '@org/errors';
 import { FirebaseTokens } from '@org/firebase';
 import { PubSubTokens } from '@org/pubsub';
 import {
@@ -13,7 +14,6 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import PubSub from 'graphql-firestore-subscriptions';
-import { NotFoundError } from '../../../../../libs/errors/src/lib/types';
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
 import { User } from './models/user.model';
@@ -24,12 +24,12 @@ export class UsersService {
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
-    private readonly userModelMapper: UserModelMapper
+    private readonly userModelMapper: UserModelMapper,
   ) {}
 
   async findOneById(id: string): Promise<User> {
     const docRef = doc(this.database, 'users', id).withConverter(
-      this.userModelMapper
+      this.userModelMapper,
     );
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists())
@@ -41,7 +41,7 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     try {
       const q = query(
-        collection(this.database, 'users').withConverter(this.userModelMapper)
+        collection(this.database, 'users').withConverter(this.userModelMapper),
       );
 
       const querySnapshot = await getDocs(q);
@@ -59,7 +59,7 @@ export class UsersService {
   streamUser(id: string) {
     this.pubSub.registerHandler(`userUpdated:${id}`, (broadcast) => {
       const docRef = doc(this.database, 'users', id).withConverter(
-        this.userModelMapper
+        this.userModelMapper,
       );
 
       return onSnapshot(docRef, (docSnap) => {
@@ -103,7 +103,7 @@ export class UsersService {
         // Save user
         await setDoc(
           doc(this.database, 'users', id).withConverter(this.userModelMapper),
-          user
+          user,
         );
 
         Logger.log(`Created user ${id}`);
@@ -118,7 +118,7 @@ export class UsersService {
   async updateOne(id: string, args: UpdateUserArgs): Promise<void> {
     try {
       const userRef = doc(this.database, 'users', id).withConverter(
-        this.userModelMapper
+        this.userModelMapper,
       );
 
       return await updateDoc(userRef, args as Partial<User>);

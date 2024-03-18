@@ -18,29 +18,20 @@ export class EndpointsService {
   }
 
   async addEndpoint(args: AddEndpointArgs): Promise<AddEndpointResult> {
-    try {
-      // Check if endpoint already exists with the same URL
-      const existingEndpoint = this.endpointLoader
-        .getEndpoints()
-        .find((e) => e.url === args.url);
-      if (existingEndpoint) {
-        // Overwrite the existing endpoint
-        await this.endpointLoader.removeEndpoint({ url: args.url });
-      }
-
-      await this.endpointLoader.addEndpoint({ ...args });
-      return {
-        endpoint: this.endpointLoader
-          .getEndpoints()
-          .find((e) => e.url === args.url),
-        success: true,
-      };
-    } catch (error) {
-      this.logger.error(error);
-      return {
-        success: false,
-      };
+    // Check if endpoint already exists with the same URL
+    const existingEndpoint = this.endpointLoader
+      .getEndpoints()
+      .find((e) => e.url === args.url);
+    if (existingEndpoint) {
+      // Overwrite the existing endpoint
+      await this.endpointLoader.removeEndpoint({ url: args.url });
     }
+
+    const addedEndpoint = await this.endpointLoader.addEndpoint({ ...args });
+    return {
+      endpoint: addedEndpoint,
+      success: true,
+    };
   }
 
   async removeEndpoint(url: string): Promise<RemoveEndpointResult> {
