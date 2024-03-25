@@ -27,7 +27,7 @@ export class EndpointsService {
       await this.endpointLoader.removeEndpoint({ url: args.url });
     }
 
-    const addedEndpoint = await this.endpointLoader.addEndpoint({ ...args });
+    const addedEndpoint = await this.endpointLoader.addEndpoint(args);
     return {
       endpoint: addedEndpoint,
       success: true,

@@ -8,6 +8,7 @@ import { GraphQLSchema, buildSchema } from 'graphql';
 import _ from 'lodash';
 import {
   BehaviorSubject,
+  Subject,
   combineLatest,
   filter,
   firstValueFrom,
@@ -19,7 +20,7 @@ import { LoadedEndpoint } from '../endpoints/models/loaded-endpoint.model';
 @Injectable()
 export class SchemaStitcher {
   private readonly logger = new Logger(SchemaStitcher.name);
-  private localSchema$ = new BehaviorSubject<GraphQLSchema>(undefined);
+  private localSchema$ = new Subject<GraphQLSchema>();
   public stitchedSchema$ = new BehaviorSubject<GraphQLSchema>(undefined);
 
   constructor(private endpointLoader: EndpointLoader) {
@@ -27,8 +28,8 @@ export class SchemaStitcher {
       .pipe(
         filter(
           ([endpoints, localSchema]) =>
-            endpoints.length > 0 && !_.isNil(localSchema)
-        )
+            endpoints.length > 0 && !_.isNil(localSchema),
+        ),
       )
       .subscribe(async ([endpoints, localSchema]) => {
         const newSchema = await this.stitch(endpoints, localSchema);
@@ -37,7 +38,7 @@ export class SchemaStitcher {
   }
 
   public async stitchWithRemotes(
-    localSchema: GraphQLSchema
+    localSchema: GraphQLSchema,
   ): Promise<GraphQLSchema> {
     this.localSchema$.next(localSchema);
     return firstValueFrom(this.stitchedSchema$.pipe(skip(1))); // Don't return initial undefined
@@ -45,7 +46,7 @@ export class SchemaStitcher {
 
   private async stitch(
     endpoints: LoadedEndpoint[],
-    localSchema: GraphQLSchema
+    localSchema: GraphQLSchema,
   ): Promise<GraphQLSchema> {
     if (endpoints.length === 0) {
       this.logger.warn('No endpoints to stitch, skipping');

@@ -26,8 +26,11 @@ export class EndpointLoader {
 
   async addEndpoint(endpoint: Endpoint): Promise<Endpoint> {
     // Attempt to load the endpoint
-    await this.loadEndpoint(endpoint);
-    this.endpoints$.next([...this.endpoints$.value, endpoint]);
+    const sdl = await this.loadEndpoint(endpoint);
+    if (sdl) {
+      this.endpoints$.next([...this.endpoints$.value, endpoint]);
+    }
+
     return endpoint;
   }
 
@@ -35,7 +38,7 @@ export class EndpointLoader {
     const index = this.endpoints$.value.findIndex(
       (e) => e.url === endpoint.url,
     );
-    if (index > -1) {
+    if (index !== -1) {
       const endpoints = [...this.endpoints$.value];
       endpoints.splice(index, 1);
       this.endpoints$.next(endpoints);
