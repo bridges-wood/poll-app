@@ -1,0 +1,46 @@
+import { NotFoundError } from '@org/errors';
+import { admin } from '@org/firebase';
+import { User } from '@org/graphql/nest';
+import { FastifyRequest as Request } from 'fastify';
+
+/**
+ * Extracts the authorization token from the request object
+ * @param req request object
+ * @returns the token extracted from the request if it exists, otherwise throws
+ */
+export const extractAuthTokenFromHeader = (req: Request): string => {
+  const [type, token] = req.headers['authorization']?.split(' ') ?? [];
+  if (type !== 'Bearer' || !token) {
+    throw new NotFoundError('Authorization token not found');
+  }
+
+  return token;
+};
+
+/**
+ * Extracts an account from an authorization token
+ *
+ * @param token The authorization token to extract the account from
+ * @returns The account associated with the token, if it exists
+ */
+export const getUserFromToken = async (token: string): Promise<User> => {
+  const decodedToken = await admin.auth().verifyIdToken(token);
+  const accountSnapshot = await admin
+    .firestore()
+    .collection('users')
+    .doc(decodedToken.uid)
+    .get();
+
+  if (!accountSnapshot.exists) {
+    throw new NotFoundError('Account not found');
+  }
+
+  const account = accountSnapshot.data();
+
+  if (!account) {
+    throw new NotFoundError('Account has no data');
+  }
+
+  // TODO - Sync the User type with the Firestore schema
+  return account as User;
+};
