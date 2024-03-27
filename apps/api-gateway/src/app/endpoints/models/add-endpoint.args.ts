@@ -4,7 +4,7 @@ import { Field, InputType } from '@nestjs/graphql';
 export class AddEndpointArgs {
   @Field({
     description:
-      'The unique URL of the GraphQL endpoint to add. Usually ends in `/graphql`',
+      "The unique URL of the GraphQL endpoint to add. Usually ends in '/graphql'",
   })
   url: string;
 
