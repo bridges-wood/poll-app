@@ -5442,6 +5442,7 @@ __metadata:
     "@types/jest": "npm:^29.5.11"
     "@types/lodash": "npm:^4.14.202"
     "@types/node": "npm:20.10.5"
+    "@types/passport-local": "npm:^1.0.38"
     "@types/react": "npm:18.2.45"
     "@types/react-dom": "npm:18.2.18"
     "@typescript-eslint/eslint-plugin": "npm:^6.15.0"
@@ -5482,6 +5483,7 @@ __metadata:
     next-themes: "npm:^0.2.1"
     nx: "npm:17.2.6"
     passport: "npm:^0.7.0"
+    passport-local: "npm:^1.0.0"
     postcss: "npm:^8.4.32"
     prettier: "npm:^3.1.1"
     radix-themes-tw: "npm:^0.0.8"
@@ -7614,6 +7616,36 @@ __metadata:
   version: 4.0.2
   resolution: "@types/parse-json@npm:4.0.2"
   checksum: b1b863ac34a2c2172fbe0807a1ec4d5cb684e48d422d15ec95980b81475fac4fdb3768a8b13eef39130203a7c04340fc167bae057c7ebcafd7dec9fe6c36aeb1
+  languageName: node
+  linkType: hard
+
+"@types/passport-local@npm:^1.0.38":
+  version: 1.0.38
+  resolution: "@types/passport-local@npm:1.0.38"
+  dependencies:
+    "@types/express": "npm:*"
+    "@types/passport": "npm:*"
+    "@types/passport-strategy": "npm:*"
+  checksum: a8464df03f073a4bb9aef7fa7cc9e76a355f149a1148330da88346d0e9c600f845601e99ed40949a13287eacae0a7ad01cd0eb5ca00d8b81da263b1dfc3aee60
+  languageName: node
+  linkType: hard
+
+"@types/passport-strategy@npm:*":
+  version: 0.2.38
+  resolution: "@types/passport-strategy@npm:0.2.38"
+  dependencies:
+    "@types/express": "npm:*"
+    "@types/passport": "npm:*"
+  checksum: d7d2b1782a0845bd8914250aa9213a23c8d9c2225db46d854b77f2bf0129a789f46d4a5e9ad336eca277fc7e0a051c0a2942da5c864e7c6710763f102d9d4295
+  languageName: node
+  linkType: hard
+
+"@types/passport@npm:*":
+  version: 1.0.16
+  resolution: "@types/passport@npm:1.0.16"
+  dependencies:
+    "@types/express": "npm:*"
+  checksum: 7120c1186c8c67e3818683b5b6a4439d102f67da93cc1c7d8f32484f7bf10e8438dd5de0bf571910b23d06caa43dd1ad501933b48618bfaf54e63219500993fe
   languageName: node
   linkType: hard
 
@@ -17183,6 +17215,15 @@ __metadata:
     no-case: "npm:^3.0.4"
     tslib: "npm:^2.0.3"
   checksum: 05ff7c344809fd272fc5030ae0ee3da8e4e63f36d47a1e0a4855ca59736254192c5a27b5822ed4bae96e54048eec5f6907713cfcfff7cdf7a464eaf7490786d8
+  languageName: node
+  linkType: hard
+
+"passport-local@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "passport-local@npm:1.0.0"
+  dependencies:
+    passport-strategy: "npm:1.x.x"
+  checksum: 59becb988014921a5d6056470d9373c41db452fcf113323064f39d53baa6f184e72151bf269ca6770511f7f0260e13632dacc7b6afdbf60ebf63e90327e186d4
   languageName: node
   linkType: hard
 
