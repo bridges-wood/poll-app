@@ -58,7 +58,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.6",
     "@babel/preset-react": "^7.23.3",
-    "@bridges-wood/graphql-codegen-nestjs": "^1.1.0",
+    "@bridges-wood/graphql-codegen-nestjs": "^1.2.1",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/typescript-nest": "^1.0.0",
     "@graphql-codegen/typescript-operations": "^4.0.1",

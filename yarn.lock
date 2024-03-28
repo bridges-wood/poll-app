@@ -2143,9 +2143,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bridges-wood/graphql-codegen-nestjs@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@bridges-wood/graphql-codegen-nestjs@npm:1.1.0"
+"@bridges-wood/graphql-codegen-nestjs@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@bridges-wood/graphql-codegen-nestjs@npm:1.2.1"
   dependencies:
     "@graphql-codegen/plugin-helpers": "npm:^3.0.0"
     "@graphql-codegen/typescript": "npm:2.8.1"
@@ -2153,7 +2153,7 @@ __metadata:
     auto-bind: "npm:~4.0.0"
   peerDependencies:
     graphql: ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: e0755ea7c79759915a3ee2dfcd69f3384e2018c71c1fa9858a3c51bf54e813cac58b0b666668c184aa2cd971323262fa0e280171926db23f16bd78ca50a22648
+  checksum: bf1b9ae830529d2eb1f40d16817e4d107ff61c1b779067dbe3bd4adb8cce488e33aed84a5772a7831cb38c145723884f74e018aebd7985d5375760a5eb2eceb8
   languageName: node
   linkType: hard
 
@@ -5399,7 +5399,7 @@ __metadata:
     "@apollo/subgraph": "npm:^2.6.2"
     "@babel/core": "npm:^7.23.6"
     "@babel/preset-react": "npm:^7.23.3"
-    "@bridges-wood/graphql-codegen-nestjs": "npm:^1.1.0"
+    "@bridges-wood/graphql-codegen-nestjs": "npm:^1.2.1"
     "@graphql-codegen/cli": "npm:^5.0.0"
     "@graphql-codegen/typescript-nest": "npm:^1.0.0"
     "@graphql-codegen/typescript-operations": "npm:^4.0.1"
