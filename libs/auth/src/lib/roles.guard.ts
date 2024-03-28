@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { User } from '@org/graphql/nest';
+import { User } from '@org/typings';
 import { Roles } from './roles.decorator';
 
 @Injectable()

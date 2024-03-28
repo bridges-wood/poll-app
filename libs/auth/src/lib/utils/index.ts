@@ -1,6 +1,6 @@
 import { NotFoundError } from '@org/errors';
 import { admin } from '@org/firebase';
-import { User } from '@org/graphql/nest';
+import { User } from '@org/typings';
 import { FastifyRequest as Request } from 'fastify';
 
 /**

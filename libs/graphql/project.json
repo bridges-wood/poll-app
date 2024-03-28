@@ -31,7 +31,8 @@
       "dependsOn": [
         "build-stitcher",
         "user-service:generate",
-        "auth-service:generate"
+        "auth-service:generate",
+        "api-gateway:generate"
       ],
       "inputs": [
         "{workspaceRoot}/generated/*.gql",
@@ -48,7 +49,7 @@
         "{projectRoot}/codegen.ts"
       ],
       "outputs": ["{projectRoot}/src/generated/*.[ts,tsx]"],
-      "command": "yarn graphql-codegen --config libs/graphql/codegen.ts",
+      "command": "yarn graphql-codegen --config libs/graphql/codegen.ts"
     }
   }
 }

@@ -1,4 +1,13 @@
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import {
+  Args,
+  Context,
+  Mutation,
+  Query,
+  Resolver,
+  Subscription,
+} from '@nestjs/graphql';
+import { AuthGuard } from '@org/auth';
 import { CreateUserArgs } from './models/create-user.args';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
@@ -7,9 +16,16 @@ import { UsersService } from './users.service';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(AuthGuard)
+  @Query((returns) => User)
+  async me(@Context() context): Promise<User> {
+    console.log(context);
+    return context.user;
+  }
+
   @Query((returns) => User, { description: 'Get a user by id' })
   async user(
-    @Args('id', { description: 'The id of the user to get' }) id: string
+    @Args('id', { description: 'The id of the user to get' }) id: string,
   ): Promise<User> {
     return this.usersService.findOneById(id);
   }
@@ -26,7 +42,7 @@ export class UsersResolver {
     @Args('id', {
       description: 'The id of the user to subscribe to changes on',
     })
-    id: string
+    id: string,
   ) {
     return this.usersService.streamUser(id);
   }
@@ -34,7 +50,7 @@ export class UsersResolver {
   @Mutation((returns) => User, { description: 'Create a new user' })
   async createUser(
     @Args('id', { description: 'The id of the new user to create' }) id: string,
-    @Args('args') args: CreateUserArgs
+    @Args('args') args: CreateUserArgs,
   ): Promise<User> {
     return this.usersService.createOne(id, args);
   }
@@ -45,7 +61,7 @@ export class UsersResolver {
   })
   async updateUser(
     @Args('id', { description: 'The id of the user to update' }) id: string,
-    @Args('args') args: CreateUserArgs
+    @Args('args') args: CreateUserArgs,
   ): Promise<void> {
     return this.usersService.updateOne(id, args);
   }

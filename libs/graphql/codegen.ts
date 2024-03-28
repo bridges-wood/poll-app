@@ -14,16 +14,6 @@ const config: CodegenConfig = {
     'libs/graphql/src/lib/generated/types.ts': {
       plugins: ['typescript'],
     },
-    'libs/graphql/src/lib/generated/nest.ts': {
-      plugins: ['@bridges-wood/graphql-codegen-nestjs'],
-      config: {
-        disableDescriptions: true,
-        strictScalars: true,
-        scalars: {
-          DateTime: 'Date',
-        },
-      },
-    },
   },
 };
 

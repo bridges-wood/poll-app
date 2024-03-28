@@ -1,10 +1,11 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
-import { UserAuthData } from '@org/graphql/types';
 import { Post } from '../../posts/models/post.model';
+import { User as UserType } from '@org/typings';
 
 @ObjectType({ description: 'A user' })
 @Directive('@key(selectionSet: "{ id }")')
-export class User implements UserAuthData {
+@Directive('@canonical')
+export class User implements UserType {
   @Field((type) => ID, {
     description: 'The ID of the user as it is stored in Firebase',
   })

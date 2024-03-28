@@ -22,8 +22,6 @@ const makeClient: ComponentProps<
     fetchOptions: { cache: 'no-store' },
   });
 
-  const authLink
-
   return new NextSSRApolloClient({
     cache: new NextSSRInMemoryCache(),
     link:

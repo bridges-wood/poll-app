@@ -16,7 +16,7 @@ import { join } from 'path';
 export async function generateSchema(
   resolvers: Function[],
   scalars: Function[],
-  options: BuildSchemaOptions
+  options: BuildSchemaOptions,
 ) {
   if (!process.env.SCHEMA_FILE) {
     throw new Error('SCHEMA_FILE is not defined, cannot generate schema');
