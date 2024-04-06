@@ -1,0 +1,5 @@
+mutation OAuthSignIn($token: String!, $provider: String!) {
+  signInWithOAuthToken(token: $token, provider: $provider) {
+    token
+  }
+}

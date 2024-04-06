@@ -2,6 +2,7 @@ import { NotFoundError } from '@org/errors';
 import { admin } from '@org/firebase';
 import { User } from '@org/typings';
 import { FastifyRequest as Request } from 'fastify';
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
 /**
  * Extracts the authorization token from the request object
@@ -9,6 +10,7 @@ import { FastifyRequest as Request } from 'fastify';
  * @returns the token extracted from the request if it exists, otherwise throws
  */
 export const extractAuthTokenFromHeader = (req: Request): string => {
+  console.log("req.headers['authorization']", req.headers['authorization']);
   const [type, token] = req.headers['authorization']?.split(' ') ?? [];
   if (type !== 'Bearer' || !token) {
     throw new NotFoundError('Authorization token not found');
@@ -24,7 +26,7 @@ export const extractAuthTokenFromHeader = (req: Request): string => {
  * @returns The account associated with the token, if it exists
  */
 export const getUserFromToken = async (token: string): Promise<User> => {
-  const decodedToken = await admin.auth().verifyIdToken(token);
+  const decodedToken: DecodedIdToken = await admin.auth().verifyIdToken(token);
   const accountSnapshot = await admin
     .firestore()
     .collection('users')

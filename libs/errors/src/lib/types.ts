@@ -4,6 +4,12 @@ export class NotFoundError extends Error {
     this.name = 'NotFoundError';
   }
 }
+export class NotImplementedError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = 'NotImplementedError';
+  }
+}
 export class UnauthorizedError extends Error {
   constructor(message: string) {
     super(message);

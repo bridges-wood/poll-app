@@ -93,6 +93,7 @@ export class UsersService {
           profilePicture: args.photoURL,
           firstName: null,
           lastName: null,
+          roles: ['user'],
           createdAt: new Date(),
           updatedAt: new Date(),
           posts: [],

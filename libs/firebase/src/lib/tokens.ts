@@ -1,3 +1,4 @@
 export enum FirebaseTokens {
-  DATABASE = 'DATABASE',
+  DATABASE = 'FIREBASE_DATABASE',
+  AUTH = 'FIREBASE_AUTH',
 }

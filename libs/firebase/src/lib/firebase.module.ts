@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { database } from './firebase';
+import { auth, database } from './firebase';
 import { FirebaseTokens } from './tokens';
 
 @Module({
@@ -9,7 +9,11 @@ import { FirebaseTokens } from './tokens';
       provide: FirebaseTokens.DATABASE,
       useValue: database,
     },
+    {
+      provide: FirebaseTokens.AUTH,
+      useValue: auth,
+    },
   ],
-  exports: [FirebaseTokens.DATABASE],
+  exports: [FirebaseTokens.DATABASE, FirebaseTokens.AUTH],
 })
 export class FirebaseModule {}

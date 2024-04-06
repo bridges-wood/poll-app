@@ -16,20 +16,47 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node"],
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "target": "ESNext",
     "paths": {
-      "@org/common": ["libs/common/src/index.ts"],
-      "@org/firebase": ["libs/firebase/src/index.ts"],
-      "@org/graphql": ["libs/graphql/src/index.ts"],
-      "@org/graphql/server": ["libs/graphql/src/server.ts"],
-      "@org/registration": ["libs/registration/src/index.ts"],
-      "@poll-app/components/*": ["apps/poll-app/src/components/*"],
-      "@poll-app/hooks/*": ["apps/poll-app/src/hooks/*"],
-      "@poll-app/types/*": ["apps/poll-app/src/types/*"],
-      "@poll-app/utils/*": ["apps/poll-app/src/utils/*"],
-      "@poll-app/lib/*": ["apps/poll-app/src/lib/*"]
+      "@org/common": [
+        "libs/common/src/index.ts"
+      ],
+      "@org/firebase": [
+        "libs/firebase/src/index.ts"
+      ],
+      "@org/graphql": [
+        "libs/graphql/src/index.ts"
+      ],
+      "@org/graphql/server": [
+        "libs/graphql/src/server.ts"
+      ],
+      "@org/registration": [
+        "libs/registration/src/index.ts"
+      ],
+      "@poll-app/components/*": [
+        "apps/poll-app/src/components/*"
+      ],
+      "@poll-app/hooks/*": [
+        "apps/poll-app/src/hooks/*"
+      ],
+      "@poll-app/types/*": [
+        "apps/poll-app/src/types/*"
+      ],
+      "@poll-app/utils/*": [
+        "apps/poll-app/src/utils/*"
+      ],
+      "@poll-app/lib/*": [
+        "apps/poll-app/src/lib/*"
+      ]
     }
   },
   "include": [
@@ -39,7 +66,8 @@
     "**/*.jsx",
     "../../apps/poll-app/.next/types/**/*.ts",
     "../../dist/apps/poll-app/.next/types/**/*.ts",
-    "next-env.d.ts"
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

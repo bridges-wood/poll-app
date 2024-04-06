@@ -1,13 +1,6 @@
 import { UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  Mutation,
-  Query,
-  Resolver,
-  Subscription,
-} from '@nestjs/graphql';
-import { AuthGuard } from '@org/auth';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { CurrentUser, Roles, RolesGuard } from '@org/auth';
 import { CreateUserArgs } from './models/create-user.args';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
@@ -16,11 +9,10 @@ import { UsersService } from './users.service';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(AuthGuard)
   @Query((returns) => User)
-  async me(@Context() context): Promise<User> {
-    console.log(context);
-    return context.user;
+  async me(@CurrentUser() user: Pick<User, 'id'>): Promise<User> {
+    console.log('user', user);
+    return this.usersService.findOneById(user.id);
   }
 
   @Query((returns) => User, { description: 'Get a user by id' })
@@ -30,6 +22,8 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
+  @Roles(['admin'])
+  @UseGuards(RolesGuard)
   @Query((returns) => [User], { description: 'Get all users' })
   async users(): Promise<User[]> {
     return this.usersService.findAll();
@@ -47,6 +41,8 @@ export class UsersResolver {
     return this.usersService.streamUser(id);
   }
 
+  @Roles(['admin'])
+  @UseGuards(RolesGuard)
   @Mutation((returns) => User, { description: 'Create a new user' })
   async createUser(
     @Args('id', { description: 'The id of the new user to create' }) id: string,

@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { User } from '@org/typings';
-import { Roles } from './roles.decorator';
+import { Roles } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -19,15 +19,15 @@ export class RolesGuard implements CanActivate {
     if (!roles) {
       return true;
     }
-    const ctx = GqlExecutionContext.create(context).getContext();
-    const user: User = ctx.user;
+
+    const ctx = GqlExecutionContext.create(context);
+    const user: User = ctx.getContext().req.user;
     return this.matchRoles(roles, user);
   }
 
   protected matchRoles(roles: string[], user: User): boolean {
-    // TODO - Implement role matching
-    this.logger.debug(`Roles: ${roles}`);
-    this.logger.debug(`User: ${user}`);
-    return true;
+    this.logger.debug(`Permitted roles: ${roles}`);
+    this.logger.debug(`User roles: ${user.roles}`);
+    return user.roles.some((role) => roles.includes(role));
   }
 }

@@ -2,4 +2,3 @@
 
 export * from './lib/client';
 export * from './lib/generated/react';
-export * from './lib/generated/types';

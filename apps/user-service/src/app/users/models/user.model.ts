@@ -1,6 +1,6 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
-import { Post } from '../../posts/models/post.model';
 import { User as UserType } from '@org/typings';
+import { Post } from '../../posts/models/post.model';
 
 @ObjectType({ description: 'A user' })
 @Directive('@key(selectionSet: "{ id }")')
@@ -28,6 +28,9 @@ export class User implements UserType {
 
   @Field({ nullable: true, description: "The user's last name" })
   lastName?: string;
+
+  @Field((type) => [String], { description: 'The roles the user has' })
+  roles: string[];
 
   @Field((type) => [Post], { description: 'All posts created by the user' })
   posts: Post[];

@@ -1,6 +1,8 @@
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
+import { DistributedAuthGuard } from '@org/auth';
 import { ConfigModule, ConfigService } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
@@ -29,5 +31,6 @@ import { UsersModule } from './users/users.module';
       },
     }),
   ],
+  providers: [{ provide: APP_GUARD, useClass: DistributedAuthGuard }],
 })
 export class AppModule {}

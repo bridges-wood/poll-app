@@ -1,7 +1,7 @@
 'use client';
-import { useCreateUserMutation, useGetUserNameLazyQuery } from '@org/graphql';
+import { useOAuthSignInMutation } from '@org/graphql';
 import { auth, provider } from '@poll-app/lib/database/firebase';
-import { AuthError, signInWithPopup } from 'firebase/auth';
+import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import _ from 'lodash';
 import { useTheme } from 'next-themes';
 import Image, { ImageProps } from 'next/image';
@@ -20,8 +20,7 @@ export interface GoogleButtonProps
 }
 
 const GoogleButton: FC<GoogleButtonProps> = (props) => {
-  const [getUser, { data, error, loading }] = useGetUserNameLazyQuery();
-  const [createUser] = useCreateUserMutation();
+  const [signIn, { data, error, loading }] = useOAuthSignInMutation();
   const { resolvedTheme } = useTheme();
   const router = useRouter();
 
@@ -33,39 +32,24 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
         {..._.merge(derivedProps, props)}
         className={`${_.defaultTo(
           props.className,
-          ''
+          '',
         )} cursor-pointer hover:opacity-80`}
         onClick={async (event) => {
           event.preventDefault();
           try {
-            const userCredential = await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, provider);
+            const authCredential =
+              GoogleAuthProvider.credentialFromResult(result);
+            if (_.isNil(authCredential?.idToken)) {
+              throw new Error('Failed to get auth credential');
+            }
 
             // Check if the user exists in the database
-            const { data: user } = await getUser({
-              variables: { id: userCredential.user.uid },
+            const { data } = await signIn({
+              variables: { token: authCredential.idToken, provider: 'google' },
             });
-
-            if (_.isNil(user)) {
-              // Check that the user credential has a display name and email
-              if (
-                _.isNil(userCredential.user.displayName) ||
-                _.isNil(userCredential.user.email)
-              ) {
-                throw new Error('User does not have a display name or email');
-              }
-
-              // Create the user
-              await createUser({
-                variables: {
-                  id: userCredential.user.uid,
-                  args: {
-                    displayName: userCredential.user.displayName,
-                    email: userCredential.user.email,
-                    photoURL: userCredential.user.photoURL,
-                  },
-                },
-              });
-            }
+            const token = data?.signInWithOAuthToken.token;
+            console.log(token);
 
             router.push('/home');
           } catch (error) {
@@ -92,7 +76,7 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
  */
 const deriveProps = (
   props: GoogleButtonProps,
-  theme: string
+  theme: string,
 ): Pick<ImageProps, 'src' | 'width' | 'height'> => {
   const { shape = DEFAULT_SHAPE, variant = DEFAULT_VARIANT } = props;
   const src = `/google/${theme}/web_${theme}_${shape}_${variant}.svg`;

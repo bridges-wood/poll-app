@@ -3,15 +3,18 @@ import { join } from 'path';
 
 @Injectable()
 export class ConfigService {
-  private environment: string;
+  private _environment: string;
   private _schemaFile: string;
+  private _gatewayUrl: string;
 
   constructor() {
-    this.environment = process.env['NODE_ENV'] || 'development';
+    this._environment = process.env['NODE_ENV'] || 'development';
     this._schemaFile = join(
       process.cwd(),
-      `generated/${process.env['SCHEMA_FILE'] || 'schema.gql'}`
+      `generated/${process.env['SCHEMA_FILE'] || 'schema.gql'}`,
     );
+    this._gatewayUrl =
+      process.env['GATEWAY_URL'] || 'http://localhost:3000/graphql';
   }
 
   get schemaFile() {
@@ -19,6 +22,10 @@ export class ConfigService {
   }
 
   public isDev(): boolean {
-    return this.environment === 'development';
+    return this._environment === 'development';
+  }
+
+  get gatewayUrl() {
+    return this._gatewayUrl;
   }
 }

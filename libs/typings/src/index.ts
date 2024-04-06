@@ -1,3 +1,5 @@
+export * from './auth';
+
 export interface User {
   id: string;
   email: string;
@@ -5,6 +7,7 @@ export interface User {
   profilePicture?: string;
   firstName?: string;
   lastName?: string;
+  roles: string[];
   posts: Post[];
   createdAt: Date;
   updatedAt: Date;
