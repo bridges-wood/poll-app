@@ -19,6 +19,7 @@
       "@org/auth": ["libs/auth/src/index.ts"],
       "@org/common": ["libs/common/src/index.ts"],
       "@org/config": ["libs/config/src/index.ts"],
+      "@org/cross-app": ["libs/cross-app/src/index.ts"],
       "@org/errors": ["libs/errors/src/index.ts"],
       "@org/firebase": ["libs/firebase/src/index.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
@@ -28,7 +29,6 @@
       "@org/graphql/types": ["libs/graphql/src/types.ts"],
       "@org/heartbeat": ["libs/heartbeat/src/index.ts"],
       "@org/pubsub": ["libs/pubsub/src/index.ts"],
-      "@org/registration": ["libs/registration/src/index.ts"],
       "@org/typings": ["libs/typings/src/index.ts"]
     }
   },
