@@ -40,7 +40,7 @@
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
-        "argsIgnorePattern": "^_|^returns|^type|^of"
+        "argsIgnorePattern": "^_**|^returns|^type|^of"
       }
     ]
   }
