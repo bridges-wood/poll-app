@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/api-gateway/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
@@ -43,9 +44,8 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/api-gateway/**/*.ts"]
+        "lintFilePatterns": ["{projectRoot}/**/*.ts"]
       }
     },
     "test": {
@@ -82,6 +82,5 @@
       "dependsOn": ["build-generator"],
       "command": "node dist/apps/api-gateway/scripts/generate-schema.js"
     }
-  },
-  "tags": []
+  }
 }

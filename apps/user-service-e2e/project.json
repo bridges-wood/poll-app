@@ -1,8 +1,8 @@
 {
   "name": "user-service-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["user-service"],
   "projectType": "application",
+  "implicitDependencies": ["user-service"],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
@@ -14,9 +14,8 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/user-service-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["{projectRoot}/**/*.{js,ts}"]
       }
     }
   }

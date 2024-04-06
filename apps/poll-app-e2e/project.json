@@ -2,6 +2,8 @@
   "name": "poll-app-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/poll-app-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["poll-app"],
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
@@ -18,12 +20,9 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/poll-app-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["{projectRoot}/**/*.{js,ts}"]
       }
     }
-  },
-  "tags": [],
-  "implicitDependencies": ["poll-app"]
+  }
 }

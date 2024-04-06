@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/auth-service/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
@@ -40,9 +41,8 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/auth-service/**/*.ts"]
+        "lintFilePatterns": ["{projectRoot}/**/*.ts"]
       }
     },
     "test": {
@@ -80,6 +80,5 @@
       "dependsOn": ["build-generator"],
       "command": "node dist/apps/auth-service/scripts/generate-schema.js"
     }
-  },
-  "tags": []
+  }
 }

@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/poll-app",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/next:build",
@@ -58,11 +59,9 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/poll-app/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,js,jsx}"]
       }
     }
-  },
-  "tags": []
+  }
 }
