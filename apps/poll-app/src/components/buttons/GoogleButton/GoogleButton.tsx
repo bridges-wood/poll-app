@@ -6,8 +6,8 @@ import _ from 'lodash';
 import { useTheme } from 'next-themes';
 import Image, { ImageProps } from 'next/image';
 import { useRouter } from 'next/navigation';
+import { setCookie } from 'nookies';
 import { FC } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 
 // See https://developers.google.com/identity/branding-guidelines
 
@@ -21,7 +21,6 @@ export interface GoogleButtonProps
 }
 
 const GoogleButton: FC<GoogleButtonProps> = (props) => {
-  const [_token, setToken, _clearToken] = useLocalStorage<string>('token', '');
   const [signIn] = useOAuthSignInMutation();
   const { resolvedTheme } = useTheme();
   const router = useRouter();
@@ -30,6 +29,7 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
     const derivedProps = deriveProps(props, resolvedTheme);
     return (
       <Image
+        priority
         alt=""
         {..._.merge(derivedProps, props)}
         className={`${_.defaultTo(
@@ -57,7 +57,9 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
             if (_.isNil(token)) {
               throw new Error('Failed to sign in');
             }
-            setToken(token);
+            setCookie(null, 'token', token, {
+              path: '/',
+            });
 
             router.push('/home');
           } catch (error) {

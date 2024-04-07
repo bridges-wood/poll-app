@@ -80,15 +80,9 @@ export class SchemaStitcher {
       executor: buildHTTPExecutor({
         endpoint: url,
         fetch,
-        headers(executorRequest) {
-          // TODO - parameterize header passthrough
-          const providedHeaders =
-            executorRequest?.context?.request?.headers?.headersInit;
-
-          return {
-            authorization: providedHeaders?.authorization,
-          };
-        },
+        headers: ({ context }) =>
+          _.pick(context?.request?.headers?.headersInit, ['authorization']),
+        // TODO make this function pure and configurable
       }),
       batch: true,
       transforms: [

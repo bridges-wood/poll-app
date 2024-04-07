@@ -34,20 +34,12 @@ export class GraphQLCrossAppClient implements CrossAppClient {
       headers?: Record<string, string>;
     },
   ): Promise<ApolloQueryResult<R>> {
-    const res = this.client.query({
+    return this.client.query({
       query: payload,
       variables: options?.variables,
       context: {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          ...options?.headers,
-        },
+        headers: options?.headers,
       },
     });
-
-    // Clear the token after the request is sent
-    this.token = undefined;
-
-    return res;
   }
 }

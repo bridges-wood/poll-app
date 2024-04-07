@@ -8,9 +8,7 @@ export class CrossAppUserService {
   private logger = new Logger(CrossAppUserService.name);
   constructor(private client: GraphQLCrossAppClient) {}
 
-  async fetchAuthData(
-    id: string,
-  ): Promise<Pick<User, 'id' | 'roles'>> {
+  async fetchAuthData(id: string): Promise<Pick<User, 'id' | 'roles'>> {
     this.logger.debug(`Fetching auth data for user with id: ${id}`);
 
     const payload = gql`
@@ -22,10 +20,12 @@ export class CrossAppUserService {
       }
     `;
 
-    const res = await this.client
-      .send<{ user: Pick<User, 'id' | 'roles'> }>(payload, {
+    const res = await this.client.send<{ user: Pick<User, 'id' | 'roles'> }>(
+      payload,
+      {
         variables: { id },
-      });
+      },
+    );
     this.logger.debug(`Response for fetchAuthData(${id})`, res);
 
     return res.data.user;

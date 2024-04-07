@@ -8,6 +8,7 @@ import {
   NextSSRInMemoryCache,
   SSRMultipartLink,
 } from '@apollo/experimental-nextjs-app-support/ssr';
+import { parseCookies } from 'nookies';
 
 import { ComponentProps, FC, PropsWithChildren } from 'react';
 
@@ -25,11 +26,11 @@ const makeClient: ComponentProps<
   });
 
   const authLink = setContext((_, { headers }) => {
-    const token = localStorage.getItem('token');
+    const token = parseCookies().token;
     return {
       headers: {
         ...headers,
-        Authorization: token ? `Bearer ${JSON.parse(token)}` : '',
+        Authorization: token ? `Bearer ${token}` : '',
       },
     };
   });

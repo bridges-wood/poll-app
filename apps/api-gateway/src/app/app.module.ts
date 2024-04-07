@@ -21,7 +21,7 @@ import { SchemaModule } from './schema/schema.module';
       driver: YogaDriver,
       useFactory: async (
         config: ConfigService,
-        schemaStitcher: SchemaStitcher
+        schemaStitcher: SchemaStitcher,
       ) => {
         return {
           introspection: true,

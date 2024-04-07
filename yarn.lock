@@ -6507,6 +6507,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     next: "npm:14.0.4"
     next-themes: "npm:^0.2.1"
+    nookies: "npm:^2.5.2"
     nx: "npm:18.2.3"
     passport: "npm:^0.7.0"
     passport-custom: "npm:^1.1.1"
@@ -11395,6 +11396,13 @@ __metadata:
   version: 0.5.0
   resolution: "cookie@npm:0.5.0"
   checksum: c01ca3ef8d7b8187bae434434582288681273b5a9ed27521d4d7f9f7928fe0c920df0decd9f9d3bbd2d14ac432b8c8cf42b98b3bdd5bfe0e6edddeebebe8b61d
+  languageName: node
+  linkType: hard
+
+"cookie@npm:^0.4.1":
+  version: 0.4.2
+  resolution: "cookie@npm:0.4.2"
+  checksum: beab41fbd7c20175e3a2799ba948c1dcc71ef69f23fe14eeeff59fc09f50c517b0f77098db87dbb4c55da802f9d86ee86cdc1cd3efd87760341551838d53fca2
   languageName: node
   linkType: hard
 
@@ -17788,6 +17796,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nookies@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "nookies@npm:2.5.2"
+  dependencies:
+    cookie: "npm:^0.4.1"
+    set-cookie-parser: "npm:^2.4.6"
+  checksum: e44d65022f4bc8e7135db8c19373d278ae4bbaf093e6a537e109a050c603d13d6538431e674e33a43715dd502220c45dee0cb86253695c7040352298feccb3e2
+  languageName: node
+  linkType: hard
+
 "nopt@npm:^7.0.0":
   version: 7.2.0
   resolution: "nopt@npm:7.2.0"
@@ -20351,7 +20369,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"set-cookie-parser@npm:^2.4.1":
+"set-cookie-parser@npm:^2.4.1, set-cookie-parser@npm:^2.4.6":
   version: 2.6.0
   resolution: "set-cookie-parser@npm:2.6.0"
   checksum: 739da029f0e56806a103fcd5501d9c475e19e77bd8274192d7ae5c374ae714a82bba9a7ac00b0330a18227c5644b08df9e442240527be578f5a6030f9bb2bb80

@@ -36,7 +36,6 @@ export class AuthResolver {
     @Context('req') request: FastifyRequest,
   ): Promise<AuthResult> {
     const token = extractAuthTokenFromHeader(request);
-    console.log('token', token);
 
     const refreshedToken = await this.authService.refreshToken(token);
     return { token: refreshedToken };

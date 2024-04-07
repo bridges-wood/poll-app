@@ -7,25 +7,31 @@ import {
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { User } from '@org/typings';
+import { CrossAppUserService } from '../cross-app/cross-app.user.service';
 import { Roles } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   private logger = new Logger(RolesGuard.name);
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private reflector: Reflector,
+    private crossAppUserService: CrossAppUserService,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.get(Roles, context.getHandler());
     if (!roles) {
       return true;
     }
 
     const ctx = GqlExecutionContext.create(context);
-    const user: User = ctx.getContext().req.user;
+    const { id }: User = ctx.getContext().req.user;
+    const user = await this.crossAppUserService.fetchAuthData(id);
+
     return this.matchRoles(roles, user);
   }
 
-  protected matchRoles(roles: string[], user: User): boolean {
+  protected matchRoles(roles: string[], user: Pick<User, 'roles'>): boolean {
     this.logger.debug(`Permitted roles: ${roles}`);
     this.logger.debug(`User roles: ${user.roles}`);
     return user.roles.some((role) => roles.includes(role));

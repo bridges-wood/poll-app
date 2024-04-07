@@ -1,19 +1,15 @@
-import { User, useRefreshTokenMutation } from '@org/graphql';
-import { DecodedIdToken } from '@org/typings';
-import { jwtDecode } from 'jwt-decode';
+import { useRefreshTokenMutation } from '@org/graphql';
 import _ from 'lodash';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import {
   FC,
   PropsWithChildren,
   createContext,
   useContext,
   useEffect,
-  useState,
 } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 
 export interface IAuthContext {
-  accountId?: User['id'];
   logout: () => void;
 }
 
@@ -22,30 +18,20 @@ const AuthContext = createContext({} as IAuthContext);
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [{ accountId }, setData] = useState<Pick<IAuthContext, 'accountId'>>(
-    {},
-  );
-  const [token, setToken, clearToken] = useLocalStorage<string>('token', '');
   const [refreshToken] = useRefreshTokenMutation();
-
-  // useEffect(() => {
-  //   if (!_.isEmpty(token)) {
-  //     const decoded: DecodedIdToken = jwtDecode(token);
-  //     if (decoded.exp < Date.now() / 1000) {
-  //       return logout();
-  //     }
-  //     setData({ accountId: decoded.sub });
-  //   }
-  // }, [token]);
 
   useEffect(() => {
     const handle = setInterval(
       async () => {
-        if (!_.isEmpty(accountId)) {
+        const token = parseCookies().token;
+        if (!_.isEmpty(token)) {
           try {
             const { data } = await refreshToken();
             if (!_.isNil(data?.refreshToken)) {
-              setToken(data.refreshToken.token);
+              setCookie(null, 'token', data.refreshToken.token, {
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+              });
             } else {
               logout();
             }
@@ -59,16 +45,14 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
     );
 
     return () => clearInterval(handle);
-  }, [accountId]);
+  }, []);
 
   const logout = () => {
-    clearToken();
-    setData({});
+    destroyCookie(null, 'token');
+    // TODO clear the cache
   };
 
   return (
-    <AuthContext.Provider value={{ accountId, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ logout }}>{children}</AuthContext.Provider>
   );
 };
