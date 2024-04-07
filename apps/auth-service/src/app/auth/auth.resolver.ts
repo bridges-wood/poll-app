@@ -1,6 +1,9 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+
+import { extractAuthTokenFromHeader } from '@org/auth';
+import { FastifyRequest } from 'fastify';
 import { AuthService } from './auth.service';
-import { SignInResult } from './models/sign-in-result.model';
+import { AuthResult } from './models/sign-in-result.model';
 import { SupportedOAuthProvider } from './supported-oauth-providers';
 
 @Resolver()
@@ -15,17 +18,28 @@ export class AuthResolver {
     return this.authService.signInWithEmailAndPassword(email, password);
   }
 
-  @Mutation((returns) => SignInResult)
+  @Mutation((returns) => AuthResult)
   async signInWithOAuthToken(
     @Args('token') oauthToken: string,
     @Args('provider') provider: string,
-  ): Promise<SignInResult> {
+  ): Promise<AuthResult> {
     const token = await this.authService.signInWithOAuthToken(
       oauthToken,
       provider as SupportedOAuthProvider,
     );
 
     return { token };
+  }
+
+  @Mutation((returns) => AuthResult)
+  async refreshToken(
+    @Context('req') request: FastifyRequest,
+  ): Promise<AuthResult> {
+    const token = extractAuthTokenFromHeader(request);
+    console.log('token', token);
+
+    const refreshedToken = await this.authService.refreshToken(token);
+    return { token: refreshedToken };
   }
 
   @Query((returns) => String)

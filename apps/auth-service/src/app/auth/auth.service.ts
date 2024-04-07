@@ -56,6 +56,11 @@ export class AuthService {
     }
   }
 
+  async refreshToken(token: string): Promise<string> {
+    const decoded = await this.validateToken(token);
+    return this.generateUserToken({ id: decoded.sub }, decoded.amr);
+  }
+
   async validateToken(token: string): Promise<DecodedIdToken> {
     this.logger.debug(`Validating token: ${token}`);
     return this.jwtService.verify(token);
