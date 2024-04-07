@@ -35,7 +35,7 @@
         "development": {
           "buildTarget": "api-gateway:build:development",
           "watch": true,
-          "waitUntilTargets": ["user-service:serve"]
+          "waitUntilTargets": ["user-service:serve", "auth-service:serve"]
         },
         "production": {
           "buildTarget": "api-gateway:build:production"
