@@ -1,4 +1,3 @@
-import { Theme } from '@radix-ui/themes';
 import Providers from '../components/providers';
 import AppFooter from './footer';
 import './global.css';
@@ -16,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>
-          <Theme appearance="dark">{children}</Theme>
-        </Providers>
+        <Providers>{children}</Providers>
         <AppFooter />
       </body>
     </html>

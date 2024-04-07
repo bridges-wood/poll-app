@@ -1,12 +1,14 @@
 'use client';
 
 import { ApolloLink, HttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import {
   ApolloNextAppProvider,
   NextSSRApolloClient,
   NextSSRInMemoryCache,
   SSRMultipartLink,
 } from '@apollo/experimental-nextjs-app-support/ssr';
+
 import { ComponentProps, FC, PropsWithChildren } from 'react';
 
 const makeClient: ComponentProps<
@@ -22,6 +24,18 @@ const makeClient: ComponentProps<
     fetchOptions: { cache: 'no-store' },
   });
 
+  const authLink = setContext((_, { headers }) => {
+    const token = localStorage.getItem('token');
+    return {
+      headers: {
+        ...headers,
+        Authorization: token ? `Bearer ${JSON.parse(token)}` : '',
+      },
+    };
+  });
+
+  const combinedLink = authLink.concat(httpLink);
+
   return new NextSSRApolloClient({
     cache: new NextSSRInMemoryCache(),
     link:
@@ -30,9 +44,9 @@ const makeClient: ComponentProps<
             new SSRMultipartLink({
               stripDefer: true,
             }),
-            httpLink,
+            combinedLink,
           ])
-        : httpLink,
+        : combinedLink,
   });
 };
 

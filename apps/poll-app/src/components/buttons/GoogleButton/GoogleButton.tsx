@@ -1,12 +1,13 @@
 'use client';
 import { useOAuthSignInMutation } from '@org/graphql';
-import { auth, provider } from '@poll-app/lib/database/firebase';
+import { auth } from '@poll-app/lib/firebase';
 import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import _ from 'lodash';
 import { useTheme } from 'next-themes';
 import Image, { ImageProps } from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
+import { useLocalStorage } from 'usehooks-ts';
 
 // See https://developers.google.com/identity/branding-guidelines
 
@@ -20,7 +21,8 @@ export interface GoogleButtonProps
 }
 
 const GoogleButton: FC<GoogleButtonProps> = (props) => {
-  const [signIn, { data, error, loading }] = useOAuthSignInMutation();
+  const [_token, setToken, _clearToken] = useLocalStorage<string>('token', '');
+  const [signIn] = useOAuthSignInMutation();
   const { resolvedTheme } = useTheme();
   const router = useRouter();
 
@@ -37,7 +39,10 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
         onClick={async (event) => {
           event.preventDefault();
           try {
-            const result = await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(
+              auth,
+              new GoogleAuthProvider(),
+            );
             const authCredential =
               GoogleAuthProvider.credentialFromResult(result);
             if (_.isNil(authCredential?.idToken)) {
@@ -49,7 +54,10 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
               variables: { token: authCredential.idToken, provider: 'google' },
             });
             const token = data?.signInWithOAuthToken.token;
-            console.log(token);
+            if (_.isNil(token)) {
+              throw new Error('Failed to sign in');
+            }
+            setToken(token);
 
             router.push('/home');
           } catch (error) {

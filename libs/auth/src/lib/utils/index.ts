@@ -10,7 +10,6 @@ import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
  * @returns the token extracted from the request if it exists, otherwise throws
  */
 export const extractAuthTokenFromHeader = (req: Request): string => {
-  console.log("req.headers['authorization']", req.headers['authorization']);
   const [type, token] = req.headers['authorization']?.split(' ') ?? [];
   if (type !== 'Bearer' || !token) {
     throw new NotFoundError('Authorization token not found');

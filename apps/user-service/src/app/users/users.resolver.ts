@@ -11,7 +11,6 @@ export class UsersResolver {
 
   @Query((returns) => User)
   async me(@CurrentUser() user: Pick<User, 'id'>): Promise<User> {
-    console.log('user', user);
     return this.usersService.findOneById(user.id);
   }
 

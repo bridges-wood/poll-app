@@ -5,10 +5,10 @@ import { ThemeProvider } from 'next-themes';
 import { FC, PropsWithChildren } from 'react';
 
 const Providers: FC<PropsWithChildren> = ({ children }) => (
-  <ThemeProvider attribute="class" enableColorScheme enableSystem>
-    <AuthContextProvider>
-      <ApolloWrapper>{children}</ApolloWrapper>
-    </AuthContextProvider>
+  <ThemeProvider attribute="class" enableColorScheme forcedTheme="dark">
+    <ApolloWrapper>
+      <AuthContextProvider>{children}</AuthContextProvider>
+    </ApolloWrapper>
   </ThemeProvider>
 );
 
