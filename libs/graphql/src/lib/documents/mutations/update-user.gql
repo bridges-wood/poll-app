@@ -1,0 +1,3 @@
+mutation UpdateUser($id: String!, $args: UpdateUserArgs!) {
+  updateUser(id: $id, args: $args)
+}
