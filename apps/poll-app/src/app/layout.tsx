@@ -1,4 +1,3 @@
-import Providers from '../components/providers';
 import AppFooter from './footer';
 import './global.css';
 
@@ -13,11 +12,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        {children}
         <AppFooter />
       </body>
     </html>
   );
 }
+
+// TODO - is this right?
+export const dynamic = 'force-dynamic';
