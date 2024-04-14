@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { CurrentUser, Roles, RolesGuard } from '@org/auth';
 import { CreateUserArgs } from './models/create-user.args';
+import { UpdateUserArgs } from './models/update-user.args';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
 
@@ -56,8 +57,8 @@ export class UsersResolver {
   })
   async updateUser(
     @Args('id', { description: 'The id of the user to update' }) id: string,
-    @Args('args') args: CreateUserArgs,
-  ): Promise<void> {
+    @Args('args') args: UpdateUserArgs,
+  ): Promise<Boolean> {
     return this.usersService.updateOne(id, args);
   }
 }

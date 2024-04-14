@@ -116,16 +116,12 @@ export class UsersService {
     }
   }
 
-  async updateOne(id: string, args: UpdateUserArgs): Promise<void> {
-    try {
-      const userRef = doc(this.database, 'users', id).withConverter(
-        this.userModelMapper,
-      );
+  async updateOne(id: string, args: UpdateUserArgs): Promise<Boolean> {
+    const userRef = doc(this.database, 'users', id).withConverter(
+      this.userModelMapper,
+    );
 
-      return await updateDoc(userRef, args as Partial<User>);
-    } catch (error) {
-      Logger.error(error);
-      return error;
-    }
+    await updateDoc(userRef, args as Partial<User>);
+    return true;
   }
 }

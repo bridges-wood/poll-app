@@ -1,5 +1,4 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Post } from '../../posts/models/post.model';
 import { User } from './user.model';
 
 @InputType()
@@ -18,6 +17,7 @@ export class UpdateUserArgs
   @Field({ nullable: true, description: "The user's last name" })
   lastName?: string;
 
-  @Field({ nullable: true, description: "A list of the user's posts" })
-  posts?: Post[];
+  // TODO add posts
+  // @Field({ nullable: true, description: "A list of the user's posts" })
+  // posts?: Post[];
 }
