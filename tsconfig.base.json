@@ -24,7 +24,7 @@
       "@org/firebase": ["libs/firebase/src/index.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
       "@org/graphql/scripts": ["libs/graphql/src/scripts/index.ts"],
-      "@org/graphql/server": ["libs/graphql/src/server.ts"],
+      "@org/graphql/server": ["libs/graphql/src/server/index.ts"],
       "@org/graphql/transformers": ["libs/graphql/src/transformers.ts"],
       "@org/graphql/types": ["libs/graphql/src/types.ts"],
       "@org/heartbeat": ["libs/heartbeat/src/index.ts"],
