@@ -30,7 +30,7 @@ const makeClient: ComponentProps<
     return {
       headers: {
         ...headers,
-        Authorization: token ? `Bearer ${token}` : '',
+        authorization: token ? `Bearer ${token}` : '',
       },
     };
   });

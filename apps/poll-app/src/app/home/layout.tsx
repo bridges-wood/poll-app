@@ -1,15 +1,23 @@
-import { Box } from '@radix-ui/themes';
-import { FC, PropsWithChildren } from 'react';
-import HomeHeader from './header';
-import HomeSidebar from './sidebar';
+import { FC, PropsWithChildren, ReactNode } from 'react';
+import Header from './header';
+import Sidebar from './sidebar';
 
-const HomeLayout: FC<PropsWithChildren> = ({ children }) => {
+interface Props {
+  feed: ReactNode;
+}
+
+const HomeLayout: FC<PropsWithChildren<Props>> = ({ children, feed }) => {
   return (
-    <>
-      <HomeHeader />
-      <HomeSidebar />
-      <Box className="grid place-items-center h-screen">{children}</Box>
-    </>
+    <div>
+      <Header />
+      <div className="grid md:grid-cols-12 gap-5">
+        <Sidebar />
+        <main className="md:col-span-9 grid place-items-center md:h-screen">
+          {feed}
+          {children}
+        </main>
+      </div>
+    </div>
   );
 };
 

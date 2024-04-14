@@ -1,14 +1,17 @@
-import ProfileIcon from '@poll-app/components/profile/ProfileIcon';
+import ProfileIconContainer from '@poll-app/components/profile/profile-icon';
+import Link from 'next/link';
 import { Suspense } from 'react';
 
 const HomeSidebar = () => {
   return (
-    <>
+    <aside className="md:col-span-2 md:h-screen bg-red-500">
       <Suspense fallback={<div>Loading...</div>}>
-        <ProfileIcon />
+        <Link href="/profile">
+          <ProfileIconContainer />
+        </Link>
       </Suspense>
       <div>HomeSidebar</div>
-    </>
+    </aside>
   );
 };
 

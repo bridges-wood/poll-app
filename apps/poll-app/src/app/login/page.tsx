@@ -20,7 +20,7 @@ const Login = () => {
       </Heading>
       <GoogleButton shape="sq" variant="ctn" />
       <Text className="mt-2 mb-2">or</Text>
-      <div id="login-form" className="w-full">
+      <form id="login-form" className="w-full">
         <TextFieldRoot className="w-full">
           <TextFieldSlot>
             <EnvelopeClosedIcon />
@@ -36,7 +36,7 @@ const Login = () => {
             <EyeNoneIcon />
           </TextFieldSlot>
         </TextFieldRoot>
-      </div>
+      </form>
     </div>
   );
 };

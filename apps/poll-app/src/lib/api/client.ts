@@ -1,5 +1,8 @@
-import { getClient } from '@org/graphql/server';
+import { registerApolloClient } from '@apollo/experimental-nextjs-app-support/rsc';
+import { client } from '@org/graphql/server';
 
-const client = getClient();
+const { getClient } = registerApolloClient(() => client);
 
-export default client;
+const wrappedClient = getClient();
+
+export default wrappedClient;
