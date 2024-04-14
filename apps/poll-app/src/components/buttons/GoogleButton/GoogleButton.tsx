@@ -1,12 +1,10 @@
 'use client';
-import { useOAuthSignInMutation } from '@org/graphql';
+import { signInWithOAuthToken } from '@poll-app/lib/actions/auth';
 import { auth } from '@poll-app/lib/firebase';
 import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import _ from 'lodash';
-import { useTheme } from 'next-themes';
 import Image, { ImageProps } from 'next/image';
 import { useRouter } from 'next/navigation';
-import { setCookie } from 'nookies';
 import { FC } from 'react';
 
 // See https://developers.google.com/identity/branding-guidelines
@@ -21,8 +19,7 @@ export interface GoogleButtonProps
 }
 
 const GoogleButton: FC<GoogleButtonProps> = (props) => {
-  const [signIn] = useOAuthSignInMutation();
-  const { resolvedTheme } = useTheme();
+  const resolvedTheme = 'light';
   const router = useRouter();
 
   if (!_.isNil(resolvedTheme)) {
@@ -38,6 +35,7 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
         )} cursor-pointer hover:opacity-80`}
         onClick={async (event) => {
           event.preventDefault();
+          router.prefetch('/home');
           try {
             const result = await signInWithPopup(
               auth,
@@ -49,22 +47,16 @@ const GoogleButton: FC<GoogleButtonProps> = (props) => {
               throw new Error('Failed to get auth credential');
             }
 
-            // Check if the user exists in the database
-            const { data } = await signIn({
-              variables: { token: authCredential.idToken, provider: 'google' },
-            });
-            const token = data?.signInWithOAuthToken.token;
-            if (_.isNil(token)) {
-              throw new Error('Failed to sign in');
-            }
-            setCookie(null, 'token', token, {
-              path: '/',
-            });
-
+            await signInWithOAuthToken(authCredential.idToken);
             router.push('/home');
           } catch (error) {
             const err = error as AuthError;
             switch (err.code) {
+              case 'auth/account-exists-with-different-credential':
+                // TODO handle this error
+                return;
+              case 'auth/cancelled-popup-request':
+                return;
               case 'auth/popup-closed-by-user':
                 return;
               default:
