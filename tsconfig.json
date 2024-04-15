@@ -1,0 +1,4 @@
+{
+  "_COMMENT": "Only used by shadcn/ui to generate components",
+  "extends": "./tsconfig.base.json"
+}
