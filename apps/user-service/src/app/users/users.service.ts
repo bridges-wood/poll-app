@@ -121,7 +121,10 @@ export class UsersService {
       this.userModelMapper,
     );
 
-    await updateDoc(userRef, args as Partial<User>);
+    await updateDoc(userRef, {
+      ...(args as Partial<User>),
+      updatedAt: new Date(),
+    });
     return true;
   }
 }
