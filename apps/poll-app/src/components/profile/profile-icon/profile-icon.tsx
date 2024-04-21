@@ -1,9 +1,11 @@
 'use client';
 import { FetchProfileDataQuery } from '@org/graphql';
-import * as Avatar from '@radix-ui/react-avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@org/ui-kit/ui/avatar';
+import { Button } from '@org/ui-kit/ui/button';
 import { Pencil1Icon } from '@radix-ui/react-icons';
 import { FC } from 'react';
 
+// TODO make this just a display component
 export type ProfileIconProps = {
   data: FetchProfileDataQuery;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -33,25 +35,24 @@ const ProfileIcon: FC<ProfileIconProps> = ({
 }) => {
   return (
     <div className={`relative ${IMAGE_SIZE_MAP[size]}`}>
-      <Avatar.Root
-        className={`inline-flex items-center justify-center align-middle overflow-hidden select-none rounded-full bg-black ${IMAGE_SIZE_MAP[size]}`}
-      >
-        <Avatar.Image
-          className="w-full h-full object-cover rounded-inherit"
+      <Avatar className={`${IMAGE_SIZE_MAP[size]}`}>
+        <AvatarImage
           src={data.me.profilePicture || undefined}
           alt={data.me.displayName}
         />
-        <Avatar.AvatarFallback
-          className={`w-full h-full flex items-center justify-center bg-white text-violet-500 leading-none ${FONT_SIZE_MAP[size]}`}
-        >
+        <AvatarFallback className={` ${FONT_SIZE_MAP[size]}`}>
           {data.me.displayName[0]}
-        </Avatar.AvatarFallback>
-      </Avatar.Root>
+        </AvatarFallback>
+      </Avatar>
       {editable && (
         // TODO make clickable
-        <div className="absolute bottom-0 right-0 w-5 h-5 bg-white rounded-full grid place-items-center border-black border">
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute bottom-0 right-0 w-5 h-5 rounded-full grid place-items-center"
+        >
           <Pencil1Icon />
-        </div>
+        </Button>
       )}
     </div>
   );

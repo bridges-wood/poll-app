@@ -4,19 +4,18 @@ import {
   FetchProfileDataQueryVariables,
 } from '@org/graphql';
 import getClient from '@poll-app/lib/api/registeredClient';
+import { getLoggedInUserId } from '@poll-app/utils/index';
 import { FC } from 'react';
-import ProfileIcon, { ProfileIconProps } from './profile-icon';
+import AccountUpdateForm from './account-update-form';
 
-export type ProfileIconContainerProps = Omit<ProfileIconProps, 'data'>;
-
-const ProfileIconContainer: FC<ProfileIconContainerProps> = async (props) => {
+const AccountUpdateFormContainer: FC = async () => {
+  const userId = getLoggedInUserId();
   const { data } = await getClient().query<
     FetchProfileDataQuery,
     FetchProfileDataQueryVariables
   >(FetchProfileDataDocument, {});
-  if (!data) return null;
 
-  return <ProfileIcon data={data} {...props} />;
+  if (data) return <AccountUpdateForm data={data} userId={userId} />;
 };
 
-export default ProfileIconContainer;
+export default AccountUpdateFormContainer;

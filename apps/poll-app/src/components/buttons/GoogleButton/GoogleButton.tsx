@@ -1,116 +1,58 @@
 'use client';
+import { Button } from '@org/ui-kit/ui/button';
+import GoogleIcon from '@poll-app/components/icons/google-icon';
 import { signInWithOAuthToken } from '@poll-app/lib/actions/auth';
 import { auth } from '@poll-app/lib/firebase';
 import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import _ from 'lodash';
-import Image, { ImageProps } from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FC } from 'react';
 
 // See https://developers.google.com/identity/branding-guidelines
 
-const DEFAULT_SHAPE = 'rd';
-const DEFAULT_VARIANT = 'ctn';
-
-export interface GoogleButtonProps
-  extends Omit<ImageProps, 'src' | 'width' | 'height' | 'alt'> {
-  shape?: 'sq' | 'rd';
-  variant?: 'ctn' | 'SI' | 'SU' | 'na';
-}
-
-const GoogleButton: FC<GoogleButtonProps> = (props) => {
-  const resolvedTheme = 'light';
+const GoogleButton: FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') ?? '/home';
 
-  if (!_.isNil(resolvedTheme)) {
-    const derivedProps = deriveProps(props, resolvedTheme);
-    return (
-      <Image
-        priority
-        alt=""
-        {..._.merge(derivedProps, props)}
-        className={`${_.defaultTo(
-          props.className,
-          '',
-        )} cursor-pointer hover:opacity-80`}
-        onClick={async (event) => {
-          event.preventDefault();
-          router.prefetch('/home');
-          try {
-            const result = await signInWithPopup(
-              auth,
-              new GoogleAuthProvider(),
-            );
-            const authCredential =
-              GoogleAuthProvider.credentialFromResult(result);
-            if (_.isNil(authCredential?.idToken)) {
-              throw new Error('Failed to get auth credential');
-            }
-
-            await signInWithOAuthToken(authCredential.idToken);
-            router.push('/home');
-          } catch (error) {
-            const err = error as AuthError;
-            switch (err.code) {
-              case 'auth/account-exists-with-different-credential':
-                // TODO handle this error
-                return;
-              case 'auth/cancelled-popup-request':
-                return;
-              case 'auth/popup-closed-by-user':
-                return;
-              default:
-                console.error(err);
-                return;
-            }
+  return (
+    <Button
+      className="w-full font-light justify-center py-2"
+      variant="outline"
+      onClick={async (event) => {
+        event.preventDefault();
+        router.prefetch(redirect);
+        try {
+          const result = await signInWithPopup(auth, new GoogleAuthProvider());
+          const authCredential =
+            GoogleAuthProvider.credentialFromResult(result);
+          if (_.isNil(authCredential?.idToken)) {
+            throw new Error('Failed to get auth credential');
           }
-        }}
-      />
-    );
-  }
-};
 
-/**
- * Derives the src, width, and height props for the button based on Google's branding guidelines
- * @param props The props passed to the GoogleButton component
- * @param theme The resolved theme from next-themes
- * @returns An object containing the src, width, and height props for the inner Image component
- */
-const deriveProps = (
-  props: GoogleButtonProps,
-  theme: string,
-): Pick<ImageProps, 'src' | 'width' | 'height'> => {
-  const { shape = DEFAULT_SHAPE, variant = DEFAULT_VARIANT } = props;
-  const src = `/google/${theme}/web_${theme}_${shape}_${variant}.svg`;
-
-  switch (variant) {
-    case 'ctn':
-      return {
-        src,
-        width: 197,
-        height: 40,
-      };
-    case 'SI':
-      return {
-        src,
-        width: 183,
-        height: 40,
-      };
-    case 'SU':
-      return {
-        src,
-        width: 188,
-        height: 40,
-      };
-    case 'na':
-      return {
-        src,
-        width: 40,
-        height: 40,
-      };
-    default:
-      throw new Error(`Invalid variant: ${variant}`);
-  }
+          await signInWithOAuthToken(authCredential.idToken);
+          router.push(redirect);
+        } catch (error) {
+          const err = error as AuthError;
+          switch (err.code) {
+            case 'auth/account-exists-with-different-credential':
+              // TODO handle this error
+              return;
+            case 'auth/cancelled-popup-request':
+              return;
+            case 'auth/popup-closed-by-user':
+              return;
+            default:
+              console.error(err);
+              return;
+          }
+        }
+      }}
+    >
+      <GoogleIcon className="mr-[4px] h-3 w-3" />
+      Google
+    </Button>
+  );
 };
 
 export default GoogleButton;

@@ -1,10 +1,17 @@
-import { Button, Flex, Text } from '@radix-ui/themes';
+import { Button } from '@org/ui-kit/ui/button';
 
-export default async function Index() {
+const Index = () => {
   return (
-    <Flex direction="column" gap="2">
-      <Text>Hello from Radix Themes :)</Text>
-      <Button className="h-14">Let&apos;s go!</Button>
-    </Flex>
+    <div className="grid place-items-center h-screen">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-9xl font-extralight">Pollstr</h1>
+        <p className="leading-7 mb-7">What will you ask?</p>
+        <Button asChild>
+          <a href="/login">Let's go!</a>
+        </Button>
+      </div>
+    </div>
   );
-}
+};
+
+export default Index;

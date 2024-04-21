@@ -21,6 +21,8 @@
     "target": "ESNext",
     "paths": {
       "@org/common": ["libs/common/src/index.ts"],
+      "@org/ui-kit/ui/*": ["libs/ui-kit/ui/src/lib/ui/*"],
+      "@org/ui-kit/util": ["libs/ui-kit/util/src/index.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
       "@org/typings": ["libs/typings/src/index.ts"],
       "@org/graphql/server": ["libs/graphql/src/lib/server/index.ts"],
@@ -28,7 +30,7 @@
       "@poll-app/components/*": ["apps/poll-app/src/components/*"],
       "@poll-app/hooks/*": ["apps/poll-app/src/hooks/*"],
       "@poll-app/types/*": ["apps/poll-app/src/types/*"],
-      "@poll-app/utils/*": ["apps/poll-app/src/utils/*"],
+      "@poll-app/utils/*": ["apps/poll-app/src/lib/utils/*"],
       "@poll-app/lib/*": ["apps/poll-app/src/lib/*"]
     }
   },

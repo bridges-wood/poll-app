@@ -1,5 +1,7 @@
+import { ThemeProvider } from 'next-themes';
 import AppFooter from './footer';
 import './global.css';
+import AppHeader from './header';
 
 export const metadata = {
   title: 'Welcome to poll-app',
@@ -12,14 +14,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        {children}
-        <AppFooter />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AppHeader />
+          {children}
+          <AppFooter />
+        </ThemeProvider>
       </body>
     </html>
   );
 }
-
-// TODO - is this right?
-export const dynamic = 'force-dynamic';
