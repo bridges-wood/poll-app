@@ -8,27 +8,24 @@ import {
   User,
 } from '@org/graphql';
 import _ from 'lodash';
-import { registeredClient } from '../api';
+import getClient from '../api/registeredClient';
 
 export async function updateUserAccount(
   userId: User['id'],
-  formData: FormData,
+  args: Partial<UpdateUserArgs>,
 ): Promise<void> {
-  const args = parseFormData(formData);
+  const parsedArgs = parseArgs(args);
 
-  await registeredClient.mutate<
-    UpdateUserMutation,
-    UpdateUserMutationVariables
-  >({
-    mutation: UpdateUserDocument,
-    variables: {
+  await getClient().mutation<UpdateUserMutation, UpdateUserMutationVariables>(
+    UpdateUserDocument,
+    {
       id: userId,
-      args,
+      args: parsedArgs,
     },
-  });
+  );
 }
 
-const parseFormData = (formData: FormData): UpdateUserArgs => {
+const parseArgs = (args: Partial<UpdateUserArgs>): UpdateUserArgs => {
   const fields: (keyof UpdateUserArgs)[] = [
     'displayName',
     'email',
@@ -36,12 +33,12 @@ const parseFormData = (formData: FormData): UpdateUserArgs => {
     'lastName',
   ];
 
-  if (fields.every((field) => !formData.has(field))) {
+  if (fields.every((field) => !args[field])) {
     throw new Error(`At least one of ${fields.join(', ')} must be provided`);
   }
 
   return _.chain(fields)
-    .map((field) => [field, formData.get(field)])
+    .map((field) => [field, args[field]])
     .fromPairs()
     .value() as UpdateUserArgs;
 };

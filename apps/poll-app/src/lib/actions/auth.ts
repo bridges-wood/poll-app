@@ -6,24 +6,25 @@ import {
   OAuthSignInMutationVariables,
 } from '@org/graphql';
 import { cookies } from 'next/headers';
-import { registeredClient } from '../api';
+import getClient from '../api/registeredClient';
+import { getTokenExpirationDate } from './utils';
 
 export async function signInWithOAuthToken(
   token: string,
   provider: string = 'google',
 ): Promise<void> {
-  const { data } = await registeredClient.mutate<
+  const { data } = await getClient().mutation<
     OAuthSignInMutation,
     OAuthSignInMutationVariables
-  >({
-    mutation: OAuthSignInDocument,
-    variables: { token, provider },
-  });
+  >(OAuthSignInDocument, { token, provider });
 
   const resultToken = data?.signInWithOAuthToken.token;
   if (!resultToken) {
     throw new Error('Failed to sign in');
   }
 
-  cookies().set('token', resultToken);
+  const expires = getTokenExpirationDate(resultToken);
+  cookies().set('token', resultToken, {
+    expires,
+  });
 }

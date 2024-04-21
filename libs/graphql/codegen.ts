@@ -5,15 +5,12 @@ const config: CodegenConfig = {
   documents: 'libs/graphql/src/lib/documents/**/*.{gql,graphql}',
   generates: {
     'libs/graphql/src/lib/generated/react.tsx': {
-      plugins: [
-        'typescript',
-        'typescript-operations',
-        'typescript-react-apollo',
-      ],
+      plugins: ['typescript', 'typescript-operations', 'typescript-urql'],
       config: {
-        withHooks: true,
+        withHooks: false,
         withComponent: false,
         withHOC: false,
+        urqlImportFrom: '@urql/core',
       },
     },
   },

@@ -1,8 +1,12 @@
-import { registerApolloClient } from '@apollo/experimental-nextjs-app-support/rsc';
-import { client } from '@org/graphql/server';
+import { cacheExchange, createClient, fetchExchange } from '@urql/core';
 
-const { getClient } = registerApolloClient(() => client);
+const FALLBACK_URL = 'http://localhost:3000/graphql';
 
-const wrappedClient = getClient();
-
-export default wrappedClient;
+export const client = createClient({
+  url:
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_GRAPHQL_URL || FALLBACK_URL
+      : FALLBACK_URL,
+  requestPolicy: 'cache-first',
+  exchanges: [cacheExchange, fetchExchange],
+});

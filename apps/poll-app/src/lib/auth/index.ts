@@ -6,8 +6,8 @@ import {
   ValidateTokenQuery,
   ValidateTokenQueryVariables,
 } from '@org/graphql';
-import { client } from '@org/graphql/server';
 import { NextRequest } from 'next/server';
+import { client } from '../api/client';
 
 export const authenticate = async (req: NextRequest): Promise<boolean> => {
   // Extract the token from the request
@@ -21,10 +21,7 @@ export const authenticate = async (req: NextRequest): Promise<boolean> => {
     const { data } = await client.query<
       ValidateTokenQuery,
       ValidateTokenQueryVariables
-    >({
-      query: ValidateTokenDocument,
-      variables: { token },
-    });
+    >(ValidateTokenDocument, { token });
 
     return !!data?.validateToken;
   } catch (error) {
@@ -42,13 +39,10 @@ export const refreshToken = async (req: NextRequest): Promise<string> => {
 
   // Validate the token
 
-  const { data } = await client.mutate<
+  const { data } = await client.mutation<
     RefreshTokenMutation,
     RefreshTokenMutationVariables
-  >({
-    mutation: RefreshTokenDocument,
-    variables: { token },
-  });
+  >(RefreshTokenDocument, { token });
 
   return data?.refreshToken.token || '';
 };
