@@ -2,7 +2,6 @@ import { SubschemaConfig } from '@graphql-tools/delegate';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import { FilterTypes } from '@graphql-tools/wrap';
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLSchema, buildSchema } from 'graphql';
 import _ from 'lodash';
@@ -85,9 +84,6 @@ export class SchemaStitcher {
         // TODO make this function pure and configurable
       }),
       batch: true,
-      transforms: [
-        new FilterTypes((namedType) => namedType.name !== 'DateTime'),
-      ],
     };
   }
 }
