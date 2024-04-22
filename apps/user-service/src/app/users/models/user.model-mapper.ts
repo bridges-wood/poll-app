@@ -17,12 +17,15 @@ export class UserModelMapper implements FirestoreDataConverter<User> {
 
   fromFirestore(
     snapshot: QueryDocumentSnapshot<DocumentData, DocumentData>,
-    options?: SnapshotOptions
+    options?: SnapshotOptions,
   ): User {
     const data = snapshot.data(options);
     return {
       id: snapshot.id,
       ...data,
+      // Firestore returns Timestamp objects, but we want to work with Date objects
+      createdAt: data.createdAt.toDate(),
+      updatedAt: data.updatedAt.toDate(),
     } as User;
   }
 }
