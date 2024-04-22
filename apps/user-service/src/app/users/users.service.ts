@@ -118,7 +118,7 @@ export class UsersService {
     }
   }
 
-  async updateOne(id: string, args: UpdateUserArgs): Promise<Boolean> {
+  async updateOne(id: string, args: UpdateUserArgs): Promise<User> {
     const userRef = doc(this.database, 'users', id).withConverter(
       this.userModelMapper,
     );
@@ -142,6 +142,9 @@ export class UsersService {
       ...(args as Partial<User>),
       updatedAt: new Date(),
     });
-    return true;
+    return {
+      ...user,
+      ...args,
+    };
   }
 }

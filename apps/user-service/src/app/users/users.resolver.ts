@@ -22,8 +22,8 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
-  @Roles(['admin'])
-  @UseGuards(RolesGuard)
+  // @Roles(['admin'])
+  // @UseGuards(RolesGuard)
   @Query((returns) => [User], { description: 'Get all users' })
   async users(): Promise<User[]> {
     return this.usersService.findAll();
@@ -51,14 +51,14 @@ export class UsersResolver {
     return this.usersService.createOne(id, args);
   }
 
-  @Mutation((returns) => Boolean!, {
+  @Mutation((returns) => User, {
     nullable: true,
     description: 'Update a user by id',
   })
   async updateUser(
     @Args('id', { description: 'The id of the user to update' }) id: string,
     @Args('args') args: UpdateUserArgs,
-  ): Promise<Boolean> {
+  ): Promise<User> {
     return this.usersService.updateOne(id, args);
   }
 }
