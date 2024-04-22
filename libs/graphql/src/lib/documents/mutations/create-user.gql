@@ -1,5 +1,6 @@
 mutation CreateUser($id: String!, $args: CreateUserArgs!) {
   createUser(id: $id, args: $args) {
+    __typename
     id
     displayName
     email

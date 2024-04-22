@@ -8,6 +8,8 @@ fragment ProfileData on User {
 
 query FetchProfileData {
   me {
+    __typename
+    id
     ...ProfileData
   }
 }
