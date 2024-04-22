@@ -6,6 +6,7 @@ import {
   Firestore,
   collection,
   doc,
+  documentId,
   getDoc,
   getDocs,
   onSnapshot,
@@ -128,6 +129,7 @@ export class UsersService {
       const q = query(
         collection(this.database, 'users').withConverter(this.userModelMapper),
         where('displayName', '==', args.displayName),
+        where(documentId(), '!=', id),
       );
 
       const querySnapshot = await getDocs(q);
