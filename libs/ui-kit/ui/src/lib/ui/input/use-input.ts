@@ -41,6 +41,10 @@ export interface Props<
    */
   endContent?: ReactNode;
   /**
+   * If `true`, the input will be replaced by a skeleton element.
+   */
+  skeleton?: boolean;
+  /**
    * Classname or list of classes to change the classNames of the element.
    * If `className` is passed, it will be added to the base slot.
    *
@@ -93,6 +97,7 @@ export function useInput<
     autoFocus,
     startContent,
     endContent,
+    skeleton,
     onClear,
     onChange,
     innerWrapperRef: innerWrapperRefProp,
@@ -339,6 +344,7 @@ export function useInput<
     domRef,
     startContent,
     endContent,
+    skeleton,
     isClearable,
     hasStartContent,
     hasPlaceholder,

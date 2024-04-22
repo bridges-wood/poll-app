@@ -1,17 +1,19 @@
 'use client';
 
 import { cn } from '@org/ui-kit/util';
+import React from 'react';
 
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+const Skeleton = React.forwardRef<
+  React.ElementRef<'div'>,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
   return (
     <div
-      className={cn('animate-pulse rounded-md bg-primary/10', className)}
+      ref={ref}
+      className={cn('bg-primary/10 animate-pulse rounded-md', className)}
       {...props}
     />
   );
-}
+});
 
 export { Skeleton };
