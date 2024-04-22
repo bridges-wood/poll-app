@@ -12,6 +12,7 @@ import {
   query,
   setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import PubSub from 'graphql-firestore-subscriptions';
 import { CreateUserArgs } from './models/create-user.args';
@@ -120,6 +121,20 @@ export class UsersService {
     const userRef = doc(this.database, 'users', id).withConverter(
       this.userModelMapper,
     );
+
+    // Check that the username is unique
+    const user = await this.findOneById(id);
+    if (args.displayName && args.displayName !== user.displayName) {
+      const q = query(
+        collection(this.database, 'users').withConverter(this.userModelMapper),
+        where('displayName', '==', args.displayName),
+      );
+
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        throw new Error('Display name is already taken');
+      }
+    }
 
     await updateDoc(userRef, {
       ...(args as Partial<User>),
