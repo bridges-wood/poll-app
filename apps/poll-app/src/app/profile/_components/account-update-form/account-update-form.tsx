@@ -56,7 +56,7 @@ const AccountUpdateForm: FC<AccountUpdateFormProps> = ({ data, userId }) => {
               </FormControl>
               <FormDescription>
                 Your email address is how we'll contact you. We'll never share
-                your email address with anyone.
+                it with anyone.
               </FormDescription>
               <FormMessage />
             </FormItem>

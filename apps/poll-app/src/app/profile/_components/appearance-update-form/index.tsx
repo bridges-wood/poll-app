@@ -2,18 +2,11 @@
 
 import { Label } from '@org/ui-kit/ui/label';
 import { RadioGroup, RadioGroupItem } from '@org/ui-kit/ui/radio-group';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@org/ui-kit/ui/select';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
 
 const LightPreview = () => (
-  <div className="items-center rounded-md border-2 border-muted p-1 hover:border-accent">
+  <div className="border-muted hover:border-accent items-center rounded-md border-2 p-1">
     <div className="space-y-2 rounded-sm bg-[#ecedef] p-2">
       <div className="space-y-2 rounded-md bg-white p-2 shadow-sm">
         <div className="h-2 w-[80px] rounded-lg bg-[#ecedef]"></div>
@@ -32,7 +25,7 @@ const LightPreview = () => (
 );
 
 const DarkPreview = () => (
-  <div className="items-center rounded-md border-2 border-muted bg-popover p-1 hover:bg-accent hover:text-accent-foreground">
+  <div className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground items-center rounded-md border-2 p-1">
     <div className="space-y-2 rounded-sm bg-slate-950 p-2">
       <div className="space-y-2 rounded-md bg-slate-800 p-2 shadow-sm">
         <div className="h-2 w-[80px] rounded-lg bg-slate-400"></div>
@@ -57,21 +50,8 @@ const AppearanceUpdateForm = () => {
   return (
     <div>
       <div className="mb-4">
-        <Label>Font</Label>
-        <Select value={font} onValueChange={(value) => setFont(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="inter">Inter</SelectItem>
-            <SelectItem value="manrope">Manrope</SelectItem>
-            <SelectItem value="system">System</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="mb-4">
         <Label>Theme</Label>
-        <p className="text-xs text-muted-foreground mb-1">
+        <p className="text-muted-foreground mb-1 text-xs">
           Select the theme for the app.
         </p>
         <RadioGroup
@@ -82,7 +62,7 @@ const AppearanceUpdateForm = () => {
           <div className="space-y-2">
             <Label
               htmlFor="light"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 [&:has([data-state=checked])>div]:border-primary"
+              className="[&:has([data-state=checked])>div]:border-primary text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               <RadioGroupItem value="light" className="sr-only" id="light" />
               <LightPreview />
@@ -94,7 +74,7 @@ const AppearanceUpdateForm = () => {
           <div className="space-y-2">
             <Label
               htmlFor="dark"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 [&:has([data-state=checked])>div]:border-primary"
+              className="[&:has([data-state=checked])>div]:border-primary text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               onClick={() => setTheme('dark')}
             >
               <RadioGroupItem value="dark" className="sr-only" />
@@ -107,7 +87,7 @@ const AppearanceUpdateForm = () => {
           <div className="space-y-2">
             <Label
               htmlFor="dark"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 [&:has([data-state=checked])>div]:border-primary"
+              className="[&:has([data-state=checked])>div]:border-primary text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               onClick={() => setTheme('system')}
             >
               <RadioGroupItem value="system" className="sr-only" />
