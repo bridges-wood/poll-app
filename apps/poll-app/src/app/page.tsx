@@ -2,15 +2,15 @@ import { Button } from '@org/ui-kit/ui/button';
 
 const Index = () => {
   return (
-    <div className="grid place-items-center h-screen">
+    <section className="grid h-[calc(100vh_-_64px)] place-items-center 2xl:h-[calc(84vh_-_64px)]">
       <div className="flex flex-col gap-2">
-        <h1 className="text-9xl font-extralight">Pollstr</h1>
-        <p className="leading-7 mb-7">What will you ask?</p>
+        <h1 className="text-8xl font-extralight sm:text-9xl">Pollstr</h1>
+        <p className="mb-7 leading-7">What will you ask?</p>
         <Button asChild>
-          <a href="/login">Let's go!</a>
+          <a href="/home">Let's go!</a>
         </Button>
       </div>
-    </div>
+    </section>
   );
 };
 
