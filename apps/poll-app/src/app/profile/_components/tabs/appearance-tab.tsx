@@ -1,13 +1,16 @@
 import { Separator } from '@org/ui-kit/ui/separator';
+import { Suspense } from 'react';
 import AppearanceUpdateForm from '../appearance-update-form';
 
 const AppearanceTab = () => {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mt-4">Appearance</h2>
-      <p className="text-sm text-muted-foreground">Choose how the app looks.</p>
+      <h2 className="mt-4 text-2xl font-semibold">Appearance</h2>
+      <p className="text-muted-foreground text-sm">Choose how the app looks.</p>
       <Separator className="my-3" />
-      <AppearanceUpdateForm />
+      <Suspense fallback={'Loading...'}>
+        <AppearanceUpdateForm />
+      </Suspense>
     </div>
   );
 };
