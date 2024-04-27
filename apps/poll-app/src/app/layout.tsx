@@ -1,3 +1,4 @@
+import { Toaster } from '@org/ui-kit/ui/sonner';
 import { ThemeProvider } from 'next-themes';
 import AppFooter from './footer';
 import './global.css';
@@ -15,16 +16,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="min-h-screen">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <AppHeader />
-          {children}
-          <AppFooter />
+          <div className="relative flex flex-col" id="app-container">
+            <AppHeader />
+            <main className="container mx-auto max-w-7xl flex-grow px-6">
+              {children}
+            </main>
+            <Toaster />
+            <AppFooter />
+          </div>
         </ThemeProvider>
       </body>
     </html>
