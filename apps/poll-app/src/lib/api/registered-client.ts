@@ -1,9 +1,11 @@
-import { cacheExchange, createClient, fetchExchange } from '@urql/core';
+import { createClient, fetchExchange } from '@urql/core';
 import { authExchange } from '@urql/exchange-auth';
+import { cacheExchange } from '@urql/exchange-graphcache';
 import { registerUrql } from '@urql/next/rsc';
 import { cookies } from 'next/headers';
 
 const FALLBACK_URL = 'http://localhost:3000/graphql';
+// TODO update cache exchange to use persisted queries
 
 const makeClient = () => {
   return createClient({
@@ -13,7 +15,7 @@ const makeClient = () => {
         : FALLBACK_URL,
     requestPolicy: 'cache-and-network',
     exchanges: [
-      cacheExchange,
+      cacheExchange({}),
       authExchange(async (utils) => {
         const requestCookies = cookies();
         const token = requestCookies.get('token')?.value;
