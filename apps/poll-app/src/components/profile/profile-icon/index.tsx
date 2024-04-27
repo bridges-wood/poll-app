@@ -3,7 +3,7 @@ import {
   FetchProfileDataQuery,
   FetchProfileDataQueryVariables,
 } from '@org/graphql';
-import getClient from '@poll-app/lib/api/registeredClient';
+import getClient from '@poll-app/lib/api/registered-client';
 import { FC } from 'react';
 import ProfileIcon, { ProfileIconProps } from './profile-icon';
 

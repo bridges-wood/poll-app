@@ -1,1 +1,1 @@
-export { default as GoogleButton } from './GoogleButton/GoogleButton';
+export { default as GoogleButton } from './google-button/google-button';

@@ -14,18 +14,24 @@ import {
 import { Input } from '@org/ui-kit/ui/input';
 import { Textarea } from '@org/ui-kit/ui/textarea';
 import { updateUserAccount } from '@poll-app/lib/actions';
-import { FC } from 'react';
+import { useRouter } from 'next/navigation';
+import { FC, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
-export type ProfileUpdateFormProps = {
+export type ProfileUpdateFormProps = QueryWrappedProps<{
   userId: User['id'];
   data: FetchProfileDataQuery;
-};
+}>;
 
 const formSchema = z.object({
   displayName: z
     .string()
+    .regex(/^[a-zA-Z0-9_]+$/, {
+      message:
+        'Display name can only contain letters, numbers, and underscores',
+    })
     .min(3, {
       message: 'Display name must be at least 3 characters long',
     })
@@ -41,17 +47,26 @@ const formSchema = z.object({
   profilePicture: z.string().optional(),
 });
 
-const ProfileUpdateForm: FC<ProfileUpdateFormProps> = ({ data, userId }) => {
+const ProfileUpdateForm: FC<ProfileUpdateFormProps> = ({
+  data,
+  userId,
+  skeleton = false,
+}) => {
+  const router = useRouter();
+  const [_isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      displayName: data.me.displayName,
+      displayName: data?.me.displayName,
     },
     mode: 'onTouched',
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (!userId) throw new Error('User ID is required');
     await updateUserAccount(userId, data);
+    startTransition(() => router.refresh()); // Refresh the page to update the outer query
+    toast.success('Profile updated');
   };
 
   return (
@@ -65,6 +80,7 @@ const ProfileUpdateForm: FC<ProfileUpdateFormProps> = ({ data, userId }) => {
               <FormLabel>Display Name</FormLabel>
               <FormControl>
                 <Input
+                  skeleton={skeleton}
                   startContent={
                     <span className="select-none opacity-50">@</span>
                   }
@@ -106,7 +122,11 @@ const ProfileUpdateForm: FC<ProfileUpdateFormProps> = ({ data, userId }) => {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={!form.formState.isValid}>
+        <Button
+          type="submit"
+          disabled={!form.formState.isValid || form.formState.isSubmitting}
+          className="transition-all"
+        >
           Save
         </Button>
       </form>
