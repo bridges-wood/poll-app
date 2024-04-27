@@ -4,7 +4,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@org/ui-kit/ui/tabs';
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 
 const ProfileTabs = () => {
   const ProfileTab = lazy(() => import('./tabs/profile-tab'));
@@ -12,29 +12,29 @@ const ProfileTabs = () => {
   const AppearanceTab = lazy(() => import('./tabs/appearance-tab'));
 
   return (
-    <RoutedTabs defaultValue="profile">
-      <TabsList>
-        <TabsTrigger value="profile">Profile</TabsTrigger>
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="appearance">Appearance</TabsTrigger>
-        <TabsTrigger value="notifications" disabled>
-          Notifications
-        </TabsTrigger>
-      </TabsList>
+    <RoutedTabs
+      defaultValue="profile"
+      orientation="horizontal"
+      className="flex w-full flex-col"
+    >
+      <div className="inline-flex">
+        <TabsList>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="appearance">Appearance</TabsTrigger>
+          <TabsTrigger value="notifications" disabled>
+            Notifications
+          </TabsTrigger>
+        </TabsList>
+      </div>
       <TabsContent value="profile">
-        <Suspense fallback={'Loading...'}>
-          <ProfileTab />
-        </Suspense>
+        <ProfileTab />
       </TabsContent>
       <TabsContent value="account">
-        <Suspense fallback={'Loading...'}>
-          <AccountTab />
-        </Suspense>
+        <AccountTab />
       </TabsContent>
       <TabsContent value="appearance">
-        <Suspense fallback={'Loading...'}>
-          <AppearanceTab />
-        </Suspense>
+        <AppearanceTab />
       </TabsContent>
     </RoutedTabs>
   );
