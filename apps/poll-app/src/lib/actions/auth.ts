@@ -6,7 +6,7 @@ import {
   OAuthSignInMutationVariables,
 } from '@org/graphql';
 import { cookies } from 'next/headers';
-import getClient from '../api/registeredClient';
+import getClient from '../api/registered-client';
 import { getTokenExpirationDate } from './utils';
 
 export async function signInWithOAuthToken(

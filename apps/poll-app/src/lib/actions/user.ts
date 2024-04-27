@@ -8,7 +8,7 @@ import {
   User,
 } from '@org/graphql';
 import _ from 'lodash';
-import getClient from '../api/registeredClient';
+import getClient from '../api/registered-client';
 
 export async function updateUserAccount(
   userId: User['id'],
