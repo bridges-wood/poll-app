@@ -3,7 +3,7 @@ import {
   FetchProfileDataQuery,
   FetchProfileDataQueryVariables,
 } from '@org/graphql';
-import getClient from '@poll-app/lib/api/registeredClient';
+import getClient from '@poll-app/lib/api/registered-client';
 import { getLoggedInUserId } from '@poll-app/utils/index';
 import { FC } from 'react';
 import AccountUpdateForm from './account-update-form';
