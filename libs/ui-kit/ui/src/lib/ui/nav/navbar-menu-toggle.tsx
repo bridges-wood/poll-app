@@ -1,0 +1,90 @@
+import { ToggleProps } from '@radix-ui/react-toggle';
+import { ReactNode, useMemo } from 'react';
+import { forwardRef, useDOMRef } from '../../utils';
+import { clsx } from '../../utils/clsx';
+import { HTMLProps } from '../../utils/types';
+import { Toggle } from '../toggle';
+import { useNavbarContext } from './navbar-context';
+
+export interface Props extends Omit<HTMLProps<'button'>, keyof ToggleProps> {
+  /**
+   * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
+   */
+  value?: string;
+  /**
+   * Text to display for screen readers.
+   * @default open/close navigation menu
+   */
+  srOnlyText?: string;
+  /**
+   * The icon to display.
+   */
+  icon?: ReactNode | ((isOpen: boolean) => ReactNode) | null;
+}
+
+export type NavbarMenuToggleProps = Props & ToggleProps;
+
+const NavbarMenuToggle = forwardRef<'button', NavbarMenuToggleProps>(
+  (props, ref) => {
+    const {
+      as,
+      icon,
+      className,
+      onChange,
+      autoFocus,
+      srOnlyText: srOnlyTextProp,
+      ...otherProps
+    } = props;
+
+    const domRef = useDOMRef(ref);
+
+    const { slots, classNames, isMenuOpen, setIsMenuOpen } = useNavbarContext();
+
+    const handleChange = (isOpen: boolean) => {
+      setIsMenuOpen(isOpen);
+    };
+
+    // const state = useToggleState({
+    //   ...otherProps,
+    //   isSelected: isMenuOpen,
+    //   onChange: handleChange,
+    // });
+
+    const toggleStyles = clsx(classNames?.toggle, className);
+
+    const child = useMemo(() => {
+      if (typeof icon === 'function') {
+        return icon(isMenuOpen ?? false);
+      }
+
+      return (
+        icon || (
+          <span
+            className={slots.toggleIcon({ class: classNames?.toggleIcon })}
+          />
+        )
+      );
+    }, [icon, isMenuOpen, slots.toggleIcon, classNames?.toggleIcon]);
+
+    const srOnlyText = useMemo(() => {
+      if (srOnlyTextProp) {
+        return srOnlyTextProp;
+      }
+
+      return true // TODO fix
+        ? 'close navigation menu'
+        : 'open navigation menu';
+    }, [srOnlyTextProp, isMenuOpen]);
+
+    return (
+      <Toggle ref={domRef} className={slots.toggle?.({ class: toggleStyles })}>
+        <span className={slots.srOnly()}>{srOnlyText}</span>
+        {child}
+      </Toggle>
+    );
+  },
+);
+
+NavbarMenuToggle.displayName = 'NextUI.NavbarMenuToggle';
+
+export default NavbarMenuToggle;
