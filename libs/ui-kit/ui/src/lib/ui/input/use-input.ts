@@ -4,7 +4,7 @@ import { AriaTextFieldOptions, useTextField } from '@react-aria/textfield';
 import { chain, mergeProps } from '@react-aria/utils';
 import { useControlledState } from '@react-stately/utils';
 import { AriaTextFieldProps } from '@react-types/textfield';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import { ReactNode, Ref, useCallback, useMemo, useState } from 'react';
 import { mapPropsVariants, useDOMRef } from '../../utils';
 import { clsx } from '../../utils/clsx';
@@ -129,7 +129,7 @@ export function useInput<
   const isFilledByDefault = ['date', 'time', 'month', 'week', 'range'].includes(
     type!,
   );
-  const isFilled = !_.isEmpty(inputValue) || isFilledByDefault;
+  const isFilled = !isEmpty(inputValue) || isFilledByDefault;
   const isFilledWithin = isFilled || isFocusWithin;
   const baseStyles = clsx(
     classNames?.base,

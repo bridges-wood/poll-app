@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { omit, pick } from 'lodash';
 import {
   Ref,
   RefObject,
@@ -44,10 +44,10 @@ export const mapPropsVariants = <
     return [props, {}];
   }
 
-  const picked = _.pick(props, variantKeys);
+  const picked = pick(props, variantKeys);
 
   if (removeVariantProps) {
-    const omitted = _.omit(props, variantKeys);
+    const omitted = omit(props, variantKeys);
 
     return [omitted, picked];
   } else {

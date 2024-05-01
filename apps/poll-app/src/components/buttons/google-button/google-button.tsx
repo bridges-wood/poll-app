@@ -4,7 +4,7 @@ import GoogleIcon from '@poll-app/components/icons/google-icon';
 import { signInWithOAuthToken } from '@poll-app/lib/actions/auth';
 import { auth } from '@poll-app/lib/firebase';
 import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import _ from 'lodash';
+import { isNil } from 'lodash';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FC } from 'react';
 
@@ -17,7 +17,7 @@ const GoogleButton: FC = () => {
 
   return (
     <Button
-      className="w-full font-light justify-center py-2"
+      className="w-full justify-center py-2 font-light"
       variant="outline"
       onClick={async (event) => {
         event.preventDefault();
@@ -26,7 +26,7 @@ const GoogleButton: FC = () => {
           const result = await signInWithPopup(auth, new GoogleAuthProvider());
           const authCredential =
             GoogleAuthProvider.credentialFromResult(result);
-          if (_.isNil(authCredential?.idToken)) {
+          if (isNil(authCredential?.idToken)) {
             throw new Error('Failed to get auth credential');
           }
 

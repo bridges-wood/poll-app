@@ -7,7 +7,7 @@ import {
   UpdateUserMutationVariables,
   User,
 } from '@org/graphql';
-import _ from 'lodash';
+import { chain } from 'lodash';
 import getClient from '../api/registered-client';
 
 export async function updateUserAccount(
@@ -37,7 +37,7 @@ const parseArgs = (args: Partial<UpdateUserArgs>): UpdateUserArgs => {
     throw new Error(`At least one of ${fields.join(', ')} must be provided`);
   }
 
-  return _.chain(fields)
+  return chain(fields)
     .map((field) => [field, args[field]])
     .fromPairs()
     .value() as UpdateUserArgs;
