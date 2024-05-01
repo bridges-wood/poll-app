@@ -7,7 +7,7 @@ import { FC } from 'react';
 
 // TODO make this just a display component
 export type ProfileIconProps = {
-  data: FetchProfileDataQuery;
+  data?: FetchProfileDataQuery;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   editable?: boolean;
 };
@@ -37,11 +37,11 @@ const ProfileIcon: FC<ProfileIconProps> = ({
     <div className={`relative ${IMAGE_SIZE_MAP[size]}`}>
       <Avatar className={`${IMAGE_SIZE_MAP[size]}`}>
         <AvatarImage
-          src={data.me.profilePicture || undefined}
-          alt={data.me.displayName}
+          src={data?.me.profilePicture || undefined}
+          alt={data?.me.displayName}
         />
         <AvatarFallback className={` ${FONT_SIZE_MAP[size]}`}>
-          {data.me.displayName[0]}
+          {data?.me.displayName[0]}
         </AvatarFallback>
       </Avatar>
       {editable && (
@@ -49,7 +49,7 @@ const ProfileIcon: FC<ProfileIconProps> = ({
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-0 right-0 w-5 h-5 rounded-full grid place-items-center"
+          className="absolute bottom-0 right-0 grid h-5 w-5 place-items-center rounded-full"
         >
           <Pencil1Icon />
         </Button>

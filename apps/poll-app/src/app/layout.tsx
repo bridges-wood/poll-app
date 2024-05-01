@@ -1,5 +1,5 @@
 import { Toaster } from '@org/ui-kit/ui/sonner';
-import { ThemeProvider } from 'next-themes';
+import Providers from '@poll-app/components/providers';
 import AppFooter from './footer';
 import './global.css';
 import AppHeader from './header';
@@ -14,15 +14,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const [client, ssr] = useMemo(() => {
+  //   const ssr = ssrExchange({
+  //     isClient: typeof window !== 'undefined',
+  //   });
+  //   const client = getClientFactory({isClientSide: true})();
+
+  //   return [client, ssr];
+  // }, []);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <Providers>
           <div className="relative flex flex-col" id="app-container">
             <AppHeader />
             <main className="container mx-auto max-w-7xl flex-grow px-6">
@@ -31,7 +35,7 @@ export default function RootLayout({
             <Toaster />
             <AppFooter />
           </div>
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

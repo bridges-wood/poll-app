@@ -1,9 +1,10 @@
-import { ToggleProps } from '@radix-ui/react-toggle';
+import { Toggle, ToggleProps } from '@radix-ui/react-toggle';
+import { mergeProps } from '@react-aria/utils';
 import { ReactNode, useMemo } from 'react';
 import { forwardRef, useDOMRef } from '../../utils';
 import { clsx } from '../../utils/clsx';
+import { dataAttr } from '../../utils/functions';
 import { HTMLProps } from '../../utils/types';
-import { Toggle } from '../toggle';
 import { useNavbarContext } from './navbar-context';
 
 export interface Props extends Omit<HTMLProps<'button'>, keyof ToggleProps> {
@@ -35,7 +36,6 @@ const NavbarMenuToggle = forwardRef<'button', NavbarMenuToggleProps>(
       srOnlyText: srOnlyTextProp,
       ...otherProps
     } = props;
-
     const domRef = useDOMRef(ref);
 
     const { slots, classNames, isMenuOpen, setIsMenuOpen } = useNavbarContext();
@@ -43,12 +43,6 @@ const NavbarMenuToggle = forwardRef<'button', NavbarMenuToggleProps>(
     const handleChange = (isOpen: boolean) => {
       setIsMenuOpen(isOpen);
     };
-
-    // const state = useToggleState({
-    //   ...otherProps,
-    //   isSelected: isMenuOpen,
-    //   onChange: handleChange,
-    // });
 
     const toggleStyles = clsx(classNames?.toggle, className);
 
@@ -71,13 +65,19 @@ const NavbarMenuToggle = forwardRef<'button', NavbarMenuToggleProps>(
         return srOnlyTextProp;
       }
 
-      return true // TODO fix
-        ? 'close navigation menu'
-        : 'open navigation menu';
+      return isMenuOpen ? 'close navigation menu' : 'open navigation menu';
     }, [srOnlyTextProp, isMenuOpen]);
 
     return (
-      <Toggle ref={domRef} className={slots.toggle?.({ class: toggleStyles })}>
+      <Toggle
+        ref={domRef}
+        className={slots.toggle?.({ class: toggleStyles })}
+        data-open={dataAttr(isMenuOpen)}
+        onPressedChange={handleChange}
+        pressed={isMenuOpen}
+        aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        {...mergeProps(otherProps)}
+      >
         <span className={slots.srOnly()}>{srOnlyText}</span>
         {child}
       </Toggle>
