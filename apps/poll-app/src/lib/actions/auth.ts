@@ -12,7 +12,7 @@ import { getTokenExpirationDate } from './utils';
 export async function signInWithOAuthToken(
   token: string,
   provider: string = 'google',
-): Promise<void> {
+): Promise<string> {
   const { data } = await getClient().mutation<
     OAuthSignInMutation,
     OAuthSignInMutationVariables
@@ -23,8 +23,13 @@ export async function signInWithOAuthToken(
     throw new Error('Failed to sign in');
   }
 
-  const expires = getTokenExpirationDate(resultToken);
-  cookies().set('token', resultToken, {
+  setCookie(resultToken);
+  return resultToken;
+}
+
+const setCookie = (token: string) => {
+  const expires = getTokenExpirationDate(token);
+  cookies().set('token', token, {
     expires,
   });
-}
+};

@@ -14,15 +14,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const [client, ssr] = useMemo(() => {
-  //   const ssr = ssrExchange({
-  //     isClient: typeof window !== 'undefined',
-  //   });
-  //   const client = getClientFactory({isClientSide: true})();
-
-  //   return [client, ssr];
-  // }, []);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen">

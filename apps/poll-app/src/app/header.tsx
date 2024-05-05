@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@org/ui-kit/ui/button';
 import {
   Navbar,
   NavbarBrand,
@@ -11,19 +10,19 @@ import {
   NavbarMenuToggle,
 } from '@org/ui-kit/ui/nav';
 import { ThemeToggle } from '@org/ui-kit/ui/theme-toggle';
-import { useIsLoggedIn } from '@poll-app/lib/hooks/use-is-logged-in';
+import AuthButton from '@poll-app/components/buttons/auth-button/auth-button';
 import Link from 'next/link';
 import { useState } from 'react';
 
 const AppHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isLoggedIn = useIsLoggedIn();
 
   return (
     <Navbar
       shouldHideOnScroll
       onMenuOpenChange={setIsMenuOpen}
       isMenuOpen={isMenuOpen}
+      maxWidth="xl"
     >
       <NavbarContent id="brand-group">
         <NavbarMenuToggle
@@ -44,15 +43,10 @@ const AppHeader = () => {
         <NavbarItem>
           <Link href="/home">Home</Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link href="/profile">Profile</Link>
-        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end" id="end-group">
-        <NavbarItem className="xs:block hidden">
-          <Button variant="outline" asChild>
-            <Link href="/login">Login</Link>
-          </Button>
+        <NavbarItem className="xs:list-item hidden h-9">
+          <AuthButton />
         </NavbarItem>
         <NavbarItem>
           <ThemeToggle />

@@ -1,18 +1,17 @@
 'use client';
-
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
 import {
+  Operation,
   UrqlProvider,
   createClient,
   fetchExchange,
   ssrExchange,
 } from '@urql/next';
-import { ThemeProvider } from 'next-themes';
 import { parseCookies } from 'nookies';
 import { FC, PropsWithChildren, useMemo } from 'react';
 
-const Providers: FC<PropsWithChildren> = ({ children }) => {
+const GraphQLProvider: FC<PropsWithChildren> = ({ children }) => {
   const [client, ssr] = useMemo(() => {
     const ssr = ssrExchange({ isClient: typeof window !== 'undefined' });
 
@@ -22,10 +21,17 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
       exchanges: [
         cacheExchange({}),
         authExchange(async (utils) => {
-          const { token } = parseCookies();
-
           return {
+            willAuthError: (operation) => {
+              const token = getToken(operation);
+
+              if (!token) return true;
+              return false;
+            },
             addAuthToOperation: (operation) => {
+              const token = getToken(operation);
+              console.log('addAuthToOperation', token);
+
               if (!token) return operation;
               return utils.appendHeaders(operation, {
                 Authorization: `Bearer ${token}`,
@@ -49,19 +55,18 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
 
     return [client, ssr];
   }, []);
-
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <UrqlProvider client={client} ssr={ssr}>
-        {children}
-      </UrqlProvider>
-    </ThemeProvider>
+    <UrqlProvider client={client} ssr={ssr}>
+      {children}
+    </UrqlProvider>
   );
 };
 
-export default Providers;
+const getToken = (operation: Operation): string | undefined | null => {
+  const contextToken = operation.context.token as string | undefined | null;
+
+  if (contextToken !== undefined) return contextToken;
+  return parseCookies().token;
+};
+
+export default GraphQLProvider;

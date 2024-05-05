@@ -3,15 +3,18 @@ import { Button } from '@org/ui-kit/ui/button';
 import GoogleIcon from '@poll-app/components/icons/google-icon';
 import { signInWithOAuthToken } from '@poll-app/lib/actions/auth';
 import { auth } from '@poll-app/lib/firebase';
+import { Dispatch } from '@poll-app/lib/store';
 import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { isNil } from 'lodash';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
 // See https://developers.google.com/identity/branding-guidelines
 
 const GoogleButton: FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch<Dispatch>();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '/home';
 
@@ -21,7 +24,6 @@ const GoogleButton: FC = () => {
       variant="outline"
       onClick={async (event) => {
         event.preventDefault();
-        router.prefetch(redirect);
         try {
           const result = await signInWithPopup(auth, new GoogleAuthProvider());
           const authCredential =
@@ -30,7 +32,8 @@ const GoogleButton: FC = () => {
             throw new Error('Failed to get auth credential');
           }
 
-          await signInWithOAuthToken(authCredential.idToken);
+          const token = await signInWithOAuthToken(authCredential.idToken);
+          dispatch.auth.login(token);
           router.push(redirect);
         } catch (error) {
           const err = error as AuthError;

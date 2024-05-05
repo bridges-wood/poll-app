@@ -1,7 +1,9 @@
-import nookies from 'nookies';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
-export const useIsLoggedIn = () => {
-  // Check token exists in cookies
-  const token = nookies.get(null).token;
-  return token;
+const useIsLoggedIn = () => {
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  return isLoggedIn;
 };
+
+export default useIsLoggedIn;
