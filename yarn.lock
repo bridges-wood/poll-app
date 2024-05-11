@@ -2154,6 +2154,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@envelop/extended-validation@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@envelop/extended-validation@npm:4.0.0"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.0"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@envelop/core": ^5.0.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 86ad663eef0303fab9e7fef233dfa798ff368526faf20cc6043bf8f6da455cf81eb3923b80bc424311f961b7cf87416158ef18abe6aaebba3cacdd4bfdf8f80e
+  languageName: node
+  linkType: hard
+
 "@envelop/types@npm:5.0.0":
   version: 5.0.0
   resolution: "@envelop/types@npm:5.0.0"
@@ -5461,6 +5474,8 @@ __metadata:
     "@babel/core": "npm:^7.23.6"
     "@babel/preset-react": "npm:^7.23.3"
     "@bridges-wood/graphql-codegen-nestjs": "npm:^1.2.1"
+    "@envelop/core": "npm:^5.0.0"
+    "@envelop/extended-validation": "npm:^4.0.0"
     "@graphql-codegen/cli": "npm:^5.0.0"
     "@graphql-codegen/typescript": "npm:^4.0.6"
     "@graphql-codegen/typescript-nest": "npm:^1.0.0"
@@ -5494,6 +5509,7 @@ __metadata:
     "@nx/next": "npm:18.2.3"
     "@nx/node": "npm:18.2.3"
     "@nx/react": "npm:18.2.3"
+    "@nx/web": "npm:18.2.3"
     "@nx/webpack": "npm:18.2.3"
     "@nx/workspace": "npm:18.2.3"
     "@radix-ui/react-avatar": "npm:^1.0.4"

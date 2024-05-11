@@ -16,10 +16,6 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@org/ui-kit/ui": ["libs/ui-kit/ui/src/index.ts"],
-      "@org/ui-kit/ui/*": ["libs/ui-kit/ui/src/*"],
-      "@org/ui-kit/util": ["libs/ui-kit/util/src/index.ts"],
-      "@org/ui-kit/util/*": ["libs/ui-kit/util/src/*"],
       "@org/auth": ["libs/auth/src/index.ts"],
       "@org/common": ["libs/common/src/index.ts"],
       "@org/config": ["libs/config/src/index.ts"],
@@ -34,6 +30,10 @@
       "@org/heartbeat": ["libs/heartbeat/src/index.ts"],
       "@org/pubsub": ["libs/pubsub/src/index.ts"],
       "@org/typings": ["libs/typings/src/index.ts"],
+      "@org/ui-kit/ui": ["libs/ui-kit/ui/src/index.ts"],
+      "@org/ui-kit/ui/*": ["libs/ui-kit/ui/src/*"],
+      "@org/ui-kit/util": ["libs/ui-kit/util/src/index.ts"],
+      "@org/ui-kit/util/*": ["libs/ui-kit/util/src/*"],
       "@org/ui/server": ["libs/ui/src/server.ts"]
     }
   },
