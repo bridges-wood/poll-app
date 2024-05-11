@@ -30,7 +30,6 @@ const GraphQLProvider: FC<PropsWithChildren> = ({ children }) => {
             },
             addAuthToOperation: (operation) => {
               const token = getToken(operation);
-              console.log('addAuthToOperation', token);
 
               if (!token) return operation;
               return utils.appendHeaders(operation, {
@@ -38,7 +37,6 @@ const GraphQLProvider: FC<PropsWithChildren> = ({ children }) => {
               });
             },
             didAuthError: (error) => {
-              console.log(error.graphQLErrors.map((e) => e.message));
               return error.graphQLErrors.some(
                 (e) => e.message === 'jwt expired',
               );
