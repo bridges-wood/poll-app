@@ -1,25 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import {
   DocumentData,
+  FieldValue,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
 } from 'firebase/firestore';
+import { Post } from '../../posts/models/post.stub';
 import { User } from './user.model';
 
+interface UserDbModel extends User {}
+
 @Injectable()
-export class UserModelMapper implements FirestoreDataConverter<User> {
-  toFirestore(modelObject: WithFieldValue<User>): WithFieldValue<DocumentData> {
+export class UserModelMapper
+  implements FirestoreDataConverter<User, UserDbModel>
+{
+  toFirestore(modelObject: WithFieldValue<User>): WithFieldValue<UserDbModel> {
     delete modelObject.id;
-    return { ...modelObject };
+    return {
+      ...modelObject,
+      // If we're not creating a new user, updatedAt should be set
+      updatedAt: modelObject.updatedAt ?? new Date(),
+    } as WithFieldValue<UserDbModel>;
   }
 
   fromFirestore(
-    snapshot: QueryDocumentSnapshot<DocumentData, DocumentData>,
+    snapshot: QueryDocumentSnapshot<DocumentData, UserDbModel>,
     options?: SnapshotOptions,
   ): User {
     const data = snapshot.data(options);
+
     return {
       id: snapshot.id,
       ...data,
@@ -27,5 +38,15 @@ export class UserModelMapper implements FirestoreDataConverter<User> {
       createdAt: data.createdAt.toDate(),
       updatedAt: data.updatedAt.toDate(),
     } as User;
+  }
+
+  private _postsToReferences(
+    posts: FieldValue | WithFieldValue<Post[]>,
+  ): Post['id'][] | FieldValue {
+    if (Array.isArray(posts)) {
+      return posts.map((post: Post) => post.id);
+    }
+
+    return posts;
   }
 }

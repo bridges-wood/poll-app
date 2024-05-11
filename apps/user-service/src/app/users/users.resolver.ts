@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import {
+  Args,
+  Directive,
+  Mutation,
+  Query,
+  Resolver,
+  Subscription,
+} from '@nestjs/graphql';
 import { CurrentUser, Roles, RolesGuard } from '@org/auth';
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
@@ -16,14 +23,15 @@ export class UsersResolver {
   }
 
   @Query((returns) => User, { description: 'Get a user by id' })
+  @Directive('@merge(keyField: "id")')
   async user(
     @Args('id', { description: 'The id of the user to get' }) id: string,
   ): Promise<User> {
     return this.usersService.findOneById(id);
   }
 
-  // @Roles(['admin'])
-  // @UseGuards(RolesGuard)
+  @Roles(['admin'])
+  @UseGuards(RolesGuard)
   @Query((returns) => [User], { description: 'Get all users' })
   async users(): Promise<User[]> {
     return this.usersService.findAll();

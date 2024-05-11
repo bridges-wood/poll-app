@@ -1,11 +1,9 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
-import { User as UserType } from '@org/typings';
-import { Post } from '../../posts/models/post.model';
 
 @ObjectType({ description: 'A user' })
 @Directive('@key(selectionSet: "{ id }")')
 @Directive('@canonical')
-export class User implements UserType {
+export class User {
   @Field((type) => ID, {
     description: 'The ID of the user as it is stored in Firebase',
   })
@@ -31,9 +29,6 @@ export class User implements UserType {
 
   @Field((type) => [String], { description: 'The roles the user has' })
   roles: string[];
-
-  @Field((type) => [Post], { description: 'All posts created by the user' })
-  posts: Post[];
 
   @Field({ description: 'The date and time the user was created' })
   createdAt: Date;

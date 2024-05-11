@@ -41,24 +41,19 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    try {
-      const q = query(
-        collection(this.database, 'users').withConverter(this.userModelMapper),
-      );
+    const q = query(
+      collection(this.database, 'users').withConverter(this.userModelMapper),
+    );
 
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty) {
-        return [];
-      }
-
-      return querySnapshot.docs.map((doc) => doc.data()) as User[];
-    } catch (error) {
-      Logger.error(error);
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
       return [];
     }
+
+    return querySnapshot.docs.map((doc) => doc.data()) as User[];
   }
 
-  streamUser(id: string) {
+  streamUser(id: string): AsyncIterator<User> {
     this.pubSub.registerHandler(`userUpdated:${id}`, (broadcast) => {
       const docRef = doc(this.database, 'users', id).withConverter(
         this.userModelMapper,
@@ -92,13 +87,12 @@ export class UsersService {
           id,
           email: args.email,
           displayName: args.displayName,
-          profilePicture: args.photoURL,
+          profilePicture: args.profilePicture,
           firstName: null,
           lastName: null,
           roles: ['user'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          posts: [],
         };
 
         Logger.log(`Creating user ${id}`);
@@ -111,7 +105,7 @@ export class UsersService {
 
         Logger.log(`Created user ${id}`);
 
-        return { id, ...user };
+        return user;
       } else {
         throw error;
       }
@@ -138,10 +132,7 @@ export class UsersService {
       }
     }
 
-    await updateDoc(userRef, {
-      ...(args as Partial<User>),
-      updatedAt: new Date(),
-    });
+    await updateDoc(userRef, args);
     return {
       ...user,
       ...args,

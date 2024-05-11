@@ -6,12 +6,14 @@ import { AuthGuardModule, DistributedAuthGuard } from '@org/auth';
 import { ConfigModule, ConfigService } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
+import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     AuthGuardModule,
     UsersModule,
+    PostsModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       imports: [ConfigModule, ErrorsModule],
       inject: [ConfigService, ErrorFormatter],

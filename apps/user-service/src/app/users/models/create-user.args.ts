@@ -1,14 +1,9 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { InputType, PickType } from '@nestjs/graphql';
+import { User } from './user.model';
 
 @InputType()
-export class CreateUserArgs {
-  @Field({ description: "The user's display name" })
-  displayName: string;
-  @Field({ description: "The user's email address" })
-  email: string;
-  @Field({
-    nullable: true,
-    description: "The user's URL pointing to the user's profile picture",
-  })
-  photoURL: string | null;
-}
+export class CreateUserArgs extends PickType(
+  User,
+  ['displayName', 'email', 'profilePicture'] as const,
+  InputType,
+) {}

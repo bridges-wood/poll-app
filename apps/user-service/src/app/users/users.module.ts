@@ -10,5 +10,6 @@ import { UsersService } from './users.service';
 @Module({
   imports: [FirebaseModule, PubSubModule, AuthGuardModule, CrossAppModule],
   providers: [UsersResolver, UsersService, UserModelMapper],
+  exports: [UsersService],
 })
 export class UsersModule {}
