@@ -2,6 +2,7 @@ import { SubschemaConfig } from '@graphql-tools/delegate';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
+import { FilterRootFields } from '@graphql-tools/wrap';
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLSchema, buildSchema } from 'graphql';
 import _ from 'lodash';
@@ -75,15 +76,22 @@ export class SchemaStitcher {
     sdl,
   }: LoadedEndpoint): SubschemaConfig {
     return {
-      schema: buildSchema(sdl),
+      schema: buildSchema(sdl, { assumeValid: true }),
       executor: buildHTTPExecutor({
         endpoint: url,
         fetch,
         headers: ({ context }) =>
           _.pick(context?.request?.headers?.headersInit, ['authorization']),
         // TODO make this function pure and configurable
+        // TODO create trust mechanism for headers - don't trust the client, but trust the gateway
       }),
       batch: true,
+      transforms: [
+        new FilterRootFields(
+          (_operation, rootFieldName, _fieldConfig) =>
+            !rootFieldName.startsWith('_'),
+        ),
+      ],
     };
   }
 }

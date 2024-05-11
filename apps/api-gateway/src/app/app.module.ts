@@ -1,3 +1,7 @@
+import {
+  OneOfInputObjectsRule,
+  useExtendedValidation,
+} from '@envelop/extended-validation';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -33,6 +37,9 @@ import { SchemaModule } from './schema/schema.module';
           },
           plugins: [
             useSchema(() => firstValueFrom(schemaStitcher.stitchedSchema$)),
+            useExtendedValidation({
+              rules: [OneOfInputObjectsRule],
+            }),
           ],
           subscriptions: {
             'graphql-ws': true,

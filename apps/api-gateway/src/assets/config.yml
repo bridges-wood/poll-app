@@ -5,3 +5,6 @@ endpoints:
   - name: auth
     description: Authentication service
     url: http://localhost:3002/graphql
+  - name: posts
+    description: Posts service
+    url: http://localhost:3003/graphql
