@@ -17,13 +17,15 @@ import { UsersService } from './users.service';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query((returns) => User)
+  @Query((returns) => User, {
+    description: 'Get the user from the passed authorization header',
+  })
   async me(@CurrentUser() user: Pick<User, 'id'>): Promise<User> {
     return this.usersService.findOneById(user.id);
   }
 
-  @Query((returns) => User, { description: 'Get a user by id' })
   @Directive('@merge(keyField: "id")')
+  @Query((returns) => User, { description: 'Get a user by id' })
   async user(
     @Args('id', { description: 'The id of the user to get' }) id: string,
   ): Promise<User> {

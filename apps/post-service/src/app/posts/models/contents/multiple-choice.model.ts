@@ -41,6 +41,7 @@ export class MultipleChoiceQuestionInput extends PickType(
 
 @ObjectType({
   implements: () => [IPostResponse],
+  description: 'A response to a multiple choice question',
 })
 export class MultipleChoiceResponse extends IPostResponse {
   type: PostContentType.MULTIPLE_CHOICE;

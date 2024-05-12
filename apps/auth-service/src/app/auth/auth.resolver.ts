@@ -8,7 +8,9 @@ import { SupportedOAuthProvider } from './supported-oauth-providers';
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation((returns) => AuthResult)
+  @Mutation((returns) => AuthResult, {
+    description: 'Generate an auth token using email and password',
+  })
   async signInWithEmailAndPassword(
     @Args('email') email: string,
     @Args('password') password: string,
@@ -21,7 +23,9 @@ export class AuthResolver {
     return { token };
   }
 
-  @Mutation((returns) => AuthResult)
+  @Mutation((returns) => AuthResult, {
+    description: 'Generate an auth token using OAuth token',
+  })
   async signInWithOAuthToken(
     @Args('token') oauthToken: string,
     @Args('provider') provider: string,
@@ -34,14 +38,16 @@ export class AuthResolver {
     return { token };
   }
 
-  @Mutation((returns) => AuthResult)
+  @Mutation((returns) => AuthResult, { description: 'Refresh an auth token' })
   async refreshToken(@Args('token') token: string): Promise<AuthResult> {
     const refreshedToken = await this.authService.refreshToken(token);
 
     return { token: refreshedToken };
   }
 
-  @Query((returns) => String)
+  @Query((returns) => String, {
+    description: 'Ensure that a given token was issued by the application',
+  })
   async validateToken(@Args('token') token: string): Promise<string> {
     const decodedIdToken = await this.authService.validateToken(token);
 

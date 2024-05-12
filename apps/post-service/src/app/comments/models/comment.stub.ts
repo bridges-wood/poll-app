@@ -1,8 +1,10 @@
 import { Field, ID, InputType, ObjectType, PickType } from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType({ description: 'Stub comment' })
 export class Comment {
-  @Field((type) => ID)
+  @Field((type) => ID, {
+    description: 'The ID of the comment as it is stored in Firebase',
+  })
   id: string;
 }
 

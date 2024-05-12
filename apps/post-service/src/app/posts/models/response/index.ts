@@ -4,7 +4,9 @@ import { User } from '../../../users/models/user.stub';
 import { MultipleChoiceResponse } from '../contents/multiple-choice.model';
 import { Post } from '../post.model';
 
-@InterfaceType()
+@InterfaceType({
+  description: 'A response to a post',
+})
 export abstract class IPostResponse {
   @Field({ description: 'The ID of the response' })
   id: string;

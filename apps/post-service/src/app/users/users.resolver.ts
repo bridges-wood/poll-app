@@ -6,7 +6,7 @@ import { UsersService } from './users.service';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query((returns) => User)
+  @Query((returns) => User, { description: 'Get a user by id' })
   @Directive('@merge(keyField: "id")')
   async _userById(
     @Args('id', { description: 'The id of the user to get' })
