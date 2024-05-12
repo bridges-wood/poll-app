@@ -21,6 +21,7 @@ const addSDLToQuery: Transformer = (schema) => {
   return appendObjectFields(schema, 'Query', {
     _sdl: {
       type: GraphQLString,
+      description: 'Prints the SDL of the schema',
     },
   });
 };
@@ -38,13 +39,18 @@ const addSDLResolver: Transformer = (schema) => {
   });
 };
 
-export const prepareSchemaForFederation: Transformer = (schema) => {
-  const transformers: Transformer[] = [
-    addStitchingDirectives,
-    addSDLToQuery,
-    addSDLResolver,
-    stitchingDirectivesValidator,
-  ];
+export const prepareSchemaForFederation = (
+  ...additionalTransformers: Transformer[]
+): Transformer => {
+  return (schema) => {
+    const transformers: Transformer[] = [
+      ...additionalTransformers,
+      addStitchingDirectives,
+      addSDLToQuery,
+      addSDLResolver,
+      stitchingDirectivesValidator,
+    ];
 
-  return _.flow(transformers)(schema);
+    return _.flow(transformers)(schema);
+  };
 };

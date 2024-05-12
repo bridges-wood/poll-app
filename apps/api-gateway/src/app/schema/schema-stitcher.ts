@@ -76,7 +76,7 @@ export class SchemaStitcher {
     sdl,
   }: LoadedEndpoint): SubschemaConfig {
     return {
-      schema: buildSchema(sdl, { assumeValid: true }),
+      schema: buildSchema(sdl),
       executor: buildHTTPExecutor({
         endpoint: url,
         fetch,

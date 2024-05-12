@@ -2,6 +2,7 @@ import {
   OneOfInputObjectsRule,
   useExtendedValidation,
 } from '@envelop/extended-validation';
+import { addTypes } from '@graphql-tools/utils';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -10,6 +11,7 @@ import { AuthGuardModule, DistributedAuthGuard } from '@org/auth';
 import { ConfigModule, ConfigService } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
+import { GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 
@@ -33,7 +35,15 @@ import { UsersModule } from './users/users.module';
             'graphql-ws': true,
           },
           transformAutoSchemaFile: true,
-          transformSchema: prepareSchemaForFederation,
+          transformSchema: prepareSchemaForFederation((schema) =>
+            addTypes(schema, [
+              new GraphQLDirective({
+                name: 'oneOf',
+                locations: ['INPUT_OBJECT', 'FIELD_DEFINITION'] as any[],
+                args: {},
+              }),
+            ]),
+          ),
           plugins: [
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],

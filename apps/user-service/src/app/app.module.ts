@@ -29,7 +29,7 @@ import { UsersModule } from './users/users.module';
             'graphql-ws': true,
           },
           transformAutoSchemaFile: true,
-          transformSchema: prepareSchemaForFederation,
+          transformSchema: prepareSchemaForFederation(),
         };
       },
     }),

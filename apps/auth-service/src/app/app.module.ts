@@ -26,7 +26,7 @@ import { AuthModule } from './auth/auth.module';
             'graphql-ws': true,
           },
           transformAutoSchemaFile: true,
-          transformSchema: prepareSchemaForFederation,
+          transformSchema: prepareSchemaForFederation(),
         };
       },
     }),
