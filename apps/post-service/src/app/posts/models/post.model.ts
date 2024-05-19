@@ -1,4 +1,5 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import { Connected, Node } from '@org/graphql/pagination';
 import { Comment } from '../../comments/models/comment.stub';
 import { User } from '../../users/models/user.stub';
 import { PostContent } from './contents';
@@ -6,7 +7,7 @@ import { PostContent } from './contents';
 @ObjectType({ description: 'A post' })
 @Directive('@key(selectionSet: "{ id }")')
 @Directive('@canonical')
-export class Post {
+export class Post implements Node {
   @Field((type) => ID, {
     description: 'The ID of the post as it is stored in Firebase',
   })
@@ -30,3 +31,6 @@ export class Post {
   @Field((type) => User, { description: 'The author of the post' })
   author: User;
 }
+
+@ObjectType()
+export class PostConnection extends Connected(Post) {}

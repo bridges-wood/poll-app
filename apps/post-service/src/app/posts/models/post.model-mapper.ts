@@ -20,8 +20,9 @@ import {
 } from './contents/multiple-choice.model';
 import { Post } from './post.model';
 
-interface PostDbModel
-  extends Omit<Post, 'author' | 'comments' | 'id' | 'content'> {
+export interface PostDbModel
+  extends DocumentData,
+    Omit<Post, 'author' | 'comments' | 'id' | 'content'> {
   /**
    * Reference to the author of the post
    */

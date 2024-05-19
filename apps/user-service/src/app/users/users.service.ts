@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
 import { FirebaseTokens } from '@org/firebase';
+import { PaginationService } from '@org/graphql/pagination';
 import { PubSubTokens } from '@org/pubsub';
 import {
   Firestore,
@@ -19,20 +20,20 @@ import PubSub from 'graphql-firestore-subscriptions';
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
 import { User } from './models/user.model';
-import { UserModelMapper } from './models/user.model-mapper';
+import { UserDbModel, UserModelMapper } from './models/user.model-mapper';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends PaginationService<User, UserDbModel> {
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     private readonly userModelMapper: UserModelMapper,
-  ) {}
+  ) {
+    super(collection(database, 'users').withConverter(userModelMapper));
+  }
 
   async findOneById(id: string): Promise<User> {
-    const docRef = doc(this.database, 'users', id).withConverter(
-      this.userModelMapper,
-    );
+    const docRef = doc(this.collectionRef, id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists())
       throw new NotFoundError(`User with id "${id}" not found`);
@@ -40,24 +41,9 @@ export class UsersService {
     return docSnap.data() as User;
   }
 
-  async findAll(): Promise<User[]> {
-    const q = query(
-      collection(this.database, 'users').withConverter(this.userModelMapper),
-    );
-
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
-      return [];
-    }
-
-    return querySnapshot.docs.map((doc) => doc.data()) as User[];
-  }
-
   streamUser(id: string): AsyncIterator<User> {
     this.pubSub.registerHandler(`userUpdated:${id}`, (broadcast) => {
-      const docRef = doc(this.database, 'users', id).withConverter(
-        this.userModelMapper,
-      );
+      const docRef = doc(this.collectionRef, id);
 
       return onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
@@ -98,10 +84,7 @@ export class UsersService {
         Logger.log(`Creating user ${id}`);
 
         // Save user
-        await setDoc(
-          doc(this.database, 'users', id).withConverter(this.userModelMapper),
-          user,
-        );
+        await setDoc(doc(this.collectionRef, id), user);
 
         Logger.log(`Created user ${id}`);
 
@@ -113,15 +96,12 @@ export class UsersService {
   }
 
   async updateOne(id: string, args: UpdateUserArgs): Promise<User> {
-    const userRef = doc(this.database, 'users', id).withConverter(
-      this.userModelMapper,
-    );
-
+    const userRef = doc(this.collectionRef, id);
     // Check that the username is unique
     const user = await this.findOneById(id);
     if (args.displayName && args.displayName !== user.displayName) {
       const q = query(
-        collection(this.database, 'users').withConverter(this.userModelMapper),
+        this.collectionRef,
         where('displayName', '==', args.displayName),
         where(documentId(), '!=', id),
       );

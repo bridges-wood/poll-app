@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
 import { FirebaseTokens } from '@org/firebase';
+import { PaginationService } from '@org/graphql/pagination';
 import { PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
 import {
@@ -10,12 +11,9 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
-  query,
   runTransaction,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import PubSub from 'graphql-firestore-subscriptions';
 import { User } from '../users/models/user.stub';
@@ -23,22 +21,22 @@ import { PostContent, PostContentInput } from './models/contents/index';
 import { MultipleChoiceQuestion } from './models/contents/multiple-choice.model';
 import { CreatePostArgs } from './models/create-post.args';
 import { Post } from './models/post.model';
-import { PostModelMapper } from './models/post.model-mapper';
+import { PostDbModel, PostModelMapper } from './models/post.model-mapper';
 import { UpdatePostArgs } from './models/update-post.args';
 
 @Injectable()
-export class PostsService {
+export class PostsService extends PaginationService<Post, PostDbModel> {
   private readonly logger = new Logger(PostsService.name);
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     private readonly postModelMapper: PostModelMapper,
-  ) {}
+  ) {
+    super(collection(database, 'posts').withConverter(postModelMapper));
+  }
 
   async findOneById(id: string): Promise<Post> {
-    const docRef = doc(this.database, 'posts', id).withConverter(
-      this.postModelMapper,
-    );
+    const docRef = doc(this.collectionRef, id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists())
       throw new NotFoundError(`Post with id "${id}" not found`);
@@ -46,24 +44,9 @@ export class PostsService {
     return docSnap.data() as Post;
   }
 
-  async findAll(): Promise<Post[]> {
-    const q = query(
-      collection(this.database, 'posts').withConverter(this.postModelMapper),
-    );
-
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
-      return [];
-    }
-
-    return querySnapshot.docs.map((doc) => doc.data()) as Post[];
-  }
-
   streamPost(id: string): AsyncIterator<Post> {
     this.pubSub.registerHandler(`postUpdated:${id}`, (broadcast) => {
-      const docRef = doc(this.database, 'posts', id).withConverter(
-        this.postModelMapper,
-      );
+      const docRef = doc(this.collectionRef, id);
       const unsubscribe = onSnapshot(docRef, (doc) => {
         broadcast(doc.data() as Post);
       });
@@ -88,9 +71,9 @@ export class PostsService {
     } as Omit<Post, 'id'>;
 
     const id = await runTransaction(this.database, async (transaction) => {
-      const postRef = doc(collection(this.database, 'posts'));
+      const postRef = doc(this.collectionRef);
       // Save post
-      transaction.set(postRef.withConverter(this.postModelMapper), post);
+      transaction.set(postRef, post);
 
       this.logger.log(`Created post with id "${postRef.id}"`);
 
@@ -123,9 +106,7 @@ export class PostsService {
   }
 
   async updateOne(id: string, args: UpdatePostArgs): Promise<Post> {
-    const postRef = doc(this.database, 'posts', id).withConverter(
-      this.postModelMapper,
-    );
+    const postRef = doc(this.collectionRef, id);
 
     const post = await this.findOneById(id);
 

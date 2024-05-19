@@ -44,6 +44,7 @@ import { SchemaModule } from './schema/schema.module';
           subscriptions: {
             'graphql-ws': true,
           },
+          batching: true,
         };
       },
     }),

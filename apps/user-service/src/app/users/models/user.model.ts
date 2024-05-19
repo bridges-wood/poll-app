@@ -1,4 +1,5 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import { Connected } from '@org/graphql/pagination';
 
 @ObjectType({ description: 'A user' })
 @Directive('@key(selectionSet: "{ id }")')
@@ -36,3 +37,6 @@ export class User {
   @Field({ description: 'The date and time the user was last updated' })
   updatedAt: Date;
 }
+
+@ObjectType()
+export class UserConnection extends Connected(User) {}

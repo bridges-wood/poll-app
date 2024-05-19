@@ -9,9 +9,8 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { Post } from '../posts/models/post.model';
 import { PostModelMapper } from '../posts/models/post.model-mapper';
-import { User } from './models/user.stub';
+import { InternalUser } from './models/user.stub';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +19,7 @@ export class UsersService {
     private readonly postModelMapper: PostModelMapper,
   ) {}
 
-  async userById(id: string): Promise<User> {
+  async userById(id: string): Promise<InternalUser> {
     const postsRef = collection(this.database, 'posts').withConverter(
       this.postModelMapper,
     );
@@ -36,7 +35,7 @@ export class UsersService {
 
     return {
       id,
-      posts: querySnapshot.docs.map((doc) => doc.data() as Post),
-    } as User;
+      posts: querySnapshot.docs.map((doc) => doc.id),
+    };
   }
 }

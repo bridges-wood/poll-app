@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Post } from '../../posts/models/post.model';
+import { PostConnection } from '../../posts/models/post.model';
 
 @ObjectType({ description: 'Stub user' })
 export class User {
@@ -8,6 +8,10 @@ export class User {
   })
   id: string;
 
-  @Field((type) => [Post], { description: 'All posts created by the user' })
-  posts: Post[];
+  @Field((type) => PostConnection, {
+    description: 'All posts created by the user',
+  })
+  posts: PostConnection;
 }
+
+export type InternalUser = Omit<User, 'posts'> & { posts: string[] };

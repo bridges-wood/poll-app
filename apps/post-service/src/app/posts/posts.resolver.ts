@@ -1,21 +1,32 @@
 import {
   Args,
-  Directive,
+  Field,
   Mutation,
+  Parent,
   Query,
   Resolver,
   Subscription,
 } from '@nestjs/graphql';
 import { CurrentUser } from '@org/auth';
-import { User } from '../users/models/user.stub';
+import { PaginationArgs } from '@org/graphql/pagination';
+import { InternalUser, User } from '../users/models/user.stub';
+import { UsersService } from '../users/users.service';
 import { CreatePostArgs } from './models/create-post.args';
-import { Post } from './models/post.model';
+import { Post, PostConnection } from './models/post.model';
 import { UpdatePostArgs } from './models/update-post.args';
 import { PostsService } from './posts.service';
 
 @Resolver((of) => Post)
 export class PostsResolver {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly userService: UsersService,
+  ) {}
+
+  @Field((type) => User, { description: 'The author of the post' })
+  async author(@Parent() post: Post): Promise<InternalUser> {
+    return this.userService.userById(post.author.id);
+  }
 
   @Query((returns) => Post, { description: 'Get a post by id' })
   async post(
@@ -24,9 +35,21 @@ export class PostsResolver {
     return this.postsService.findOneById(id);
   }
 
-  @Query((returns) => [Post], { description: 'Get all posts' })
-  async posts(): Promise<Post[]> {
-    return this.postsService.findAll();
+  @Query((returns) => PostConnection, { description: 'Get all posts' })
+  async posts(@Args() args: PaginationArgs): Promise<PostConnection> {
+    return this.postsService.findAll(args);
+  }
+
+  @Query((returns) => PostConnection, { description: 'Get all posts by id' })
+  async postsByIds(
+    @Args('ids', {
+      type: () => [String],
+      description: 'The ids of the posts to get',
+    })
+    ids: string[],
+    @Args() args: PaginationArgs,
+  ): Promise<PostConnection> {
+    return this.postsService.findByIds(ids, args);
   }
 
   @Subscription((returns) => Post, {

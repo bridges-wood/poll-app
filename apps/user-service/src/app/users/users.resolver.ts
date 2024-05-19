@@ -8,9 +8,10 @@ import {
   Subscription,
 } from '@nestjs/graphql';
 import { CurrentUser, Roles, RolesGuard } from '@org/auth';
+import { PaginationArgs } from '@org/graphql/pagination';
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
-import { User } from './models/user.model';
+import { User, UserConnection } from './models/user.model';
 import { UsersService } from './users.service';
 
 @Resolver((of) => User)
@@ -32,11 +33,11 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
-  @Roles(['admin'])
+  // @Roles(['admin'])
   @UseGuards(RolesGuard)
-  @Query((returns) => [User], { description: 'Get all users' })
-  async users(): Promise<User[]> {
-    return this.usersService.findAll();
+  @Query((returns) => UserConnection, { description: 'Get all users' })
+  async users(@Args() args: PaginationArgs): Promise<UserConnection> {
+    return this.usersService.findAll(args);
   }
 
   @Subscription((returns) => User, {
@@ -51,7 +52,7 @@ export class UsersResolver {
     return this.usersService.streamUser(id);
   }
 
-  @Roles(['admin'])
+  // @Roles(['admin'])
   @UseGuards(RolesGuard)
   @Mutation((returns) => User, { description: 'Create a new user' })
   async createUser(
