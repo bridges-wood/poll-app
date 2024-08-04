@@ -6,7 +6,7 @@ import {
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
 import { GraphQLSchema, GraphQLString } from 'graphql';
-import _ from 'lodash';
+import { flow } from 'lodash';
 
 const { stitchingDirectivesValidator, allStitchingDirectives } =
   stitchingDirectives();
@@ -51,6 +51,6 @@ export const prepareSchemaForFederation = (
       stitchingDirectivesValidator,
     ];
 
-    return _.flow(transformers)(schema);
+    return flow(transformers)(schema);
   };
 };

@@ -1,0 +1,109 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: post-service
+  namespace: default
+spec:
+  selector:
+    app: post-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 5201
+    targetPort: 5201
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: post-service
+  namespace: default
+automountServiceAccountToken: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: post-service
+  namespace: default
+spec:
+  protocol: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-service
+  namespace: default
+  labels:
+    app: post-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: post-service
+  template:
+    metadata:
+      labels:
+        app: post-service
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "api-gateway:3000"
+    spec:
+      serviceAccountName: post-service
+      containers:
+      - name: post-service
+        image: bridgeswood/post-service:main
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5201
+        env:
+        - name: PORT
+          value: "5201"
+        - name: FIREBASE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: api-key
+        - name: FIREBASE_AUTH_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: auth-domain
+        - name: FIREBASE_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: project-id
+        - name: FIREBASE_STORAGE_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: storage-bucket
+        - name: FIREBASE_MESSAGING_SENDER_ID
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: messaging-sender-id
+        - name: FIREBASE_APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: app-id
+        - name: FIREBASE_CLIENT_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: client-email     
+        - name: FIREBASE_ADMIN_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: firebase-credentials
+              key: private-key           
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5201
+          initialDelaySeconds: 15
+          timeoutSeconds: 1
+          periodSeconds: 10
+          failureThreshold: 30
+

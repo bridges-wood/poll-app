@@ -31,13 +31,13 @@ export class EndpointsResolver {
     description: 'Remove an endpoint from the gateway',
   })
   removeEndpoint(
-    @Args('url', {
-      description: 'The url of the endpoint to remove from the gateway',
+    @Args('name', {
+      description: 'The name of the endpoint to remove from the gateway',
     })
-    url: string
+    name: string,
   ): Promise<RemoveEndpointResult> {
-    this.logger.debug(`Removing endpoint ${url}`);
-    return this.endpointsService.removeEndpoint(url);
+    this.logger.debug(`Removing endpoint ${name}`);
+    return this.endpointsService.removeEndpoint(name);
   }
 
   @Mutation((returns) => ReloadAllEndpointsResult, {

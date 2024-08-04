@@ -5,6 +5,12 @@ import { registerUrql } from '@urql/next/rsc';
 import { cookies } from 'next/headers';
 
 const { getClient } = registerUrql(() => {
+  const url =
+    process.env.NODE_ENV === 'production'
+      ? `http://localhost:${process.env['API_GATEWAY_SERVICE_PORT']}/graphql`
+      : 'http://localhost:3000/graphql';
+
+  console.log('Creating client with url:', url);
   return createClient({
     exchanges: [
       cacheExchange({}),
@@ -29,10 +35,7 @@ const { getClient } = registerUrql(() => {
       }),
       fetchExchange,
     ],
-    url:
-      process.env.NODE_ENV === 'production'
-        ? process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:3000/graphql'
-        : 'http://localhost:3000/graphql',
+    url,
     requestPolicy: 'cache-and-network',
   });
 });

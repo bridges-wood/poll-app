@@ -1,3 +1,4 @@
+import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
 import { FirebaseTokens } from '@org/firebase';
@@ -16,7 +17,6 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import PubSub from 'graphql-firestore-subscriptions';
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
 import { User } from './models/user.model';

@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLCrossAppClient } from '@org/cross-app';
-import { User } from '@org/typings';
+import gql from 'graphql-tag';
+import { User } from '../users/models/user.model';
 
 @Injectable()
 export class CrossAppUserService {
@@ -18,11 +18,12 @@ export class CrossAppUserService {
       }
     `;
 
-    const res = await this.client.send<{ user: Pick<User, 'id'> }>(payload, {
-      variables: { id },
-    });
+    const res = await this.client.query<
+      { user: Pick<User, 'id'> },
+      { id: string }
+    >(payload, { id });
     this.logger.debug(`Response for checkUserExists(${id})`, res);
 
-    return { id: res.data.user.id };
+    return { id: res.user.id };
   }
 }

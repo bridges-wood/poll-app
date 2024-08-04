@@ -11,12 +11,14 @@ import { AuthGuardModule, DistributedAuthGuard } from '@org/auth';
 import { ConfigModule, ConfigService } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
+import { HealthModule } from '@org/health';
 import { GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
+    HealthModule,
     AuthGuardModule,
     PostsModule,
     UsersModule,
@@ -49,6 +51,7 @@ import { UsersModule } from './users/users.module';
               rules: [OneOfInputObjectsRule],
             }),
           ],
+          path: 'graphql',
         };
       },
     }),

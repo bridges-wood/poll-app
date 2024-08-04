@@ -49,9 +49,13 @@ Thumbs.db
 
 # Generated files
 **/generated/*
+!**/libs/graphql/**/generated/*
 
 # Helm Dependencies
 charts/*/charts
 
 # Garden
 .garden
+
+# Secret files
+**/secrets.yaml

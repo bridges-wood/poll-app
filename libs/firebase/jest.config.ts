@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'libs/firebase',
+  displayName: 'firebase',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

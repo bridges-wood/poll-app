@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
-import _ from 'lodash';
+import { isNull, partition } from 'lodash';
 import { join } from 'path';
-import { Endpoint, isEndpoint } from '../endpoints/models/endpoint.model';
+import { z } from 'zod';
+import { Endpoint } from '../endpoints/models/endpoint.model';
 
 interface Config {
   endpoints: Endpoint[];
@@ -13,49 +14,78 @@ interface Config {
 export class ConfigService {
   private readonly logger = new Logger(ConfigService.name);
   private environment: string;
-  private endpoints: Endpoint[];
+  private endpoints: Endpoint[] = [];
+  private ConfigSchema = z
+    .object({
+      endpoints: z
+        .array(
+          z.object({
+            name: z.string(),
+            url: z.string(),
+            description: z.string().optional(),
+          }),
+        )
+        .default([]),
+    })
+    .or(z.null());
 
   constructor() {
     this.environment = process.env.NODE_ENV || 'development';
-    this.loadConfig();
+    this.loadConfigFromFile();
+    this.loadConfigFromEnv();
   }
 
-  private loadConfig(): void {
+  private loadConfigFromFile(): void {
     const configPath = process.env.CONFIG_PATH || 'assets/config.yml';
     const configFile = readFileSync(join(__dirname, configPath), 'utf8');
     try {
       this.logger.log(`Loading config from ${configPath}`);
 
       const loadedConfig = yaml.load(configFile);
-      const parsedConfig = this.validate(loadedConfig);
-      this.logger.log(
-        `Successfully loaded config for ${parsedConfig.endpoints.length} endpoints`
-      );
+      const parsedConfig = this.ConfigSchema.parse(loadedConfig);
+      if (parsedConfig?.endpoints) {
+        this.endpoints = this.endpoints.concat(parsedConfig.endpoints);
+      }
 
-      this.endpoints = parsedConfig.endpoints;
+      if (isNull(parsedConfig)) {
+        this.logger.warn(`No valid config found in ${configPath}`);
+      } else {
+        this.logger.log(`Successfully loaded config from ${configPath}`);
+      }
     } catch (error) {
-      throw new Error(`Invalid config: ${error.message}`);
+      this.logger.error(`Invalid config: ${error.message}`);
     }
   }
 
-  private validate(config: unknown): Config {
-    if (_.isNil(config)) throw new Error('Config is empty');
-    if (!_.isObject(config)) throw new Error('Config is not an object');
-    if (!_.has(config, 'endpoints'))
-      throw new Error('Config does not have endpoints');
+  private loadConfigFromEnv(): void {
+    this.logger.log('Loading config from environment variables');
+    const endpointCandidates = Object.keys(process.env).filter((key) =>
+      key.includes('SVC_CONNECT_SERVICE'),
+    );
 
-    return {
-      endpoints: this.validateEndpoints((config as Config).endpoints),
-    };
-  }
+    // Split endpoint candidates into host and port
+    const [hosts, ports] = partition(endpointCandidates, (key) =>
+      key.includes('HOST'),
+    );
 
-  private validateEndpoints(endpoints: Endpoint[]): Endpoint[] {
-    if (!_.isArray(endpoints)) throw new Error('Endpoints is not an array');
-    if (endpoints.length === 0) throw new Error('Endpoints is empty');
-    if (!endpoints.every((endpoint) => isEndpoint(endpoint)))
-      throw new Error('Endpoint is invalid');
+    if (hosts.length !== ports.length) {
+      this.logger.error('Invalid endpoint configuration');
+      return;
+    } else if (hosts.length === 0) {
+      this.logger.warn('No endpoints found in environment variables');
+      return;
+    }
 
-    return endpoints;
+    this.endpoints = this.endpoints.concat(
+      hosts.map((host, index) => ({
+        name: host.toLowerCase().split('.')[0],
+        url: `http://${process.env[host]}:${process.env[ports[index]]}/graphql`,
+      })),
+    );
+
+    if (hosts.length > 0) {
+      this.logger.log('Successfully loaded config from environment variables');
+    }
   }
 
   public isDev(): boolean {

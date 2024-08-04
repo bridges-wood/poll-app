@@ -1,19 +1,12 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { InputType, OmitType } from '@nestjs/graphql';
+import { Endpoint } from './endpoint.model';
 
-@InputType()
-export class AddEndpointArgs {
-  @Field({
-    description:
-      "The unique URL of the GraphQL endpoint to add. Usually ends in '/graphql'",
-  })
-  url: string;
-
-  @Field({
-    nullable: true,
-    description: 'The name of the endpoint',
-  })
-  name?: string;
-
-  @Field({ nullable: true, description: 'A description of the endpoint' })
-  description?: string;
-}
+@InputType({
+  description:
+    'Arguments to add a new endpoint to the gateway. Intended to be compatible with [Hashicorp Consul](https://developer.hashicorp.com/consul).',
+})
+export class AddEndpointArgs extends OmitType(
+  Endpoint,
+  [] as const,
+  InputType,
+) {}

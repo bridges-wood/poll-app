@@ -1,0 +1,13 @@
+diff --git a/src/utils/compiler-helper-dependency.js b/src/utils/compiler-helper-dependency.js
+index da45e37f9c7595237ec2ade4a731f0328d41b1ce..3f3b6d15ff3a2a818a9e0045ed5357b69bc948ad 100644
+--- a/src/utils/compiler-helper-dependency.js
++++ b/src/utils/compiler-helper-dependency.js
+@@ -17,7 +17,7 @@ const jsExecutors = {
+     },
+     '@nx/js:swc': {
+         helperDependency: HelperDependency.swc,
+-        getConfigPath: (options, contextRoot, projectRoot) => (0, get_swcrc_path_1.getSwcrcPath)(options, contextRoot, projectRoot),
++        getConfigPath: (options, contextRoot, projectRoot) => (0, get_swcrc_path_1.getSwcrcPath)(options, contextRoot, projectRoot).swcrcPath,
+     },
+ };
+ /**

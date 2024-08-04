@@ -13,14 +13,14 @@ export async function signInWithOAuthToken(
   token: string,
   provider: string = 'google',
 ): Promise<string> {
-  const { data } = await getClient().mutation<
+  const { data, error } = await getClient().mutation<
     OAuthSignInMutation,
     OAuthSignInMutationVariables
   >(OAuthSignInDocument, { token, provider });
 
   const resultToken = data?.signInWithOAuthToken.token;
   if (!resultToken) {
-    throw new Error('Failed to sign in');
+    throw new Error(error?.message);
   }
 
   setCookie(resultToken);

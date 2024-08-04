@@ -1,0 +1,8 @@
+mutation RegisterService($args: AddEndpointArgs!) {
+  addEndpoint(args: $args) {
+    success
+    endpoint {
+      name
+    }
+  }
+}

@@ -1,28 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType({
-  description: 'An endpoint to be loaded into the API Gateway',
-  isAbstract: true,
-  inheritDescription: true,
+  description: 'A service accessible by the API Gateway',
 })
-export abstract class Endpoint {
-  @Field({ description: 'The URL of the endpoint' })
-  url: string;
+export class Endpoint {
+  @Field({
+    description:
+      'Logical name of the service, e.g. "users-service". Many nodes may share the same logical service name. Use valid DNS label. See [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-72) for more details.',
+  })
+  name!: string;
 
   @Field({
-    nullable: true,
-    description: 'The name of the service exposed by the endpoint',
+    description:
+      'The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL.',
   })
-  name?: string;
-
-  @Field({ nullable: true, description: 'A description of the endpoint' })
-  description?: string;
+  url!: string;
 }
-
-export const isEndpoint = (obj: unknown): obj is Endpoint => {
-  return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    typeof (obj as Endpoint).url === 'string'
-  );
-};

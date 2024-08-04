@@ -17,7 +17,8 @@
         "tsConfig": "apps/auth-service/tsconfig.app.json",
         "assets": ["apps/auth-service/src/assets"],
         "isolatedConfig": true,
-        "webpackConfig": "apps/auth-service/webpack.config.js"
+        "webpackConfig": "apps/auth-service/webpack.config.js",
+        "generatePackageJson": true
       },
       "configurations": {
         "development": {},
@@ -79,6 +80,29 @@
     "generate": {
       "dependsOn": ["build-generator"],
       "command": "node dist/apps/auth-service/scripts/generate-schema.js"
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": ["bridgeswood/auth-service"],
+          "load": true,
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=sha,prefix=sha-"
+          ]
+        }
+      },
+      "configurations": {
+        "ci": {
+          "push": true
+        }
+      }
     }
   }
 }

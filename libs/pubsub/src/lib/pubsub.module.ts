@@ -1,5 +1,5 @@
+import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Module } from '@nestjs/common';
-import PubSub from 'graphql-firestore-subscriptions';
 import { PubSubTokens } from './tokens';
 
 @Module({

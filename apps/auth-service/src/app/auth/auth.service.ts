@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { FirebaseTokens } from '@org/firebase';
-import { DecodedIdToken, User } from '@org/typings';
+import { DecodedIdToken } from '@org/typings';
 import {
   Auth,
   GoogleAuthProvider,
@@ -9,7 +9,7 @@ import {
   signInWithCredential,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { CrossAppUserService } from '../cross-app/cross-app.user.service';
+import { User } from '../users/models/user.model';
 import { SupportedOAuthProvider } from './supported-oauth-providers';
 
 @Injectable()
@@ -17,7 +17,6 @@ export class AuthService {
   private logger = new Logger(AuthService.name);
   constructor(
     private jwtService: JwtService,
-    private crossAppUserService: CrossAppUserService,
     @Inject(FirebaseTokens.AUTH) private firebaseAuth: Auth,
   ) {}
 

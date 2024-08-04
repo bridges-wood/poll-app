@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EndpointLoader } from './endpoint-loader';
+import { EndpointLoader } from './loaders';
 import { AddEndpointArgs } from './models/add-endpoint.args';
 import { AddEndpointResult } from './models/add-endpoint.result';
+import { Endpoint } from './models/endpoint.model';
 import { LoadedEndpoint } from './models/loaded-endpoint.model';
 import { ReloadAllEndpointsResult } from './models/reload-all-endpoints.result';
 import { RemoveEndpointResult } from './models/remove-endpoint.result';
@@ -21,10 +22,10 @@ export class EndpointsService {
     // Check if endpoint already exists with the same URL
     const existingEndpoint = this.endpointLoader
       .getEndpoints()
-      .find((e) => e.url === args.url);
+      .find((e) => e.name === args.name);
     if (existingEndpoint) {
       // Overwrite the existing endpoint
-      await this.endpointLoader.removeEndpoint({ url: args.url });
+      await this.endpointLoader.removeEndpoint({ name: args.name });
     }
 
     const addedEndpoint = await this.endpointLoader.addEndpoint(args);
@@ -34,9 +35,9 @@ export class EndpointsService {
     };
   }
 
-  async removeEndpoint(url: string): Promise<RemoveEndpointResult> {
+  async removeEndpoint(name: Endpoint['name']): Promise<RemoveEndpointResult> {
     try {
-      await this.endpointLoader.removeEndpoint({ url });
+      await this.endpointLoader.removeEndpoint({ name });
       return {
         success: true,
       };

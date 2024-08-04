@@ -1,8 +1,12 @@
-import { gql } from '@apollo/client/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLCrossAppClient } from '@org/cross-app';
+import {
+  ValidateTokenDocument,
+  ValidateTokenQuery,
+  ValidateTokenQueryVariables,
+} from '@org/graphql';
 import { User } from '@org/typings';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class CrossAppAuthService {
@@ -15,21 +19,16 @@ export class CrossAppAuthService {
    * @returns The user ID if the token is valid, otherwise throws an error
    */
   async validateToken(token: string | undefined): Promise<User['id']> {
-    if (_.isEmpty(token)) {
+    if (!token || isEmpty(token)) {
       throw new Error('Token is missing');
     }
 
-    const payload = gql`
-      query ValidateToken($token: String!) {
-        validateToken(token: $token)
-      }
-    `;
-
-    const res = await this.client.send<{ validateToken: User['id'] }>(payload, {
-      variables: { token },
-    });
+    const res = await this.client.query<
+      ValidateTokenQuery,
+      ValidateTokenQueryVariables
+    >(ValidateTokenDocument, { token });
     this.logger.debug(`Response for validateToken(${token})`, res);
 
-    return res.data.validateToken;
+    return res.validateToken;
   }
 }

@@ -16,7 +16,9 @@
         "development": {
           "outputPath": "apps/poll-app"
         },
-        "production": {}
+        "production": {
+          "generateLockfile": true
+        }
       }
     },
     "serve": {
@@ -61,6 +63,29 @@
       "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": ["bridgeswood/poll-app"],
+          "load": true,
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=sha,prefix=sha-"
+          ]
+        }
+      },
+      "configurations": {
+        "ci": {
+          "push": true
+        }
       }
     }
   }

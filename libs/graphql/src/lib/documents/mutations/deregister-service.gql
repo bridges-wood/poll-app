@@ -1,0 +1,5 @@
+mutation DeRegisterService($name: String!) {
+  removeEndpoint(name: $name) {
+    success
+  }
+}

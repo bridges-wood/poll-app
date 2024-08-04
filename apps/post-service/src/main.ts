@@ -5,18 +5,16 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import 'dotenv/config';
 
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'graphql';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3003;
+  const port =
+    process.env.NODE_ENV === 'development' ? 3002 : Number(process.env.PORT);
   await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
-  );
+  Logger.log(`🚀 Post Service is running on: http://localhost:${port}/graphql`);
 }
 
 bootstrap();

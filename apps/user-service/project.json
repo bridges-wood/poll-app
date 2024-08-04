@@ -21,7 +21,9 @@
       },
       "configurations": {
         "development": {},
-        "production": {}
+        "production": {
+          "generatePackageJson": true
+        }
       }
     },
     "serve": {
@@ -79,6 +81,29 @@
     "generate": {
       "dependsOn": ["build-generator"],
       "command": "node dist/apps/user-service/scripts/generate-schema.js"
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": ["bridgeswood/user-service"],
+          "load": true,
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=sha,prefix=sha-"
+          ]
+        }
+      },
+      "configurations": {
+        "ci": {
+          "push": true
+        }
+      }
     }
   }
 }

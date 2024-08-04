@@ -10,6 +10,20 @@ export enum ServiceStatus {
 registerEnumType(ServiceStatus, {
   name: 'ServiceStatus',
   description: 'The status of the service',
+  valuesMap: {
+    STARTING_UP: {
+      description: 'The service is starting up',
+    },
+    OK: {
+      description: 'The service is running normally',
+    },
+    ERROR: {
+      description: 'The service has encountered an error',
+    },
+    SHUTTING_DOWN: {
+      description: 'The service is shutting down',
+    },
+  },
 });
 
 @ObjectType({ description: 'Heartbeat message' })

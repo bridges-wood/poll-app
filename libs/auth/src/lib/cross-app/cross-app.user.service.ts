@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLCrossAppClient } from '@org/cross-app';
 import { User } from '@org/typings';
+import gql from 'graphql-tag';
 
 @Injectable()
 export class CrossAppUserService {
@@ -20,14 +20,12 @@ export class CrossAppUserService {
       }
     `;
 
-    const res = await this.client.send<{ user: Pick<User, 'id' | 'roles'> }>(
-      payload,
-      {
-        variables: { id },
-      },
-    );
+    const res = await this.client.query<
+      { user: Pick<User, 'id' | 'roles'> },
+      { id: string }
+    >(payload, { id });
     this.logger.debug(`Response for fetchAuthData(${id})`, res);
 
-    return res.data.user;
+    return res.user;
   }
 }

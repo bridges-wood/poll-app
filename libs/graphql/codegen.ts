@@ -4,7 +4,7 @@ const config: CodegenConfig = {
   schema: 'generated/schema.gql',
   documents: 'libs/graphql/src/lib/documents/**/*.{gql,graphql}',
   generates: {
-    'libs/graphql/src/lib/generated/react.tsx': {
+    'libs/graphql/src/lib/generated/index.ts': {
       plugins: ['typescript', 'typescript-operations', 'typescript-urql'],
       config: {
         withHooks: false,

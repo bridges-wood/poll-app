@@ -2,10 +2,11 @@ import { SubschemaConfig } from '@graphql-tools/delegate';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
+import { ExecutionRequest } from '@graphql-tools/utils';
 import { FilterRootFields } from '@graphql-tools/wrap';
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLSchema, buildSchema } from 'graphql';
-import _ from 'lodash';
+import { isNil, pick } from 'lodash';
 import {
   BehaviorSubject,
   Subject,
@@ -14,23 +15,20 @@ import {
   firstValueFrom,
   skip,
 } from 'rxjs';
-import { EndpointLoader } from '../endpoints/endpoint-loader';
+import { EndpointLoader } from '../endpoints/loaders';
 import { LoadedEndpoint } from '../endpoints/models/loaded-endpoint.model';
 
 @Injectable()
 export class SchemaStitcher {
   private readonly logger = new Logger(SchemaStitcher.name);
   private localSchema$ = new Subject<GraphQLSchema>();
-  public stitchedSchema$ = new BehaviorSubject<GraphQLSchema>(undefined);
+  public stitchedSchema$ = new BehaviorSubject<GraphQLSchema>(
+    undefined as unknown as GraphQLSchema,
+  );
 
   constructor(private endpointLoader: EndpointLoader) {
     combineLatest([this.endpointLoader.loadedEndpoints$, this.localSchema$])
-      .pipe(
-        filter(
-          ([endpoints, localSchema]) =>
-            endpoints.length > 0 && !_.isNil(localSchema),
-        ),
-      )
+      .pipe(filter(([_endpoints, localSchema]) => !isNil(localSchema)))
       .subscribe(async ([endpoints, localSchema]) => {
         const newSchema = await this.stitch(endpoints, localSchema);
         this.stitchedSchema$.next(newSchema);
@@ -41,7 +39,9 @@ export class SchemaStitcher {
     localSchema: GraphQLSchema,
   ): Promise<GraphQLSchema> {
     this.localSchema$.next(localSchema);
-    return firstValueFrom(this.stitchedSchema$.pipe(skip(1))); // Don't return initial undefined
+    return firstValueFrom(
+      this.stitchedSchema$.pipe(skip(1)),
+    ) as Promise<GraphQLSchema>; // Don't return initial undefined
   }
 
   private async stitch(
@@ -80,8 +80,8 @@ export class SchemaStitcher {
       executor: buildHTTPExecutor({
         endpoint: url,
         fetch,
-        headers: ({ context }) =>
-          _.pick(context?.request?.headers?.headersInit, ['authorization']),
+        headers: ({ context }: ExecutionRequest) =>
+          pick(context?.request?.headers?.headersInit, ['authorization']),
         // TODO make this function pure and configurable
         // TODO create trust mechanism for headers - don't trust the client, but trust the gateway
       }),

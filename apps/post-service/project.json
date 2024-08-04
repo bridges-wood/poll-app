@@ -16,7 +16,8 @@
         "main": "apps/post-service/src/main.ts",
         "tsConfig": "apps/post-service/tsconfig.app.json",
         "assets": ["apps/post-service/src/assets"],
-        "webpackConfig": "apps/post-service/webpack.config.js"
+        "webpackConfig": "apps/post-service/webpack.config.js",
+        "generatePackageJson": true
       },
       "configurations": {
         "development": {},
@@ -68,6 +69,29 @@
     "generate": {
       "dependsOn": ["build-generator"],
       "command": "node dist/apps/post-service/scripts/generate-schema.js"
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": ["bridgeswood/post-service"],
+          "load": true,
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=sha,prefix=sha-"
+          ]
+        }
+      },
+      "configurations": {
+        "ci": {
+          "push": true
+        }
+      }
     }
   }
 }

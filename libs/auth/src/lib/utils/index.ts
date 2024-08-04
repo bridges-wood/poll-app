@@ -1,5 +1,5 @@
 import { NotFoundError } from '@org/errors';
-import { admin } from '@org/firebase';
+import { admin } from '@org/firebase/admin';
 import { User } from '@org/typings';
 import { FastifyRequest as Request } from 'fastify';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';

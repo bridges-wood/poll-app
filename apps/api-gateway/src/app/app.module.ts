@@ -6,6 +6,7 @@ import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
+import { HealthModule } from '@org/health';
 import { useSchema } from 'graphql-yoga';
 import { firstValueFrom } from 'rxjs';
 import { ConfigModule } from './config/config.module';
@@ -16,6 +17,7 @@ import { SchemaModule } from './schema/schema.module';
 
 @Module({
   imports: [
+    HealthModule,
     EndpointsModule,
     SchemaModule,
     ScheduleModule.forRoot(),
@@ -45,6 +47,7 @@ import { SchemaModule } from './schema/schema.module';
             'graphql-ws': true,
           },
           batching: true,
+          path: 'graphql',
         };
       },
     }),
