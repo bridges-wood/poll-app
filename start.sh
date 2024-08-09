@@ -18,7 +18,7 @@ echo "Connecting to the cluster..."
 kubectl cluster-info
 
 # Deploy Consul
-echo "Deploying consul..."
+echo "🚀 Deploying consul..."
 helm install --values config/helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.2.0"
 
 # Expose the Consul UI
@@ -28,5 +28,5 @@ export CONSUL_HTTP_SSL_VERIFY=false
 # Echo the Consul HTTP token
 printf "\n\nYour Consul HTTP token is: $CONSUL_HTTP_TOKEN\n"
 
-echo "Applying the application configuration..."
+echo "📝 Applying the application configuration..."
 kubectl apply -f config/kube
