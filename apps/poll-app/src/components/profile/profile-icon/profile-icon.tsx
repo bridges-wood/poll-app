@@ -1,13 +1,16 @@
 'use client';
-import { FetchProfileDataQuery } from '@org/graphql';
+import { ProfileDataFragment } from '@org/graphql';
 import { Avatar, AvatarFallback, AvatarImage } from '@org/ui-kit/ui/avatar';
 import { Button } from '@org/ui-kit/ui/button';
 import { Pencil1Icon } from '@radix-ui/react-icons';
-import { FC } from 'react';
+import { head } from 'lodash';
+import Link, { LinkProps } from 'next/link';
+import { ComponentPropsWithoutRef, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 // TODO make this just a display component
 export type ProfileIconProps = {
-  data?: FetchProfileDataQuery;
+  data?: ProfileDataFragment;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   editable?: boolean;
 };
@@ -28,20 +31,25 @@ const FONT_SIZE_MAP: Record<NonNullable<ProfileIconProps['size']>, string> = {
   '2xl': 'text-4xl', // 40px
 };
 
-const ProfileIcon: FC<ProfileIconProps> = ({
+const ProfileIcon: FC<ProfileIconProps & ComponentPropsWithoutRef<'div'>> = ({
   data,
   size = 'sm',
   editable = false,
+  className,
+  ...props
 }) => {
   return (
-    <div className={`relative ${IMAGE_SIZE_MAP[size]}`}>
+    <div
+      {...props}
+      className={twMerge(`relative ${IMAGE_SIZE_MAP[size]}`, className)}
+    >
       <Avatar className={`${IMAGE_SIZE_MAP[size]}`}>
         <AvatarImage
-          src={data?.me.profilePicture || undefined}
-          alt={data?.me.displayName}
+          src={data?.profilePicture || undefined}
+          alt={data?.displayName}
         />
         <AvatarFallback className={` ${FONT_SIZE_MAP[size]}`}>
-          {data?.me.displayName[0]}
+          {head(data?.displayName)}
         </AvatarFallback>
       </Avatar>
       {editable && (
@@ -57,5 +65,13 @@ const ProfileIcon: FC<ProfileIconProps> = ({
     </div>
   );
 };
+
+export const LinkedProfileIcon: FC<
+  ProfileIconProps & { containerProps?: Omit<LinkProps, 'href'>; href: string }
+> = ({ href, containerProps, ...props }) => (
+  <Link {...containerProps} href={href}>
+    <ProfileIcon {...props} />
+  </Link>
+);
 
 export default ProfileIcon;

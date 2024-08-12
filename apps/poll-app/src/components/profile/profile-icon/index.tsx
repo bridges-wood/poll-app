@@ -16,7 +16,7 @@ const ProfileIconContainer: FC<ProfileIconContainerProps> = async (props) => {
   >(FetchProfileDataDocument, {});
   if (!data) return null;
 
-  return <ProfileIcon data={data} {...props} />;
+  return <ProfileIcon data={data.me} {...props} />;
 };
 
 export default ProfileIconContainer;

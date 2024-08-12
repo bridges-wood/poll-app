@@ -7,12 +7,13 @@ import { Dispatch } from '@poll-app/lib/store';
 import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { isNil } from 'lodash';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 // See https://developers.google.com/identity/branding-guidelines
 
 const GoogleButton: FC = () => {
+  const [disabled, setDisabled] = useState(false)
   const router = useRouter();
   const dispatch = useDispatch<Dispatch>();
   const searchParams = useSearchParams();
@@ -22,8 +23,10 @@ const GoogleButton: FC = () => {
     <Button
       className="w-full justify-center py-2 font-light"
       variant="outline"
+      disabled={disabled}
       onClick={async (event) => {
         event.preventDefault();
+        setDisabled(true);
         try {
           const result = await signInWithPopup(auth, new GoogleAuthProvider());
           const authCredential =
@@ -36,6 +39,7 @@ const GoogleButton: FC = () => {
           dispatch.auth.login(token);
           router.push(redirect);
         } catch (error) {
+          setDisabled(false);
           const err = error as AuthError;
           switch (err.code) {
             case 'auth/account-exists-with-different-credential':

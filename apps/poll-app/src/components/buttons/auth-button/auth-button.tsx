@@ -30,7 +30,7 @@ const AuthButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          <ProfileIcon data={result.data} />
+          <ProfileIcon data={result.data.me} />
           <span className="sr-only">Profile menu</span>
         </Button>
       </DropdownMenuTrigger>
