@@ -11,6 +11,18 @@ const config: CodegenConfig = {
         withComponent: false,
         withHOC: false,
         urqlImportFrom: '@urql/core',
+        scalars: {
+          DateTime: {
+            input: 'Date',
+            output: 'string',
+          },
+        },
+      },
+    },
+    'libs/graphql/assets/introspection.json': {
+      plugins: ['introspection'],
+      config: {
+        minify: true,
       },
     },
   },

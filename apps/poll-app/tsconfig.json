@@ -24,6 +24,7 @@
       "@org/ui-kit/ui/*": ["libs/ui-kit/ui/src/lib/ui/*"],
       "@org/ui-kit/util": ["libs/ui-kit/util/src/index.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
+      "@org/graphql/schema.json": ["libs/graphql/assets/introspection.json"],
       "@org/typings": ["libs/typings/src/index.ts"],
       "@org/graphql/server": ["libs/graphql/src/lib/server/index.ts"],
       "@org/registration": ["libs/registration/src/index.ts"],

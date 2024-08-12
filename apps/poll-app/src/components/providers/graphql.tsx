@@ -1,4 +1,5 @@
 'use client';
+import schema from '@org/graphql/schema.json';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
 import {
@@ -19,7 +20,12 @@ const GraphQLProvider: FC<PropsWithChildren> = ({ children }) => {
       url:
         process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:3000/graphql',
       exchanges: [
-        cacheExchange({}),
+        cacheExchange({
+          keys: {
+            MultipleChoiceQuestion: () => null,
+          },
+          schema,
+        }),
         authExchange(async (utils) => {
           return {
             willAuthError: (operation) => {

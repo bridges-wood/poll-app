@@ -1,3 +1,4 @@
+import schema from '@org/graphql/schema.json';
 import { createClient, fetchExchange } from '@urql/core';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
@@ -10,10 +11,15 @@ const { getClient } = registerUrql(() => {
       ? `http://localhost:${process.env['API_GATEWAY_SERVICE_PORT']}/graphql`
       : 'http://localhost:3000/graphql';
 
-  console.log('Creating client with url:', url);
+  console.info('Creating client with url:', url);
   return createClient({
     exchanges: [
-      cacheExchange({}),
+      cacheExchange({
+        keys: {
+          MultipleChoiceQuestion: () => null,
+        },
+        schema,
+      }),
       authExchange(async (utils) => {
         const token = cookies().get('token')?.value;
 
@@ -25,11 +31,11 @@ const { getClient } = registerUrql(() => {
             });
           },
           didAuthError: (error) => {
-            console.log(error.graphQLErrors.map((e) => e.message));
+            console.error(error.graphQLErrors.map((e) => e.message));
             return error.graphQLErrors.some((e) => e.message === 'jwt expired');
           },
           async refreshAuth() {
-            console.log('Refreshing token');
+            console.info('Refreshing token');
           },
         };
       }),
