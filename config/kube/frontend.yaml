@@ -56,9 +56,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 4200
-          env:
-            - name: NEXT_PUBLIC_API_URL
-              value: "/"
           resources:
             limits:
               cpu: "0.5"

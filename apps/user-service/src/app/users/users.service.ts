@@ -1,7 +1,7 @@
 import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
-import { FirebaseTokens } from '@org/firebase';
+import { FirebaseTokens, USERS_COLLECTION } from '@org/firebase';
 import { PaginationService } from '@org/graphql/pagination';
 import { PubSubTokens } from '@org/pubsub';
 import {
@@ -29,7 +29,10 @@ export class UsersService extends PaginationService<User, UserDbModel> {
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     private readonly userModelMapper: UserModelMapper,
   ) {
-    super(collection(database, 'users').withConverter(userModelMapper));
+    super(
+      User,
+      collection(database, USERS_COLLECTION).withConverter(userModelMapper),
+    );
   }
 
   async findOneById(id: string): Promise<User> {

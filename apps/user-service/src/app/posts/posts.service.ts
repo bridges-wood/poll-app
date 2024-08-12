@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
-import { FirebaseTokens } from '@org/firebase';
+import { FirebaseTokens, POSTS_COLLECTION } from '@org/firebase';
 import { Firestore, doc, getDoc } from 'firebase/firestore';
 import { UsersService } from '../users/users.service';
 import { PostModelMapper } from './models/post.model-mapper';
@@ -15,7 +15,7 @@ export class PostsService {
   ) {}
 
   async postById(id: string): Promise<Post> {
-    const postRef = doc(this.database, 'posts', id).withConverter(
+    const postRef = doc(this.database, POSTS_COLLECTION, id).withConverter(
       this.postModelMapper,
     );
     const postSnap = await getDoc(postRef);

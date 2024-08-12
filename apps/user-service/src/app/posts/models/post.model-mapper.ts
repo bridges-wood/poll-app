@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { FirebaseTokens } from '@org/firebase';
+import { FirebaseTokens, USERS_COLLECTION } from '@org/firebase';
 import {
   DocumentData,
   DocumentReference,
@@ -27,7 +27,7 @@ export class PostModelMapper
     delete modelObject.id;
     return {
       ...modelObject,
-      author: doc(this.database, 'users', modelObject.author.id),
+      author: doc(this.database, USERS_COLLECTION, modelObject.author.id),
     };
   }
 

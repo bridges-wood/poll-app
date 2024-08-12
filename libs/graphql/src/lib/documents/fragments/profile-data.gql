@@ -1,0 +1,7 @@
+fragment ProfileData on User {
+  displayName
+  firstName
+  lastName
+  profilePicture
+  createdAt
+}

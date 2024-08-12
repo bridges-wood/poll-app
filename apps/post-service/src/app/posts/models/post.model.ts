@@ -1,6 +1,6 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 import { Connected, Node } from '@org/graphql/pagination';
-import { Response } from '../../responses/models/response.stub';
+import { ResponseConnection } from '../../responses/models/response.model';
 import { User } from '../../users/models/user.stub';
 import { PostContent } from './contents';
 
@@ -19,8 +19,10 @@ export class Post implements Node {
   @Field({ description: 'The caption of the post' })
   caption: string;
 
-  @Field((type) => [Response], { description: 'All responses to the post' })
-  responses: Response[];
+  @Field((type) => ResponseConnection, {
+    description: 'All responses to the post',
+  })
+  responses: ResponseConnection;
 
   @Field({ description: 'The date and time the post was created' })
   createdAt: Date;

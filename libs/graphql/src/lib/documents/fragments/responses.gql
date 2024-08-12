@@ -1,0 +1,3 @@
+fragment MultipleChoiceResponseFragment on MultipleChoiceResponse {
+  selectedOption
+}

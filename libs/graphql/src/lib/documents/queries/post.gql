@@ -1,0 +1,5 @@
+query FetchPost($id: String!) {
+  post(id: $id) {
+    ...FeedPost
+  }
+}

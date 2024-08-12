@@ -1,6 +1,8 @@
 import { Type } from '@nestjs/common';
-import { ArgsType, Field, Int, ObjectType } from '@nestjs/graphql';
+import { ArgsType, Field, Int, ObjectType, Union } from '@nestjs/graphql';
 import { Min } from 'class-validator';
+
+// See https://relay.dev/graphql/connections.htm
 
 export interface Node {
   id: string;
@@ -62,9 +64,14 @@ export class PageInfo implements IPageInfo {
 }
 
 export function Connected<T extends Node>(
-  classRef: Type<T>,
+  classRef: Type<T> | Union<[T]>,
 ): Type<IConnectionType<T>> {
-  @ObjectType(`${classRef.name}Edge`)
+  const edgeName =
+    typeof classRef === 'object' && (classRef as Union<[T]>).name
+      ? (classRef as Union<[T]>).name
+      : (classRef as Type<T>).name;
+
+  @ObjectType(`${edgeName}Edge`)
   abstract class EdgeType implements IEdgeType<T> {
     @Field((type) => String, {
       description: 'A cursor for use in pagination',
@@ -79,7 +86,7 @@ export function Connected<T extends Node>(
 
   @ObjectType({ isAbstract: true })
   abstract class ConnectionType implements IConnectionType<T> {
-    @Field((type) => [EdgeType], {
+    @Field((type) => [EdgeType!], {
       nullable: true,
       description: 'Edges connected to this page',
     })
@@ -125,6 +132,13 @@ export class PaginationArgs
     description: 'Cursor before which items will be returned',
   })
   before?: string;
+
+  @Field((type) => String, {
+    nullable: true,
+    description: 'The field on the resultant node to order by',
+    defaultValue: 'id',
+  })
+  orderBy?: string;
 }
 
 export * from './constants';

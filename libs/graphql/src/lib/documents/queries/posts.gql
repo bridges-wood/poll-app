@@ -1,0 +1,27 @@
+query FetchPosts(
+  $first: Int
+  $after: String
+  $last: Int
+  $before: String
+  $orderBy: String
+) {
+  posts(
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+    orderBy: $orderBy
+  ) {
+    edges {
+      node {
+        ...FeedPost
+      }
+    }
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+  }
+}

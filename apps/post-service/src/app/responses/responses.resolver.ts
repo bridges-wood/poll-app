@@ -1,16 +1,44 @@
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
+import { CurrentUser } from '@org/auth';
+import { PaginationArgs } from '@org/graphql/pagination';
 import { Post } from '../posts/models/post.model';
-import { PostsService } from '../posts/posts.service';
-import { Response } from './models/response.stub';
+import { User } from '../users/models/user.stub';
+import {
+  Response,
+  ResponseConnection,
+  ResponseInput,
+} from './models/response.model';
+import { ResponsesService } from './responses.service';
 
-@Resolver((of) => Response)
+@Resolver((of) => Post)
 export class ResponsesResolver {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly responsesService: ResponsesService) {}
 
-  @ResolveField((returns) => Post, {
-    description: 'The post that the response relates to',
+  @Mutation((returns) => Response, {
+    description: 'Create a response to a post',
   })
-  async post(@Parent() postResponse: Response): Promise<Post> {
-    return this.postsService.findOneById(postResponse.post.id);
+  async createResponse(
+    @Args('postId', { description: 'The id of the post to respond to' })
+    postId: string,
+    @Args('args') args: ResponseInput,
+    @CurrentUser() user: Pick<User, 'id'>,
+  ): Promise<Response> {
+    return this.responsesService.createResponse(postId, args, user);
+  }
+
+  @ResolveField((returns) => ResponseConnection, {
+    description: 'All responses to the post',
+  })
+  async responses(
+    @Args() args: PaginationArgs,
+    @Parent() parent: Post,
+  ): Promise<ResponseConnection> {
+    return this.responsesService.findAllByPostId(parent.id, args);
   }
 }

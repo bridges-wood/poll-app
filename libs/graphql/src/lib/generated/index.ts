@@ -15,7 +15,7 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: { input: any; output: any; }
+  DateTime: { input: Date; output: string; }
 };
 
 /** Arguments to add a new endpoint to the gateway. Intended to be compatible with [Hashicorp Consul](https://developer.hashicorp.com/consul). */
@@ -40,21 +40,10 @@ export type AuthResult = {
   token: Scalars['String']['output'];
 };
 
-/** Stub comment */
-export type Comment = {
-  __typename?: 'Comment';
-  /** The ID of the comment as it is stored in Firebase */
-  id: Scalars['ID']['output'];
-};
-
 export type CommentInput = {
   /** The ID of the comment as it is stored in Firebase */
   id: Scalars['ID']['input'];
 };
-
-export enum ContentType {
-  MultipleChoice = 'MULTIPLE_CHOICE'
-}
 
 export type CreatePostArgs = {
   /** The caption of the post */
@@ -83,25 +72,7 @@ export type Endpoint = {
 
 export type IPostContent = {
   /** The type of content */
-  type: ContentType;
-};
-
-/** A response to a post */
-export type IPostResponse = {
-  /** The author of the response */
-  author: User;
-  /** The content of the response */
-  content: Scalars['String']['output'];
-  /** The date and time the response was created */
-  createdAt: Scalars['DateTime']['output'];
-  /** The ID of the response */
-  id: Scalars['String']['output'];
-  /** The post that the response relates to */
-  post: Post;
-  /** The type of content */
-  type: ContentType;
-  /** The date and time the response was last updated */
-  updatedAt: Scalars['DateTime']['output'];
+  type: PostContentType;
 };
 
 /** An endpoint that has been loaded into the API Gateway */
@@ -124,10 +95,8 @@ export type MultipleChoiceQuestion = IPostContent & {
   options: Array<Scalars['String']['output']>;
   /** The question being asked */
   question: Scalars['String']['output'];
-  /** All responses to the question */
-  responses: Array<MultipleChoiceResponse>;
   /** The type of content */
-  type: ContentType;
+  type: PostContentType;
   /** The vote totals for each option */
   voteTotals: Array<Scalars['Float']['output']>;
 };
@@ -140,12 +109,12 @@ export type MultipleChoiceQuestionInput = {
 };
 
 /** A response to a multiple choice question */
-export type MultipleChoiceResponse = IPostResponse & {
+export type MultipleChoiceResponse = Response & {
   __typename?: 'MultipleChoiceResponse';
   /** The author of the response */
   author: User;
   /** The content of the response */
-  content: Scalars['String']['output'];
+  content?: Maybe<Scalars['String']['output']>;
   /** The date and time the response was created */
   createdAt: Scalars['DateTime']['output'];
   /** The ID of the response */
@@ -155,9 +124,18 @@ export type MultipleChoiceResponse = IPostResponse & {
   /** The index of the option selected */
   selectedOption: Scalars['Float']['output'];
   /** The type of content */
-  type: ContentType;
+  type: PostContentType;
   /** The date and time the response was last updated */
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type MultipleChoiceResponseInput = {
+  /** The content of the response */
+  content?: InputMaybe<Scalars['String']['input']>;
+  /** The index of the option selected */
+  selectedOption: Scalars['Float']['input'];
+  /** The type of content */
+  type: PostContentType;
 };
 
 export type Mutation = {
@@ -166,6 +144,8 @@ export type Mutation = {
   addEndpoint: AddEndpointResult;
   /** Create a new post */
   createPost: Post;
+  /** Create a response to a post */
+  createResponse: Response;
   /** Create a new user */
   createUser: User;
   /** Delete a post by id */
@@ -194,6 +174,12 @@ export type MutationAddEndpointArgs = {
 
 export type MutationCreatePostArgs = {
   args: CreatePostArgs;
+};
+
+
+export type MutationCreateResponseArgs = {
+  args: ResponseInput;
+  postId: Scalars['String']['input'];
 };
 
 
@@ -260,16 +246,26 @@ export type Post = {
   author: User;
   /** The caption of the post */
   caption: Scalars['String']['output'];
-  /** All comments on the post */
-  comments: Array<Comment>;
   /** The content of the post */
   content: PostContent;
   /** The date and time the post was created */
   createdAt: Scalars['DateTime']['output'];
   /** The ID of the post as it is stored in Firebase */
   id: Scalars['ID']['output'];
+  /** All responses to the post */
+  responses: ResponseConnection;
   /** The date and time the post was last updated */
   updatedAt: Scalars['DateTime']['output'];
+};
+
+
+/** A post */
+export type PostResponsesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PostConnection = {
@@ -288,6 +284,12 @@ export type PostContentInput = {
   multipleChoiceQuestion?: InputMaybe<MultipleChoiceQuestionInput>;
 };
 
+/** The type of content for a post */
+export enum PostContentType {
+  /** A multiple choice question */
+  MultipleChoice = 'MULTIPLE_CHOICE'
+}
+
 export type PostEdge = {
   __typename?: 'PostEdge';
   /** A cursor for use in pagination */
@@ -298,6 +300,8 @@ export type PostEdge = {
 
 export type Query = {
   __typename?: 'Query';
+  /** Get a user by id */
+  _userById: User;
   /** Get all endpoints currently loaded by the gateway */
   endpoints: Array<LoadedEndpoint>;
   /** Get the user from the passed authorization header */
@@ -317,6 +321,11 @@ export type Query = {
 };
 
 
+export type Query_UserByIdArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type QueryPostArgs = {
   id: Scalars['String']['input'];
 };
@@ -327,6 +336,7 @@ export type QueryPostsArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -336,6 +346,7 @@ export type QueryPostsByIdsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   ids: Array<Scalars['String']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -349,6 +360,7 @@ export type QueryUsersArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -366,6 +378,46 @@ export type RemoveEndpointResult = {
   __typename?: 'RemoveEndpointResult';
   /** Whether the endpoint was removed successfully */
   success: Scalars['Boolean']['output'];
+};
+
+/** A response to a post */
+export type Response = {
+  /** The author of the response */
+  author: User;
+  /** The content of the response */
+  content?: Maybe<Scalars['String']['output']>;
+  /** The date and time the response was created */
+  createdAt: Scalars['DateTime']['output'];
+  /** The ID of the response */
+  id: Scalars['String']['output'];
+  /** The post that the response relates to */
+  post: Post;
+  /** The type of content */
+  type: PostContentType;
+  /** The date and time the response was last updated */
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ResponseConnection = {
+  __typename?: 'ResponseConnection';
+  /** Edges connected to this page */
+  edges?: Maybe<Array<ResponseEdge>>;
+  /** Information about this page */
+  pageInfo: PageInfo;
+  /** Total count of items in existence */
+  totalCount: Scalars['Int']['output'];
+};
+
+export type ResponseEdge = {
+  __typename?: 'ResponseEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: Response;
+};
+
+export type ResponseInput = {
+  multipleChoiceResponse?: InputMaybe<MultipleChoiceResponseInput>;
 };
 
 export type Subscription = {
@@ -432,6 +484,16 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+
+/** A user */
+export type UserPostsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UserConnection = {
   __typename?: 'UserConnection';
   /** Edges connected to this page */
@@ -451,6 +513,16 @@ export type UserEdge = {
 };
 
 export type AuthDataFragment = { __typename?: 'User', id: string, roles: Array<string> };
+
+export type FeedMultipleChoiceQuestionFragment = { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> };
+
+export type FeedResponseFragment = { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } };
+
+export type FeedPostFragment = { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } };
+
+export type ProfileDataFragment = { __typename?: 'User', displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string };
+
+export type MultipleChoiceResponseFragmentFragment = { __typename?: 'MultipleChoiceResponse', selectedOption: number };
 
 export type CreateUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -495,14 +567,30 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename: 'User', id: string, updatedAt: any } | null };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename: 'User', id: string, updatedAt: string } | null };
 
-export type ProfileDataFragment = { __typename?: 'User', email: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null };
+export type FetchPostQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type FetchPostQuery = { __typename?: 'Query', post: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } };
+
+export type FetchPostsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type FetchPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', edges?: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } }> | null, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type FetchProfileDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchProfileDataQuery = { __typename?: 'Query', me: { __typename: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null } };
+export type FetchProfileDataQuery = { __typename?: 'Query', me: { __typename: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } };
 
 export type ValidateTokenQueryVariables = Exact<{
   token: Scalars['String']['input'];
@@ -519,13 +607,71 @@ export const AuthDataFragmentDoc = gql`
     `;
 export const ProfileDataFragmentDoc = gql`
     fragment ProfileData on User {
-  email
   displayName
   firstName
   lastName
   profilePicture
+  createdAt
 }
     `;
+export const FeedMultipleChoiceQuestionFragmentDoc = gql`
+    fragment FeedMultipleChoiceQuestion on MultipleChoiceQuestion {
+  type
+  question
+  options
+  voteTotals
+}
+    `;
+export const MultipleChoiceResponseFragmentFragmentDoc = gql`
+    fragment MultipleChoiceResponseFragment on MultipleChoiceResponse {
+  selectedOption
+}
+    `;
+export const FeedResponseFragmentDoc = gql`
+    fragment FeedResponse on Response {
+  id
+  type
+  ... on MultipleChoiceResponse {
+    ...MultipleChoiceResponseFragment
+  }
+  post {
+    id
+  }
+  author {
+    id
+    ...ProfileData
+  }
+  content
+  createdAt
+}
+    ${MultipleChoiceResponseFragmentFragmentDoc}
+${ProfileDataFragmentDoc}`;
+export const FeedPostFragmentDoc = gql`
+    fragment FeedPost on Post {
+  id
+  author {
+    id
+    ...ProfileData
+  }
+  content {
+    ... on MultipleChoiceQuestion {
+      ...FeedMultipleChoiceQuestion
+    }
+  }
+  responses(last: 3, orderBy: "createdAt") {
+    edges {
+      node {
+        ...FeedResponse
+      }
+    }
+  }
+  caption
+  createdAt
+  updatedAt
+}
+    ${ProfileDataFragmentDoc}
+${FeedMultipleChoiceQuestionFragmentDoc}
+${FeedResponseFragmentDoc}`;
 export const CreateUserDocument = gql`
     mutation CreateUser($id: String!, $args: CreateUserArgs!) {
   createUser(id: $id, args: $args) {
@@ -576,11 +722,42 @@ export const UpdateUserDocument = gql`
   }
 }
     `;
+export const FetchPostDocument = gql`
+    query FetchPost($id: String!) {
+  post(id: $id) {
+    ...FeedPost
+  }
+}
+    ${FeedPostFragmentDoc}`;
+export const FetchPostsDocument = gql`
+    query FetchPosts($first: Int, $after: String, $last: Int, $before: String, $orderBy: String) {
+  posts(
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+    orderBy: $orderBy
+  ) {
+    edges {
+      node {
+        ...FeedPost
+      }
+    }
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+  }
+}
+    ${FeedPostFragmentDoc}`;
 export const FetchProfileDataDocument = gql`
     query FetchProfileData {
   me {
     __typename
     id
+    email
     ...ProfileData
   }
 }

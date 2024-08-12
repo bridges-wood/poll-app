@@ -1,4 +1,5 @@
 import { NotFoundError } from '@org/errors';
+import { USERS_COLLECTION } from '@org/firebase';
 import { admin } from '@org/firebase/admin';
 import { User } from '@org/typings';
 import { FastifyRequest as Request } from 'fastify';
@@ -28,7 +29,7 @@ export const getUserFromToken = async (token: string): Promise<User> => {
   const decodedToken: DecodedIdToken = await admin.auth().verifyIdToken(token);
   const accountSnapshot = await admin
     .firestore()
-    .collection('users')
+    .collection(USERS_COLLECTION)
     .doc(decodedToken.uid)
     .get();
 

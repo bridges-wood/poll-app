@@ -30,7 +30,7 @@ import { UpdatePostArgs } from './models/update-post.args';
 
 @Injectable()
 export class PostsService extends PaginationService<Post, PostDbModel> {
-  private readonly logger = new Logger(PostsService.name);
+  override logger = new Logger(PostsService.name);
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,

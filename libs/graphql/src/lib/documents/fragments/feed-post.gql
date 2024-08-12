@@ -1,0 +1,46 @@
+fragment FeedMultipleChoiceQuestion on MultipleChoiceQuestion {
+  type
+  question
+  options
+  voteTotals
+}
+
+fragment FeedResponse on Response {
+  id
+  type
+  ... on MultipleChoiceResponse {
+    ...MultipleChoiceResponseFragment
+  }
+  post {
+    id
+  }
+  author {
+    id
+    ...ProfileData
+  }
+  content
+  createdAt
+}
+
+fragment FeedPost on Post {
+  id
+  author {
+    id
+    ...ProfileData
+  }
+  content {
+    ... on MultipleChoiceQuestion {
+      ...FeedMultipleChoiceQuestion
+    }
+  }
+  responses(last: 3, orderBy: "createdAt") {
+    edges {
+      node {
+        ...FeedResponse
+      }
+    }
+  }
+  caption
+  createdAt
+  updatedAt
+}

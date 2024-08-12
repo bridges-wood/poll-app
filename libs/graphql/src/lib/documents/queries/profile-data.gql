@@ -1,15 +1,8 @@
-fragment ProfileData on User {
-  email
-  displayName
-  firstName
-  lastName
-  profilePicture
-}
-
 query FetchProfileData {
   me {
     __typename
     id
+    email
     ...ProfileData
   }
 }

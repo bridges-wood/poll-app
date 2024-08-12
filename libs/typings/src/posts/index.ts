@@ -1,4 +1,5 @@
 import { User } from '../user';
+import { MultipleChoiceQuestion } from './multiple-choice';
 export * from './multiple-choice';
 
 export interface Post {
