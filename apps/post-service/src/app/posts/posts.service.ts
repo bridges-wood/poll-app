@@ -1,16 +1,20 @@
 import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
-import { FirebaseTokens } from '@org/firebase';
+import {
+  FirebaseTokens,
+  POSTS_COLLECTION,
+  USERS_COLLECTION,
+} from '@org/firebase';
 import { PaginationService } from '@org/graphql/pagination';
 import { PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
 import {
-  Firestore,
   arrayRemove,
   arrayUnion,
   collection,
   doc,
+  Firestore,
   getDoc,
   onSnapshot,
   runTransaction,
@@ -32,7 +36,10 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     private readonly postModelMapper: PostModelMapper,
   ) {
-    super(collection(database, 'posts').withConverter(postModelMapper));
+    super(
+      Post,
+      collection(database, POSTS_COLLECTION).withConverter(postModelMapper),
+    );
   }
 
   async findOneById(id: string): Promise<Post> {
@@ -64,8 +71,7 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
     const post: Omit<Post, 'id'> = {
       content: this.buildContent(args.content),
       caption: args.caption,
-      author: author,
-      comments: [],
+      author,
       createdAt: new Date(),
       updatedAt: new Date(),
     } as Omit<Post, 'id'>;
@@ -78,7 +84,8 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
       this.logger.log(`Created post with id "${postRef.id}"`);
 
       // Update the posts array in the user document
-      const userRef = doc(this.database, 'users', author.id);
+      const userRef = doc(this.database, USERS_COLLECTION, author.id);
+      // TODO replace this with a subcollection
       transaction.update(userRef, {
         posts: arrayUnion(postRef),
       });
@@ -98,7 +105,6 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
         question: content.multipleChoiceQuestion.question,
         options: content.multipleChoiceQuestion.options,
         voteTotals: content.multipleChoiceQuestion.options.map(() => 0),
-        responses: [],
       } as MultipleChoiceQuestion;
     } else {
       throw new Error('Invalid content type');
@@ -121,7 +127,7 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
 
   async deleteOne(id: string): Promise<boolean> {
     return await runTransaction(this.database, async (transaction) => {
-      const postRef = doc(this.database, 'posts', id);
+      const postRef = doc(this.database, POSTS_COLLECTION, id);
       const postDoc = await transaction.get(postRef);
 
       if (!postDoc.exists()) {
@@ -134,7 +140,7 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
 
       // Remove post from user's posts array
       const post = postDoc.data();
-      const userRef = doc(this.database, 'users', post.author);
+      const userRef = doc(this.database, USERS_COLLECTION, post.author);
       transaction.update(userRef, {
         posts: arrayRemove(postRef),
       });

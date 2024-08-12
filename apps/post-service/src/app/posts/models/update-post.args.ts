@@ -9,7 +9,7 @@ export class UpdatePostArgs extends PartialType(
     'createdAt',
     'updatedAt',
     'content',
-    'comments',
+    'responses',
     'author',
   ] as const),
   InputType,

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { FirebaseTokens } from '@org/firebase';
+import { FirebaseTokens, USERS_COLLECTION } from '@org/firebase';
 import { PostContentType } from '@org/typings';
 import {
   DocumentData,
@@ -12,7 +12,6 @@ import {
   WithFieldValue,
   doc,
 } from 'firebase/firestore';
-import { Comment } from '../../comments/models/comment.stub';
 import { User } from '../../users/models/user.stub';
 import {
   MultipleChoiceQuestion,
@@ -22,15 +21,11 @@ import { Post } from './post.model';
 
 export interface PostDbModel
   extends DocumentData,
-    Omit<Post, 'author' | 'comments' | 'id' | 'content'> {
+    Omit<Post, 'author' | 'responses' | 'id' | 'content'> {
   /**
    * Reference to the author of the post
    */
   author: DocumentReference<User>;
-  /**
-   * Array of comment references
-   */
-  comments: DocumentReference<Comment>[];
   /**
    * The content of the post
    */
@@ -56,7 +51,6 @@ export class PostModelMapper
       ...modelObject,
       content: this.serializeContent(modelObject.content),
       author: this.authorToReference(modelObject.author),
-      comments: this.commentsToReferences(modelObject.comments),
       // If we're not creating a new post, updatedAt should be set
       updatedAt: modelObject.updatedAt ?? new Date(),
     };
@@ -95,7 +89,6 @@ export class PostModelMapper
       ...data,
       content: this.deseralizeContent(data.content),
       author: this.referenceToAuthor(data.author),
-      comments: this.referencesToComments(data.comments),
       // Firestore returns Timestamp objects, but we want to work with Date objects
       createdAt: data.createdAt.toDate(),
       updatedAt: data.updatedAt.toDate(),
@@ -113,7 +106,6 @@ export class PostModelMapper
             question: content.question,
             options: content.options,
             voteTotals: Object.values(content.voteTotals),
-            responses: [],
           };
       }
     } else {
@@ -125,7 +117,7 @@ export class PostModelMapper
     author: FieldValue | WithFieldValue<User>,
   ): DocumentReference | FieldValue {
     if ('id' in author) {
-      return doc(this.database, 'users', author.id as string);
+      return doc(this.database, USERS_COLLECTION, author.id as string);
     }
 
     return author;
@@ -139,27 +131,5 @@ export class PostModelMapper
     }
 
     return authorReference;
-  }
-
-  private commentsToReferences(
-    comments: FieldValue | WithFieldValue<Comment[]>,
-  ): DocumentReference[] | FieldValue {
-    if (Array.isArray(comments)) {
-      return comments.map((comment: Comment) =>
-        doc(this.database, 'comments', comment.id as string),
-      );
-    }
-
-    return comments;
-  }
-
-  private referencesToComments(
-    commentReferences: FieldValue | Comment['id'][],
-  ): Comment[] | FieldValue {
-    if (Array.isArray(commentReferences)) {
-      return commentReferences.map((id) => ({ id }));
-    }
-
-    return commentReferences;
   }
 }

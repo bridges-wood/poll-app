@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
-import { FirebaseTokens } from '@org/firebase';
+import { FirebaseTokens, POSTS_COLLECTION, USERS_COLLECTION } from '@org/firebase';
 import {
   Firestore,
   collection,
@@ -20,12 +20,12 @@ export class UsersService {
   ) {}
 
   async userById(id: string): Promise<InternalUser> {
-    const postsRef = collection(this.database, 'posts').withConverter(
+    const postsRef = collection(this.database, POSTS_COLLECTION).withConverter(
       this.postModelMapper,
     );
     const q = query(
       postsRef,
-      where('author', '==', doc(this.database, 'users', id)),
+      where('author', '==', doc(this.database, USERS_COLLECTION, id)),
     );
 
     const querySnapshot = await getDocs(q);

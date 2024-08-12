@@ -13,8 +13,14 @@ import {
 } from './multiple-choice.model';
 
 registerEnumType(PostContentType, {
-  name: 'ContentType',
-});
+  name: 'PostContentType',
+  description: 'The type of content for a post',
+  valuesMap: {
+    MULTIPLE_CHOICE: {
+      description: 'A multiple choice question',
+    },
+  },
+}); 
 
 @InterfaceType()
 export abstract class IPostContent {

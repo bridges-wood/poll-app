@@ -14,6 +14,7 @@ import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { HealthModule } from '@org/health';
 import { GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
+import { ResponsesModule } from './responses/responses.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { UsersModule } from './users/users.module';
     AuthGuardModule,
     PostsModule,
     UsersModule,
+    ResponsesModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       imports: [ConfigModule, ErrorsModule],
       inject: [ConfigService, ErrorFormatter],
