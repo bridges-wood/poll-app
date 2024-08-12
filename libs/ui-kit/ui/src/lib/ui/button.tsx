@@ -7,18 +7,16 @@ import * as React from 'react';
 import { cn } from '@org/ui-kit/util';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none',
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow hover:bg-primary/90',
-        destructive:
-          'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+          'bg-background-neutral text-foreground-accent-emphasis shadow-md hover:bg-secondary/80 disabled:bg-background-neutral-muted disabled:text-foreground-muted',
+        danger:
+          'border-border-danger-emphasis border text-destructive-foreground shadow-sm hover:bg-background-danger-emphasis hover:text-foreground-emphasis',
         outline:
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
-        secondary:
-          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
+          'border border-border-muted bg-background-transparent shadow-sm hover:bg-background-muted hover:text-foreground-muted disabled:bg-background-neutral-muted disabled:text-foreground-muted',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
       },

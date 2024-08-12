@@ -7,7 +7,7 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
     return (
       <span
         ref={ref}
-        className="border-primary inline-block h-6 w-6 animate-spin rounded-full border-2"
+        className="border-border-accent-emphasis inline-block h-6 w-6 animate-spin rounded-full border-2"
         {...props}
       />
     );
