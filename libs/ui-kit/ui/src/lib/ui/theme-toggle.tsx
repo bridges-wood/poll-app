@@ -1,6 +1,7 @@
 'use client';
 
-import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { DesktopIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { Button } from './button';
 import {
@@ -18,8 +19,35 @@ export function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <AnimatePresence>
+            {theme === 'light' && (
+              <motion.div
+                key="light"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+              >
+                <SunIcon className="h-[1.2rem] w-[1.2rem]" />
+              </motion.div>
+            )}
+            {theme === 'dark' && (
+              <motion.div
+                key="dark"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+              >
+                <MoonIcon className="h-[1.2rem] w-[1.2rem]" />
+              </motion.div>
+            )}
+            {theme === 'system' && (
+              <motion.div
+                key="system"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+              >
+                <DesktopIcon className="h-[1.2rem] w-[1.2rem]" />
+              </motion.div>
+            )}
+          </AnimatePresence>
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>

@@ -1,0 +1,109 @@
+@layer base {
+  :root {
+    /* Foreground */
+    --fgColor-default: #1f2328;
+    --fgColor-muted: #636c76;
+    --fgColor-emphasis: #ffffff;
+    --fgColor-inverse: #ffffff;
+    --fgColor-white: #ffffff;
+    --fgColor-black: #1f2328;
+    --fgColor-disabled: #8c959f;
+    --fgColor-link: #0969da;
+    --fgColor-neutral: #57606a;
+    --fgColor-accent: #0969da;
+    --fgColor-success: #1a7f37;
+    --fgColor-open: #1a7f37;
+    --fgColor-attention: #9a6700;
+    --fgColor-severe: #bc4c00;
+    --fgColor-danger: #d1242f;
+    --fgColor-closed: #d1242f;
+    --fgColor-done: #8250df;
+    --fgColor-upsell: #8250df;
+
+    /* Background */
+    --bgColor-default: #ffffff;
+    --bgColor-muted: #f6f8fa;
+    --bgColor-inset: #f6f8fa;
+    --bgColor-emphasis: #24292f;
+    --bgColor-inverse: #24292f;
+    --bgColor-white: #ffffff;
+    --bgColor-black: #1f2328;
+    --bgColor-disabled: #eaeef2b3;
+    --bgColor-transparent: #ffffff00;
+    --bgColor-neutral-muted: #afb8c133;
+    --bgColor-neutral-emphasis: #6e7781;
+    --bgColor-accent-muted: #ddf4ff;
+    --bgColor-accent-emphasis: #0969da;
+    --bgColor-success-muted: #dafbe1;
+    --bgColor-success-emphasis: #1f883d;
+    --bgColor-open-muted: #dafbe1;
+    --bgColor-open-emphasis: #1f883d;
+    --bgColor-attention-muted: #fff8c5;
+    --bgColor-attention-emphasis: #9a6700;
+    --bgColor-severe-muted: #fff1e5;
+    --bgColor-severe-emphasis: #bc4c00;
+    --bgColor-danger-muted: #ffebe9;
+    --bgColor-danger-emphasis: #cf222e;
+    --bgColor-closed-muted: #ffebe9;
+    --bgColor-closed-emphasis: #cf222e;
+    --bgColor-done-muted: #fbefff;
+    --bgColor-done-emphasis: #8250df;
+    --bgColor-upsell-muted: #fbefff;
+    --bgColor-upsell-emphasis: #8250df;
+    --bgColor-sponsors-muted: #ffeff7;
+    --bgColor-sponsors-emphasis: #bf3989;
+
+    /* Border */
+    --borderColor-default: #d1d9e0;
+    --borderColor-muted: #d1d9e0b3;
+    --borderColor-emphasis: #818b98;
+    --borderColor-disabled: #818b981a;
+    --borderColor-transparent: #ffffff00;
+    --borderColor-translucent: #1f232826;
+    --borderColor-neutral-muted: #d1d9e0b3;
+    --borderColor-neutral-emphasis: #59636e;
+    --borderColor-accent-muted: #54aeff66;
+    --borderColor-accent-emphasis: #0969da;
+    --borderColor-success-muted: #4ac26b66;
+    --borderColor-success-emphasis: #1a7f37;
+    --borderColor-open-muted: #4ac26b66;
+    --borderColor-open-emphasis: #1a7f37;
+    --borderColor-attention-muted: #d4a72c66;
+    --borderColor-attention-emphasis: #9a6700;
+    --borderColor-severe-muted: #fb8f4466;
+    --borderColor-severe-emphasis: #bc4c00;
+    --borderColor-danger-muted: #ff818266;
+    --borderColor-danger-emphasis: #cf222e;
+    --borderColor-closed-muted: #ff818266;
+    --borderColor-closed-emphasis: #cf222e;
+    --borderColor-done-muted: #c297ff66;
+    --borderColor-done-emphasis: #8250df;
+    --borderColor-upsell-muted: #c297ff66;
+    --borderColor-upsell-emphasis: #8250df;
+    --borderColor-sponsors-muted: #ff80c866;
+    --borderColor-sponsors-emphasis: #bf3989;
+    --border-radius-sm: 0.1875rem;
+    --border-radius-md: 0.375rem;
+    --border-radius-lg: 0.75rem;
+    --border-radius-xl: 1.5rem;
+    --border-radius-full: 9999px;
+    --border-radius-default: 0.375rem;
+    --border-width-thin: 0.0625rem;
+    --border-width-thick: 0.125rem;
+    --border-width-thicker: 0.25rem;
+    
+    /* Shadow */
+    --shadow-inset: inset 0px 1px 0px 0px #1f23280a;
+  --shadow-resting-xsmall: 0px 1px 0px 0px #1f23281a;
+  --shadow-resting-small: 0px 1px 0px 0px #1f23280a;
+  --shadow-resting-medium: 0px 3px 6px 0px #25292e1f;
+  --shadow-floating-small: 0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f;
+  --shadow-floating-medium: 0px 0px 0px 1px #d1d9e0, 0px 8px 16px -4px #25292e14, 0px 4px 32px -4px #25292e14, 0px 24px 48px -12px #25292e14, 0px 48px 96px -24px #25292e14;
+  --shadow-floating-large: 0px 0px 0px 1px #d1d9e0, 0px 40px 80px 0px #25292e3d;
+  --shadow-floating-xlarge: 0px 0px 0px 1px #d1d9e0, 0px 56px 112px 0px #25292e52;
+  --shadow-floating-legacy: 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f;
+
+    /* Focus */
+    --focus-outlineColor: #0969da;
+  }
+}
