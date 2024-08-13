@@ -1,4 +1,4 @@
-import { SubschemaConfig } from '@graphql-tools/delegate';
+import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
@@ -90,7 +90,7 @@ export class SchemaStitcher {
         new FilterRootFields(
           (_operation, rootFieldName, _fieldConfig) =>
             !rootFieldName.startsWith('_'),
-        ),
+        ) as Transform,
       ],
     };
   }
