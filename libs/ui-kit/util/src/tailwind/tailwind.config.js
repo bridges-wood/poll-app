@@ -101,6 +101,11 @@ module.exports = {
           "sponsors-muted": 'var(--borderColor-sponsors-muted)',
           "sponsors-emphasis": 'var(--borderColor-sponsors-emphasis)',
         },
+        overlay: {
+          background: 'var(--overlay-bgColor)',
+          border: 'var(--overlay-borderColor)',
+          backdrop: 'var(--overlay-backdrop-bgColor)',
+        },
         ring: 'var(--focus-outlineColor)',
       },
       borderRadius: {

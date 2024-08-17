@@ -97,5 +97,10 @@
 
     /* Focus */
     --focus-outlineColor: #1f6feb;
+
+    /* Overlay */
+    --overlay-bgColor: #151b23;
+    --overlay-borderColor: #3d444db3;
+    --overlay-backdrop-bgColor: #21283066;
   }
 }

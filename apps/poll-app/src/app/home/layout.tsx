@@ -1,23 +1,20 @@
+import { FC, PropsWithChildren, ReactNode } from 'react';
 import Sidebar from './sidebar';
 
-// interface HomeLayoutProps {
-//   feed: ReactNode;
-// }
+interface HomeLayoutProps {
+  feed: ReactNode;
+}
 
-const HomeLayout = ({
+const HomeLayout: FC<PropsWithChildren<HomeLayoutProps>> = ({
   children,
   feed,
-}: {
-  children: React.ReactNode;
-  feed: React.ReactNode;
 }) => {
   return (
-    <div className="h-[calc(100vh_-_64px)] 2xl:h-[calc(84vh_-_64px)]">
+    <div className="h-[calc(100vh-64px)]">
       <div className="grid h-full gap-5 md:grid-cols-12">
-        <Sidebar className="max-sm:hidden" />
-        <main className="grid place-items-center md:col-span-9 md:h-screen">
+        <Sidebar className="fixed mt-4 h-[calc(100vh_-_64px)] pb-8 max-sm:hidden md:col-span-2 md:col-start-1" />
+        <main className="grid h-full place-items-center md:col-span-12 md:col-start-1">
           {feed}
-          {/* {children} */}
         </main>
       </div>
     </div>

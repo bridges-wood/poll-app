@@ -12,11 +12,15 @@ type PostPage = FetchPostsQuery['posts'];
 
 interface FeedProps {
   firstPage: PostPage;
+  pageSize: number;
 }
 
-const Feed: FC<FeedProps> = ({ firstPage }) => {
+const Feed: FC<FeedProps> = ({ firstPage, pageSize }) => {
   const [pages, setPages] = useState<PostPage[]>([firstPage]);
-  const [result, executeQuery] = usePosts(1, pages.at(-1)?.pageInfo.startCursor);
+  const [result, executeQuery] = usePosts(
+    pageSize,
+    pages.at(-1)?.pageInfo.startCursor,
+  );
   const [loading, setLoading] = useState(false);
   const [_isPending, startTransition] = useTransition();
 
@@ -38,7 +42,7 @@ const Feed: FC<FeedProps> = ({ firstPage }) => {
         .map((edge) => edge.node)
         .value()
         .map((post) => (
-          <Post key={post.id} post={post} className="mb-4 last:mb-0 w-full" />
+          <Post key={post.id} post={post} className="mb-4 w-full last:mb-0" />
         ))}
       <Suspense fallback={<div>Loading...</div>}>
         <Button

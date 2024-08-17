@@ -24,7 +24,7 @@ const AuthButton = () => {
   const isLoggedIn = !!token;
   const [result] = useUser(token);
 
-  if (result.fetching) return <Skeleton className="h-8 w-8 rounded-full" />;
+  if (result.fetching) return <Skeleton className="h-9 w-9" />;
 
   return isLoggedIn && result.data ? (
     <DropdownMenu>
@@ -48,10 +48,9 @@ const AuthButton = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Button
-            variant="destructive"
+            variant="danger"
             onClick={(e) => {
               dispatch.auth.logout();
-
               router.push('/login');
             }}
           >

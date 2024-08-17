@@ -1,5 +1,6 @@
 'use client';
 
+import { ClientOnly } from '@org/ui-kit/ui/client-only';
 import {
   Navbar,
   NavbarBrand,
@@ -9,6 +10,7 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from '@org/ui-kit/ui/nav';
+import { Skeleton } from '@org/ui-kit/ui/skeleton';
 import { ThemeToggle } from '@org/ui-kit/ui/theme-toggle';
 import AuthButton from '@poll-app/components/buttons/auth-button/auth-button';
 import Link from 'next/link';
@@ -45,11 +47,13 @@ const AppHeader = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end" id="end-group">
-        <NavbarItem className="xs:list-item hidden h-9">
+        <NavbarItem className="max-xs:hidden h-9">
           <AuthButton />
         </NavbarItem>
         <NavbarItem>
-          <ThemeToggle />
+          <ClientOnly skeleton={<Skeleton className="h-9 w-9" />}>
+            <ThemeToggle />
+          </ClientOnly>
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
