@@ -90,6 +90,7 @@
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["build"],
       "options": {
+        "file": "{projectRoot}/Dockerfile",
         "engine": "docker",
         "metadata": {
           "images": ["bridgeswood/api-gateway"],

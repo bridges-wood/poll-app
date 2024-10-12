@@ -86,6 +86,7 @@
       "dependsOn": ["build"],
       "options": {
         "engine": "docker",
+        "file": "{projectRoot}/Dockerfile",
         "metadata": {
           "images": ["bridgeswood/auth-service"],
           "load": true,

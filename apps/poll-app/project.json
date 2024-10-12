@@ -70,6 +70,7 @@
       "dependsOn": ["build"],
       "options": {
         "engine": "docker",
+        "file": "{projectRoot}/Dockerfile",
         "metadata": {
           "images": ["bridgeswood/poll-app"],
           "load": true,
