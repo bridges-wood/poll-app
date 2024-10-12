@@ -16,20 +16,21 @@
         "main": "apps/auth-service/src/main.ts",
         "tsConfig": "apps/auth-service/tsconfig.app.json",
         "assets": ["apps/auth-service/src/assets"],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/auth-service/webpack.config.js",
-        "generatePackageJson": true
+        "webpackConfig": "apps/auth-service/webpack.config.js"
       },
       "configurations": {
         "development": {},
-        "production": {}
+        "production": {
+          "generatePackageJson": true
+        }
       }
     },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "apps/auth-service:build"
+        "buildTarget": "apps/auth-service:build",
+        "port": 0
       },
       "configurations": {
         "development": {
@@ -72,7 +73,6 @@
         "outputFileName": "generate-schema.js",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "assets": ["{projectRoot}/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "{projectRoot}/webpack.config.js"
       },
       "cache": true

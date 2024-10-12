@@ -16,19 +16,21 @@
         "main": "apps/post-service/src/main.ts",
         "tsConfig": "apps/post-service/tsconfig.app.json",
         "assets": ["apps/post-service/src/assets"],
-        "webpackConfig": "apps/post-service/webpack.config.js",
-        "generatePackageJson": true
+        "webpackConfig": "apps/post-service/webpack.config.js"
       },
       "configurations": {
         "development": {},
-        "production": {}
+        "production": {
+          "generatePackageJson": true
+        }
       }
     },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "post-service:build"
+        "buildTarget": "post-service:build",
+        "port": 0
       },
       "configurations": {
         "development": {
@@ -61,7 +63,6 @@
         "outputFileName": "generate-schema.js",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "assets": ["{projectRoot}/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "{projectRoot}/webpack.config.js"
       },
       "cache": true

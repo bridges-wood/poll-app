@@ -25,12 +25,10 @@
       "@org/firebase/admin": ["libs/firebase/src/admin.ts"],
       "@org/graphql": ["libs/graphql/src/index.ts"],
       "@org/graphql/pagination": ["libs/graphql/src/lib/pagination/index.ts"],
+      "@org/graphql/schema.json": ["libs/graphql/assets/introspection.json"],
       "@org/graphql/scripts": ["libs/graphql/src/scripts/index.ts"],
       "@org/graphql/transformers": [
         "libs/graphql/src/lib/transformers/index.ts"
-      ],
-      "@org/graphql/schema.json": [
-        "libs/graphql/assets/introspection.json"
       ],
       "@org/health": ["libs/health/src/index.ts"],
       "@org/heartbeat": ["libs/heartbeat/src/index.ts"],
