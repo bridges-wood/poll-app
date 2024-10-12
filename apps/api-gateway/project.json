@@ -16,20 +16,21 @@
         "main": "apps/api-gateway/src/main.ts",
         "tsConfig": "apps/api-gateway/tsconfig.app.json",
         "assets": ["apps/api-gateway/src/assets"],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/api-gateway/webpack.config.js",
-        "generatePackageJson": true
+        "webpackConfig": "apps/api-gateway/webpack.config.js"
       },
       "configurations": {
         "development": {},
-        "production": {}
+        "production": {
+          "generatePackageJson": true
+        }
       }
     },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "api-gateway:build"
+        "buildTarget": "api-gateway:build",
+        "port": 0
       },
       "configurations": {
         "development": {
@@ -78,7 +79,6 @@
         "outputFileName": "generate-schema.js",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "assets": ["{projectRoot}/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "{projectRoot}/webpack.config.js"
       }
     },

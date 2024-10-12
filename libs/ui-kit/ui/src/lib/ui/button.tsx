@@ -1,10 +1,9 @@
 'use client';
 
+import { cn } from '@org/ui-kit/util';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-
-import { cn } from '@org/ui-kit/util';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none',
@@ -14,7 +13,7 @@ const buttonVariants = cva(
         default:
           'bg-background-neutral text-foreground-accent-emphasis shadow-md hover:bg-secondary/80 disabled:bg-background-neutral-muted disabled:text-foreground-muted',
         danger:
-          'border-border-danger-emphasis border text-destructive-foreground shadow-sm hover:bg-background-danger-emphasis hover:text-foreground-emphasis',
+          'border-border-danger-emphasis border text-foreground-danger shadow-sm hover:bg-background-danger-emphasis hover:text-foreground-emphasis',
         outline:
           'border border-border-muted bg-background-transparent shadow-sm hover:bg-background-muted hover:text-foreground-muted disabled:bg-background-neutral-muted disabled:text-foreground-muted',
         ghost: 'hover:bg-accent hover:text-accent-foreground',

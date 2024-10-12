@@ -16,7 +16,6 @@
         "main": "apps/user-service/src/main.ts",
         "tsConfig": "apps/user-service/tsconfig.app.json",
         "assets": ["apps/user-service/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "apps/user-service/webpack.config.js"
       },
       "configurations": {
@@ -30,7 +29,8 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "user-service:build"
+        "buildTarget": "user-service:build",
+        "port": 0
       },
       "configurations": {
         "development": {
@@ -73,7 +73,6 @@
         "outputFileName": "generate-schema.js",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "assets": ["{projectRoot}/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "{projectRoot}/webpack.config.js"
       },
       "cache": true

@@ -1,0 +1,8 @@
+mutation VoteOnMultipleChoicePost($postId: String!, $response:MultipleChoiceResponseInput!) {
+  createResponse(postId: $postId, args: {
+    multipleChoiceResponse: $response
+  }) {
+    id
+    ...MultipleChoiceResponseFragment
+  }
+}

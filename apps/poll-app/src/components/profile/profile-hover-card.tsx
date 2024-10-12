@@ -15,7 +15,7 @@ const ProfileHoverCard: FC<
   <div
     {...props}
     className={twMerge(
-      'bg-background-white border-border-open-muted border-thick grid grid-cols-4 rounded-md p-4',
+      'bg-background-inset shadow-floating-md border-border-open-muted border-thin grid grid-cols-4 rounded-md p-4',
       className,
     )}
   >

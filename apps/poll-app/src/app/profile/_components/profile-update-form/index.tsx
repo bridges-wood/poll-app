@@ -4,9 +4,9 @@ import {
   FetchProfileDataQueryVariables,
 } from '@org/graphql';
 import getClient from '@poll-app/lib/api/registered-client';
-import { getLoggedInUserId } from '@poll-app/utils/index';
 import { FC } from 'react';
 import ProfileUpdateForm from './profile-update-form';
+import { getLoggedInUserId } from '@poll-app/utils/get-logged-in-user-id';
 
 export interface ProfileUpdateFormContainerProps extends QueryWrapperProps {}
 
