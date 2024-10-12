@@ -1,17 +1,24 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { GraphQLCrossAppClient } from '@org/cross-app';
 import {
   ValidateTokenDocument,
   ValidateTokenQuery,
   ValidateTokenQueryVariables,
 } from '@org/graphql';
-import { User } from '@org/typings';
+import { DecodedIdToken, User } from '@org/typings';
+import { Cache } from 'cache-manager';
 import { isEmpty } from 'lodash';
 
 @Injectable()
 export class CrossAppAuthService {
   private logger = new Logger(CrossAppAuthService.name);
-  constructor(private client: GraphQLCrossAppClient) {}
+  constructor(
+    private client: GraphQLCrossAppClient,
+    private jwtService: JwtService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   /**
    * Validates a JWT token and returns the decoded token, if the token is valid
@@ -23,12 +30,37 @@ export class CrossAppAuthService {
       throw new Error('Token is missing');
     }
 
+    // Query cache for token
+    this.logger.debug(`Validating token: ${token}`);
+    const value = await this.cacheManager.get(token);
+    if (!isEmpty(value)) {
+      this.logger.debug(`Found matching value in cache: ${value}`);
+      return value as User['id'];
+    }
+
     const res = await this.client.query<
       ValidateTokenQuery,
       ValidateTokenQueryVariables
     >(ValidateTokenDocument, { token });
     this.logger.debug(`Response for validateToken(${token})`, res);
 
+    // Cache the token
+    await this.cacheManager.set(token, res.validateToken, this.getTtl(token));
+
     return res.validateToken;
+  }
+
+  /**
+   * Gets the number of milliseconds until the token expires
+   * @param token The token for which to calculate the TTL
+   * @returns The number of milliseconds until the token expires
+   */
+  private getTtl(token: string): number {
+    const decoded = this.jwtService.decode<DecodedIdToken>(token);
+    if (!decoded) {
+      throw new Error(`Could not decode token ${token}`);
+    }
+
+    return decoded.exp * 1000 - Date.now();
   }
 }

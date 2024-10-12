@@ -14,8 +14,8 @@ import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { HealthModule } from '@org/health';
 import { GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
-import { UsersModule } from './users/users.module';
 import { ResponsesModule } from './responses/responses.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
