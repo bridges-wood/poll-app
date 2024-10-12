@@ -7,7 +7,7 @@ import { HoverCardContent } from '@radix-ui/react-hover-card';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ComponentPropsWithoutRef, FC } from 'react';
+import { ComponentPropsWithoutRef, FC, useState } from 'react';
 import { withErrorBoundary } from 'react-error-boundary';
 import { twMerge } from 'tailwind-merge';
 import ProfileHoverCard from '../profile/profile-hover-card';
@@ -26,6 +26,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
   ...props
 }) => {
   const router = useRouter();
+  const [showResponses, setShowResponses] = useState(false);
 
   return (
     <div
@@ -75,7 +76,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
       <div id="body" className="w-full">
         <PostBody post={post} />
       </div>
-      <div id="footer" className="mt-3 w-full">
+      <div id="footer" className="mt-3 flex w-full flex-row items-baseline">
         <div className="text-foreground-muted ml-auto w-min whitespace-nowrap text-sm">
           <RelativeTime date={new Date(post.createdAt)} timeZoneName="short" />
         </div>

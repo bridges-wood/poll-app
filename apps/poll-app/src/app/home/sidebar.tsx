@@ -18,7 +18,7 @@ import {
 } from '@radix-ui/react-icons';
 import { motion, useSpring } from 'framer-motion';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   ComponentPropsWithoutRef,
   FC,
@@ -32,6 +32,7 @@ interface HomeSidebarProps {}
 const HomeSidebar: FC<HomeSidebarProps & ComponentPropsWithoutRef<'div'>> = ({
   ...props
 }) => {
+  const router = useRouter();
   const pathname = usePathname();
   const sidebarContainerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -174,6 +175,7 @@ const HomeSidebar: FC<HomeSidebarProps & ComponentPropsWithoutRef<'div'>> = ({
                 <Button
                   variant="outline"
                   className="flex w-full items-center gap-2"
+                  onClick={() => router.push('/new-post')}
                 >
                   <Pencil2Icon />
                   Post

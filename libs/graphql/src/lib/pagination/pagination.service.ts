@@ -147,6 +147,62 @@ export abstract class PaginationService<
     };
   }
 
+  async findWithConstraints(
+    args: PaginationArgs,
+    constraints: QueryConstraint[],
+    options?: {
+      collectionRefOverride?: CollectionReference<
+        PartialWithFieldValue<AppModelType>,
+        PartialWithFieldValue<DbModelType>
+      >;
+    },
+  ): Promise<IConnectionType<AppModelType>> {
+    const collectionRef = options?.collectionRefOverride || this.collectionRef;
+    if (!collectionRef)
+      throw new Error('Collection reference must be provided');
+    this.logger.debug(`Using collection reference: ${collectionRef.path}`);
+
+    if (!isForwardPagination(args) && !isBackwardPagination(args))
+      throw new Error('At least one of "first" or "last" must be provided');
+
+    const q = query(collectionRef, ...constraints);
+    this.logger.debug(
+      `Querying with constraints: ${JSON.stringify(constraints)}`,
+    );
+
+    const querySnapshot = await getDocs(q);
+    const totalCount = this.getTotalCount(collectionRef);
+
+    if (querySnapshot.empty) {
+      return EMPTY_PAGE;
+    }
+
+    const nodes = querySnapshot.docs.map((doc) => doc.data() as AppModelType);
+    const allEdges = nodes.map(nodeToEdge);
+    const edges = edgesToReturn(allEdges, args);
+    this.logger.debug(`Returning ${edges.length} edges`);
+
+    return {
+      edges,
+      totalCount: await totalCount,
+      pageInfo: {
+        startCursor: edges[0].cursor,
+        endCursor: edges[edges.length - 1].cursor,
+        hasNextPage: await this.hasNextPage(
+          querySnapshot.docs,
+          isBackwardPagination(args),
+          collectionRef,
+        ),
+        hasPreviousPage: await this.hasPreviousPage(
+          querySnapshot.docs,
+          isBackwardPagination(args),
+          collectionRef,
+        ),
+        count: edges.length,
+      },
+    };
+  }
+
   private getChunksForQuery(
     ids: Node['id'][],
     args: PaginationArgs,

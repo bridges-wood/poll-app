@@ -1,7 +1,11 @@
 import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
-import { FirebaseTokens, POSTS_COLLECTION } from '@org/firebase';
+import {
+  FirebaseTokens,
+  POSTS_COLLECTION,
+  USERS_COLLECTION,
+} from '@org/firebase';
 import { PaginationArgs, PaginationService } from '@org/graphql/pagination';
 import { PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
@@ -12,6 +16,7 @@ import {
   Firestore,
   getDoc,
   runTransaction,
+  where,
 } from 'firebase/firestore';
 import { User } from '../users/models/user.stub';
 import {
@@ -53,6 +58,25 @@ export class ResponsesService extends PaginationService<
     ).withConverter(this.responseModelMapper);
 
     return this.findAll(args, { collectionRefOverride });
+  }
+
+  async findAllByUserId(
+    postId: string,
+    userId: string,
+    args: PaginationArgs,
+  ): Promise<ResponseConnection> {
+    const collectionRefOverride = collection(
+      this.database,
+      POSTS_COLLECTION,
+      postId,
+      'responses',
+    ).withConverter(this.responseModelMapper);
+
+    const userRef = doc(this.database, USERS_COLLECTION, userId);
+
+    return this.findWithConstraints(args, [where('author', '==', userRef)], {
+      collectionRefOverride,
+    });
   }
 
   async createResponse(

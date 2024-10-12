@@ -41,4 +41,15 @@ export class ResponsesResolver {
   ): Promise<ResponseConnection> {
     return this.responsesService.findAllByPostId(parent.id, args);
   }
+
+  @ResolveField((returns) => ResponseConnection, {
+    description: 'All responses to the post, for the current user',
+  })
+  async myResponses(
+    @Args() args: PaginationArgs,
+    @Parent() parent: Post,
+    @CurrentUser() user: Pick<User, 'id'>,
+  ): Promise<ResponseConnection> {
+    return this.responsesService.findAllByUserId(parent.id, user.id, args);
+  }
 }

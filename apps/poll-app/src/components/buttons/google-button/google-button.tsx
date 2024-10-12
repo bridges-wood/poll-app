@@ -40,7 +40,7 @@ const GoogleButton: FC = () => {
           const token = await signInWithOAuthToken(authCredential.idToken);
           if (process.env.NODE_ENV === 'development') {
             toast.custom((t) => (
-              <li className="border-thin border-border-success-emphasis shadow-resting-md flex w-80 items-baseline justify-between gap-2 rounded-md p-4">
+              <div className="border-thin border-border-success-emphasis shadow-resting-md flex w-80 items-baseline justify-between gap-2 rounded-md p-4">
                 <span>Copy token to clipboard</span>
                 <Button
                   variant="outline"
@@ -53,7 +53,7 @@ const GoogleButton: FC = () => {
                 >
                   <ClipboardCopyIcon />
                 </Button>
-              </li>
+              </div>
             ));
           }
 

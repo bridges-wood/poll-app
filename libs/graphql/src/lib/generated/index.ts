@@ -252,10 +252,22 @@ export type Post = {
   createdAt: Scalars['DateTime']['output'];
   /** The ID of the post as it is stored in Firebase */
   id: Scalars['ID']['output'];
+  /** All responses to the post, for the current user */
+  myResponses: ResponseConnection;
   /** All responses to the post */
   responses: ResponseConnection;
   /** The date and time the post was last updated */
   updatedAt: Scalars['DateTime']['output'];
+};
+
+
+/** A post */
+export type PostMyResponsesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -518,7 +530,7 @@ export type FeedMultipleChoiceQuestionFragment = { __typename?: 'MultipleChoiceQ
 
 export type FeedResponseFragment = { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } };
 
-export type FeedPostFragment = { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } };
+export type FeedPostFragment = { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null }, myResponses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } };
 
 export type ProfileDataFragment = { __typename?: 'User', displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string };
 
@@ -569,12 +581,20 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename: 'User', id: string, updatedAt: string } | null };
 
+export type VoteOnMultipleChoicePostMutationVariables = Exact<{
+  postId: Scalars['String']['input'];
+  response: MultipleChoiceResponseInput;
+}>;
+
+
+export type VoteOnMultipleChoicePostMutation = { __typename?: 'Mutation', createResponse: { __typename?: 'MultipleChoiceResponse', id: string, selectedOption: number } };
+
 export type FetchPostQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type FetchPostQuery = { __typename?: 'Query', post: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } };
+export type FetchPostQuery = { __typename?: 'Query', post: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null }, myResponses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } };
 
 export type FetchPostsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -585,7 +605,7 @@ export type FetchPostsQueryVariables = Exact<{
 }>;
 
 
-export type FetchPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', edges?: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } }> | null, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type FetchPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', edges?: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null }, myResponses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } }> | null, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type FetchProfileDataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -631,9 +651,7 @@ export const FeedResponseFragmentDoc = gql`
     fragment FeedResponse on Response {
   id
   type
-  ... on MultipleChoiceResponse {
-    ...MultipleChoiceResponseFragment
-  }
+  ...MultipleChoiceResponseFragment
   post {
     id
   }
@@ -654,11 +672,16 @@ export const FeedPostFragmentDoc = gql`
     ...ProfileData
   }
   content {
-    ... on MultipleChoiceQuestion {
-      ...FeedMultipleChoiceQuestion
-    }
+    ...FeedMultipleChoiceQuestion
   }
   responses(last: 3, orderBy: "createdAt") {
+    edges {
+      node {
+        ...FeedResponse
+      }
+    }
+  }
+  myResponses(first: 1) {
     edges {
       node {
         ...FeedResponse
@@ -722,6 +745,14 @@ export const UpdateUserDocument = gql`
   }
 }
     `;
+export const VoteOnMultipleChoicePostDocument = gql`
+    mutation VoteOnMultipleChoicePost($postId: String!, $response: MultipleChoiceResponseInput!) {
+  createResponse(postId: $postId, args: {multipleChoiceResponse: $response}) {
+    id
+    ...MultipleChoiceResponseFragment
+  }
+}
+    ${MultipleChoiceResponseFragmentFragmentDoc}`;
 export const FetchPostDocument = gql`
     query FetchPost($id: String!) {
   post(id: $id) {

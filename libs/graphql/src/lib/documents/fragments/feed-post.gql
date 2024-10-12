@@ -8,9 +8,7 @@ fragment FeedMultipleChoiceQuestion on MultipleChoiceQuestion {
 fragment FeedResponse on Response {
   id
   type
-  ... on MultipleChoiceResponse {
-    ...MultipleChoiceResponseFragment
-  }
+  ...MultipleChoiceResponseFragment
   post {
     id
   }
@@ -29,11 +27,16 @@ fragment FeedPost on Post {
     ...ProfileData
   }
   content {
-    ... on MultipleChoiceQuestion {
-      ...FeedMultipleChoiceQuestion
-    }
+    ...FeedMultipleChoiceQuestion
   }
   responses(last: 3, orderBy: "createdAt") {
+    edges {
+      node {
+        ...FeedResponse
+      }
+    }
+  }
+  myResponses(first: 1) {
     edges {
       node {
         ...FeedResponse
