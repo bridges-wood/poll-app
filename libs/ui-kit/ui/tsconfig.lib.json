@@ -8,7 +8,9 @@
       "@nx/react/typings/image.d.ts",
       "next",
       "@nx/next/typings/image.d.ts"
-    ]
+    ],
+    "composite": true,
+    "declaration": true
   },
   "exclude": [
     "jest.config.ts",
