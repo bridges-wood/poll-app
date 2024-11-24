@@ -48,7 +48,7 @@ const GraphQLProvider: FC<PropsWithChildren> = ({ children }) => {
               );
             },
             async refreshAuth() {
-              console.log('Refreshing token');
+              console.log('Refreshing token - Not Implemented');
             },
           };
         }),

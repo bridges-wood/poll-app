@@ -1,4 +1,5 @@
 import { Button } from '@org/ui-kit/ui/button';
+import Link from 'next/link';
 
 const Index = () => {
   return (
@@ -7,7 +8,9 @@ const Index = () => {
         <h1 className="text-8xl font-extralight sm:text-9xl">Pollstr</h1>
         <p className="mb-7 leading-7">What will you ask?</p>
         <Button asChild>
-          <a href="/home">Let's go!</a>
+          <Link href="/home" prefetch>
+            Let's go!
+          </Link>
         </Button>
       </div>
     </section>

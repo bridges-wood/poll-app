@@ -24,17 +24,18 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     console.error(error);
 
     const { pathname, searchParams } = new URL(request.url);
-    const redirectSearchParams = new URLSearchParams({
-      redirect: `${pathname}?${searchParams.toString()}`,
-    });
-    return NextResponse.redirect(
-      new URL(`/login?${redirectSearchParams.toString()}`, request.url),
+    const redirectUrl = new URL('/login', request.url);
+    redirectUrl.searchParams.append(
+      'r',
+      `${pathname.slice(1)}${searchParams.size > 0 ? '?' + searchParams.toString() : ''}`,
     );
+
+    return NextResponse.redirect(redirectUrl);
   }
 }
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|login|.*\\.png$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|login|.*\\.png|$).*)',
   ],
 };

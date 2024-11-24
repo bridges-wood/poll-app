@@ -19,7 +19,7 @@ const GoogleButton: FC = () => {
   const router = useRouter();
   const dispatch = useDispatch<Dispatch>();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') ?? '/home';
+  const redirect = searchParams.get('r') ?? 'home';
 
   return (
     <Button
@@ -58,7 +58,7 @@ const GoogleButton: FC = () => {
           }
 
           dispatch.auth.login(token);
-          router.push(redirect);
+          router.push(`/${redirect}`);
         } catch (error) {
           setDisabled(false);
           const err = error as AuthError;
