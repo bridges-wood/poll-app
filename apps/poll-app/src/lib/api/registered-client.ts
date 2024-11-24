@@ -21,7 +21,7 @@ const { getClient } = registerUrql(() => {
         schema,
       }),
       authExchange(async (utils) => {
-        const token = cookies().get('token')?.value;
+        const token = (await cookies()).get('token')?.value;
 
         return {
           addAuthToOperation: (operation) => {

@@ -1,6 +1,6 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CACHE_INSTANCE } from '@org/cache';
 import { GraphQLCrossAppClient } from '@org/cross-app';
 import {
   ValidateTokenDocument,
@@ -8,7 +8,7 @@ import {
   ValidateTokenQueryVariables,
 } from '@org/graphql';
 import { DecodedIdToken, User } from '@org/typings';
-import { Cache } from 'cache-manager';
+import { Cacheable } from 'cacheable';
 import { isEmpty } from 'lodash';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class CrossAppAuthService {
   constructor(
     private client: GraphQLCrossAppClient,
     private jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_INSTANCE) private cache: Cacheable,
   ) {}
 
   /**
@@ -32,7 +32,7 @@ export class CrossAppAuthService {
 
     // Query cache for token
     this.logger.debug(`Validating token: ${token}`);
-    const value = await this.cacheManager.get(token);
+    const value = await this.cache.get(token);
     if (!isEmpty(value)) {
       this.logger.debug(`Found matching value in cache: ${value}`);
       return value as User['id'];
@@ -45,7 +45,7 @@ export class CrossAppAuthService {
     this.logger.debug(`Response for validateToken(${token})`, res);
 
     // Cache the token
-    await this.cacheManager.set(token, res.validateToken, this.getTtl(token));
+    await this.cache.set(token, res.validateToken, this.getTtl(token));
 
     return res.validateToken;
   }
