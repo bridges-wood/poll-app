@@ -54,11 +54,13 @@ export class EndpointsService {
       await this.endpointLoader.reload();
       return {
         success: true,
+        loadedEndpoints: this.endpointLoader.getEndpoints(),
       };
     } catch (error) {
       this.logger.error(error);
       return {
         success: false,
+        loadedEndpoints: this.endpointLoader.getEndpoints(),
       };
     }
   }
