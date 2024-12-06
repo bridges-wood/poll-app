@@ -1,7 +1,7 @@
-interface QueryWrapperProps {
+export interface QueryWrapperProps {
   skeleton?: boolean;
 }
 
-type QueryWrappedProps<T = any> = {
+export type QueryWrappedProps<T = never> = {
   skeleton?: boolean;
 } & Partial<T>;

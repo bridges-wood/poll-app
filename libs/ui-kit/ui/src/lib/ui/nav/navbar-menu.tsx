@@ -39,7 +39,7 @@ const NavbarMenu = forwardRef<'ul', NavbarMenuProps>((props, ref) => {
     style,
     ...otherProps
   } = props;
-  const domRef = useDOMRef(ref);
+  const domRef = useDOMRef<HTMLUListElement>(ref);
 
   const { slots, isMenuOpen, height, disableAnimation, classNames } =
     useNavbarContext();

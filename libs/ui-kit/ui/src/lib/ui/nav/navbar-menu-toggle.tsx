@@ -36,7 +36,7 @@ const NavbarMenuToggle = forwardRef<'button', NavbarMenuToggleProps>(
       srOnlyText: srOnlyTextProp,
       ...otherProps
     } = props;
-    const domRef = useDOMRef(ref);
+    const domRef = useDOMRef<HTMLButtonElement>(ref);
 
     const { slots, classNames, isMenuOpen, setIsMenuOpen } = useNavbarContext();
 
@@ -58,7 +58,7 @@ const NavbarMenuToggle = forwardRef<'button', NavbarMenuToggleProps>(
           />
         )
       );
-    }, [icon, isMenuOpen, slots.toggleIcon, classNames?.toggleIcon]);
+    }, [icon, slots, classNames?.toggleIcon, isMenuOpen]);
 
     const srOnlyText = useMemo(() => {
       if (srOnlyTextProp) {

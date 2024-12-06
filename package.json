@@ -45,7 +45,6 @@
     "@react-stately/utils": "^3.10.5",
     "@react-types/textfield": "^3.10.0",
     "@rematch/core": "^2.2.0",
-    "@swc/helpers": "0.5.15",
     "@urql/core": "^5.0.8",
     "@urql/exchange-auth": "^2.2.0",
     "@urql/exchange-graphcache": "^7.2.1",
@@ -112,6 +111,8 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "@bridges-wood/graphql-codegen-nestjs": "^1.2.1",
+    "@eslint/eslintrc": "^2.1.1",
+    "@eslint/js": "~8.57.0",
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/introspection": "^4.0.3",
     "@graphql-codegen/typescript": "^4.1.2",
@@ -138,10 +139,11 @@
     "@nx/web": "20.2.0",
     "@nx/webpack": "20.2.0",
     "@nx/workspace": "20.2.0",
-    "@swc-node/register": "1.10.9",
-    "@swc/cli": "0.5.1",
-    "@swc/core": "1.9.3",
-    "@swc/jest": "0.2.37",
+    "@swc-node/register": "~1.9.1",
+    "@swc/cli": "~0.3.12",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@swc/jest": "~0.2.36",
     "@testing-library/react": "16.0.1",
     "@types/ip": "^1.1.3",
     "@types/jest": "^29.5.14",
@@ -151,8 +153,6 @@
     "@types/passport-local": "^1.0.38",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
-    "@typescript-eslint/eslint-plugin": "8.15.0",
-    "@typescript-eslint/parser": "8.15.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-lodash": "^3.3.4",
     "color-convert": "^2.0.1",
@@ -176,17 +176,13 @@
     "prettier-plugin-tailwindcss": "^0.6.9",
     "radix-themes-tw": "^0.2.3",
     "ts-jest": "^29.2.5",
-    "typescript": "5.7.2"
+    "typescript": "5.7.2",
+    "typescript-eslint": "^8.13.0"
   },
   "packageManager": "yarn@4.5.0",
   "main": "index.js",
   "repository": "https://github.com/bridges-wood/poll-app.git",
   "author": "Max Wood <bridges.wood@gmail.com>",
-  "overrides": {
-    "next": {
-      "@swc/helpers": "0.4.36"
-    }
-  },
   "resolutions": {
     "@nx/js@npm:19.0.4": "patch:@nx/js@npm%3A19.0.4#~/.yarn/patches/@nx-js-npm-19.0.4-ceeb17d9af.patch"
   }

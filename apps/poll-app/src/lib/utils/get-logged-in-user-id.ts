@@ -7,8 +7,8 @@ import { cookies } from 'next/headers';
  * Retrieves the ID of the currently logged in user.
  * @returns The ID of the currently logged in user.
  */
-export const getLoggedInUserId = (): User['id'] => {
-  const token = cookies().get('token')?.value;
+export const getLoggedInUserId = async (): Promise<User['id']> => {
+  const token = (await cookies()).get('token')?.value;
   if (!token) throw new Error('No token found');
 
   const userId = (jwtDecode(token) as DecodedIdToken).sub;

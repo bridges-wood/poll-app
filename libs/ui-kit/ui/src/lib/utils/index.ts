@@ -16,15 +16,16 @@ import {
 export function forwardRef<
   Component extends As,
   Props extends object,
-  OmitKeys extends keyof any = never,
+  OmitKeys extends keyof never = never,
 >(
   component: React.ForwardRefRenderFunction<
-    any,
+    never,
     RightJoinProps<PropsOf<Component>, Props> & {
       as?: As;
     }
   >,
 ) {
+  // @ts-expect-error Types of property 'as' are incompatible.
   return baseForwardRef(component) as InternalForwardRefRenderFunction<
     Component,
     Props,
@@ -33,6 +34,7 @@ export function forwardRef<
 }
 
 export const mapPropsVariants = <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends Record<string, any>,
   K extends keyof T,
 >(

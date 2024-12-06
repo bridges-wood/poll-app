@@ -7,7 +7,7 @@ import { HoverCardContent } from '@radix-ui/react-hover-card';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ComponentPropsWithoutRef, FC, useState } from 'react';
+import { ComponentPropsWithoutRef, FC } from 'react';
 import { withErrorBoundary } from 'react-error-boundary';
 import { twMerge } from 'tailwind-merge';
 import ProfileHoverCard from '../profile/profile-hover-card';
@@ -26,7 +26,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
   ...props
 }) => {
   const router = useRouter();
-  const [showResponses, setShowResponses] = useState(false);
+  // const [showResponses, setShowResponses] = useState(false);
 
   return (
     <div

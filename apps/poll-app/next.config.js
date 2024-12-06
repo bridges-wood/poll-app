@@ -1,8 +1,7 @@
 //@ts-check
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
-const withBundleAnalyzer = require('@next/bundle-analyzer')
+const withBundleAnalyzer = require('@next/bundle-analyzer');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -11,13 +10,13 @@ const nextConfig = {
   nx: {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr
-    svgr: false,  
+    svgr: false,
   },
   experimental: {
-    serverActions: { 
-      allowedOrigins: ['localhost']
-    }
-  }
+    serverActions: {
+      allowedOrigins: ['localhost'],
+    },
+  },
 };
 
 const plugins = [
@@ -25,7 +24,7 @@ const plugins = [
   withNx,
   withBundleAnalyzer({
     enabled: process.env.ANALYZE === 'true',
-  })
+  }),
 ];
 
 module.exports = composePlugins(...plugins)(nextConfig);

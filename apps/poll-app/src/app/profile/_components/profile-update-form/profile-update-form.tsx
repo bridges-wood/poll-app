@@ -14,6 +14,7 @@ import {
 import { Input } from '@org/ui-kit/ui/input';
 import { Textarea } from '@org/ui-kit/ui/textarea';
 import { updateUserAccount } from '@poll-app/lib/actions';
+import { QueryWrappedProps } from '@poll-app/lib/types';
 import { useRouter } from 'next/navigation';
 import { FC, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
@@ -53,7 +54,7 @@ const ProfileUpdateForm: FC<ProfileUpdateFormProps> = ({
   skeleton = false,
 }) => {
   const router = useRouter();
-  const [_isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

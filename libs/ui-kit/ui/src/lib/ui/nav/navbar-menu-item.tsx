@@ -16,7 +16,7 @@ export interface NavbarMenuItemProps extends HTMLProps<'li'> {
 const NavbarMenuItem = forwardRef<'li', NavbarMenuItemProps>((props, ref) => {
   const { className, children, isActive, ...otherProps } = props;
 
-  const domRef = useDOMRef(ref);
+  const domRef = useDOMRef<HTMLLIElement>(ref);
 
   const { slots, isMenuOpen, classNames } = useNavbarContext();
 

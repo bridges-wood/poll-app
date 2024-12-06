@@ -22,7 +22,7 @@ const Feed: FC<FeedProps> = ({ firstPage, pageSize }) => {
     pages.at(-1)?.pageInfo.startCursor,
   );
   const [loading, setLoading] = useState(false);
-  const [_isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const paginationEnabled = pages.at(-1)?.pageInfo.hasPreviousPage;
 

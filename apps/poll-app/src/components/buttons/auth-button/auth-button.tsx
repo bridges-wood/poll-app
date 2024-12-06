@@ -49,7 +49,7 @@ const AuthButton = () => {
         <DropdownMenuItem>
           <Button
             variant="danger"
-            onClick={(e) => {
+            onClick={(_e) => {
               dispatch.auth.logout();
               router.push('/login');
             }}

@@ -9,7 +9,7 @@ import { ReactNode, Ref, useCallback, useMemo, useState } from 'react';
 import { mapPropsVariants, useDOMRef } from '../../utils';
 import { clsx } from '../../utils/clsx';
 import { filterDOMProps } from '../../utils/filter-dom-props';
-import { dataAttr, objectToDeps } from '../../utils/functions';
+import { dataAttr } from '../../utils/functions';
 import { safeAriaLabel } from '../../utils/text';
 import { HTMLProps, PropGetter } from '../../utils/types';
 import { SlotsToClasses } from '../theme/utils';
@@ -129,7 +129,7 @@ export function useInput<
   );
 
   const isFilledByDefault = ['date', 'time', 'month', 'week', 'range'].includes(
-    type!,
+    type ?? '',
   );
   const isFilled = !isEmpty(inputValue) || isFilledByDefault;
   const isFilledWithin = isFilled || isFocusWithin;
@@ -144,9 +144,10 @@ export function useInput<
     setInputValue('');
     onClear?.();
     domRef.current?.focus();
-  }, [setInputValue, onClear]);
+  }, [setInputValue, onClear, domRef]);
 
   const { inputProps } = useTextField(
+    // @ts-expect-error - The types are not updated yet
     {
       ...originalProps,
       validationBehavior: 'native',
@@ -168,7 +169,7 @@ export function useInput<
     isTextInput: true,
   });
 
-  const { isHovered, hoverProps } = useHover({
+  const { isHovered } = useHover({
     isDisabled: !!originalProps?.isDisabled,
   });
 
@@ -204,7 +205,7 @@ export function useInput<
         ...variantProps,
         isClearable,
       }),
-    [objectToDeps(variantProps), isClearable, hasStartContent],
+    [variantProps, isClearable],
   );
 
   const getBaseProps: PropGetter = useCallback(
@@ -230,21 +231,21 @@ export function useInput<
       ...props,
     }),
     [
+      baseDomRef,
       slots,
       baseStyles,
       isFilled,
-      isFocused,
-      isHovered,
-      isPlaceholderShown,
+      hasPlaceholder,
       hasStartContent,
+      isPlaceholderShown,
       isFocusWithin,
       isFocusVisible,
-      isFilledWithin,
-      hasPlaceholder,
-      focusWithinProps,
-      originalProps.readOnly,
+      originalProps.isReadOnly,
       originalProps.isRequired,
       originalProps.isDisabled,
+      isFocused,
+      isHovered,
+      focusWithinProps,
     ],
   );
 
@@ -275,18 +276,18 @@ export function useInput<
       onChange: chain(inputProps.onChange, onChange),
     }),
     [
-      slots,
-      inputValue,
-      focusProps,
-      inputProps,
-      otherProps,
+      domRef,
       isFilled,
       isFilledWithin,
       hasStartContent,
       endContent,
+      slots,
       classNames?.input,
-      originalProps.isReadOnly,
+      focusProps,
+      inputProps,
+      otherProps,
       originalProps.isRequired,
+      originalProps.isReadOnly,
       onChange,
     ],
   );
@@ -305,7 +306,7 @@ export function useInput<
         class: clsx(classNames?.innerWrapper, props?.className),
       }),
     }),
-    [slots, classNames?.innerWrapper],
+    [innerWrapperRef, slots, classNames?.innerWrapper, domRef],
   );
 
   const getMainWrapperProps: PropGetter = useCallback(
