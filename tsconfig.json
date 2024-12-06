@@ -1,4 +1,7 @@
 {
   "_COMMENT": "Only used by shadcn/ui to generate components",
-  "extends": "./tsconfig.base.json"
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "libs/ui-kit/ui/src/index.ts"
+  ]
 }
