@@ -101,7 +101,9 @@ export function useInput<
     onClear,
     onChange,
     innerWrapperRef: innerWrapperRefProp,
-    onValueChange = () => {},
+    onValueChange = () => {
+      return;
+    },
     ...otherProps
   } = props;
 

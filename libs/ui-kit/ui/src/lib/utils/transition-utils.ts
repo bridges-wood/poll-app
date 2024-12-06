@@ -17,13 +17,13 @@ export type TransitionProperties = {
   transitionEnd?: TransitionEndConfig;
 };
 
-type TargetResolver<P = {}> = (
+type TargetResolver<P = object> = (
   props: P & TransitionProperties,
 ) => TargetAndTransition;
 
-type Variant<P = {}> = TargetAndTransition | TargetResolver<P>;
+type Variant<P = object> = TargetAndTransition | TargetResolver<P>;
 
-export type Variants<P = {}> = Record<
+export type Variants<P = object> = Record<
   string,
   {
     enter: Variant<P>;

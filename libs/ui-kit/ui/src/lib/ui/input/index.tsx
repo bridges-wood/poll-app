@@ -6,7 +6,7 @@ import { forwardRef } from '../../utils';
 import { Skeleton } from '../skeleton';
 import { UseInputProps, useInput } from './use-input';
 
-export interface InputProps extends Omit<UseInputProps, 'isMultiLine'> {}
+export type InputProps = Omit<UseInputProps, 'isMultiLine'>;
 
 const Input = forwardRef<'input', InputProps>((props, ref) => {
   const {
@@ -27,8 +27,7 @@ const Input = forwardRef<'input', InputProps>((props, ref) => {
         <Skeleton
           {...getInputProps()}
           ref={null} // Remove ref from skeleton
-          className="h-6 w-full rounded-full data-[has-end-content=true]:me-1.5
-        data-[has-start-content=true]:ms-1.5"
+          className="h-6 w-full rounded-full data-[has-end-content=true]:me-1.5 data-[has-start-content=true]:ms-1.5"
         />
       );
     }

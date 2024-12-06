@@ -103,7 +103,7 @@ const NewPostContent: FC<{
   form: UseFormReturn<z.infer<typeof postSchema>>;
 }> = ({ contentType, form }) => {
   switch (contentType) {
-    case PostContentType.MultipleChoice:
+    case PostContentType.MultipleChoice: {
       const options = form.watch('content.options');
       console.log(form.getFieldState('content.options'));
 
@@ -194,6 +194,7 @@ const NewPostContent: FC<{
           />
         </>
       );
+    }
     default:
       return null;
   }

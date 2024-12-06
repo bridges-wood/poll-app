@@ -5,7 +5,7 @@ import {
 } from '@org/graphql';
 import { useQuery } from 'urql';
 
-const usePosts = (last: number = 10, before?: null | undefined | string) =>
+const usePosts = (last = 10, before?: null | undefined | string) =>
   useQuery<FetchPostsQuery, FetchPostsQueryVariables>({
     query: FetchPostsDocument,
     variables: {

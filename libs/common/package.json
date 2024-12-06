@@ -2,7 +2,8 @@
   "name": "@org/common",
   "version": "0.0.1",
   "dependencies": {
-    "@swc/helpers": "~0.5.2"
+    "@swc/helpers": "~0.5.2",
+    "dayjs": "^1.11.13"
   },
   "type": "commonjs",
   "main": "./src/index.js",

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import { addTypes } from '@graphql-tools/utils';
 import { BuildSchemaOptions } from '@nestjs/graphql';

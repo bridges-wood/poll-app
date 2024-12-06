@@ -6,7 +6,7 @@ interface HomeLayoutProps {
 }
 
 const HomeLayout: FC<PropsWithChildren<HomeLayoutProps>> = ({
-  children,
+  children: _children,
   feed,
 }) => {
   return (

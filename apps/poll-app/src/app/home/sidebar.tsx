@@ -27,11 +27,7 @@ import {
   useState,
 } from 'react';
 
-interface HomeSidebarProps {}
-
-const HomeSidebar: FC<HomeSidebarProps & ComponentPropsWithoutRef<'div'>> = ({
-  ...props
-}) => {
+const HomeSidebar: FC<ComponentPropsWithoutRef<'div'>> = ({ ...props }) => {
   const router = useRouter();
   const pathname = usePathname();
   const sidebarContainerRef = useRef<HTMLDivElement>(null);

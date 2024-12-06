@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow-restricted-names */
 /* eslint-disable no-plusplus */
 function toVal(mix: any) {
-  var k,
+  let k,
     y,
     str = '';
 
@@ -31,7 +31,7 @@ function toVal(mix: any) {
 }
 
 export function clsx(...args: any[]) {
-  var i = 0,
+  let i = 0,
     tmp,
     x,
     str = '';

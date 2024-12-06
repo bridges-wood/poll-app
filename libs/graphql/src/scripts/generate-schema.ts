@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';

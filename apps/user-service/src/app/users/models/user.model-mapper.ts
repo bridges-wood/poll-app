@@ -10,7 +10,7 @@ import {
 import { Post } from '../../posts/models/post.stub';
 import { User } from './user.model';
 
-export interface UserDbModel extends User {}
+export type UserDbModel = User;
 
 @Injectable()
 export class UserModelMapper

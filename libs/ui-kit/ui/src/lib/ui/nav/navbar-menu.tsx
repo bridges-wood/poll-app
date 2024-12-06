@@ -64,7 +64,7 @@ const NavbarMenu = forwardRef<'ul', NavbarMenuProps>((props, ref) => {
         className={slots.menu?.({ class: styles })}
         data-open={dataAttr(isMenuOpen)}
         style={{
-          // @ts-expect-error
+          // @ts-expect-error navbar-height is a custom property
           '--navbar-height': height,
         }}
         {...otherProps}
@@ -86,7 +86,7 @@ const NavbarMenu = forwardRef<'ul', NavbarMenuProps>((props, ref) => {
               exit="exit"
               initial="exit"
               style={{
-                // @ts-expect-error
+                // @ts-expect-error navbar-height is a custom property
                 '--navbar-height': height,
                 ...style,
               }}

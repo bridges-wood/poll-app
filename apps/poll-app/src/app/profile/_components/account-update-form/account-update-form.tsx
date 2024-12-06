@@ -55,8 +55,8 @@ const AccountUpdateForm: FC<AccountUpdateFormProps> = ({ data, userId }) => {
                 <Input {...field} autoComplete="email" />
               </FormControl>
               <FormDescription>
-                Your email address is how we'll contact you. We'll never share
-                it with anyone.
+                Your email address is how we&apos;ll contact you. We&apos;ll
+                never share it with anyone.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -72,8 +72,8 @@ const AccountUpdateForm: FC<AccountUpdateFormProps> = ({ data, userId }) => {
                 <Input {...field} autoComplete="given-name" />
               </FormControl>
               <FormDescription>
-                Your name is how we'll address you. We never share your name
-                with other users.
+                Your name is how we&apos;ll address you. We never share your
+                name with other users.
               </FormDescription>
               <FormMessage />
             </FormItem>

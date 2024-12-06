@@ -9,7 +9,7 @@ const Index = () => {
         <p className="mb-7 leading-7">What will you ask?</p>
         <Button asChild>
           <Link href="/home" prefetch>
-            Let's go!
+            Let&apos;s go!
           </Link>
         </Button>
       </div>

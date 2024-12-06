@@ -11,7 +11,7 @@ import { getTokenExpirationDate } from './utils';
 
 export async function signInWithOAuthToken(
   token: string,
-  provider: string = 'google',
+  provider = 'google',
 ): Promise<string> {
   const { data, error } = await getClient().mutation<
     OAuthSignInMutation,
@@ -27,9 +27,9 @@ export async function signInWithOAuthToken(
   return resultToken;
 }
 
-const setCookie = (token: string) => {
+const setCookie = async (token: string) => {
   const expires = getTokenExpirationDate(token);
-  cookies().set('token', token, {
+  (await cookies()).set('token', token, {
     expires,
   });
 };

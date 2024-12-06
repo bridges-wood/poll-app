@@ -27,14 +27,14 @@ export type OmitCommonProps<
 > = Omit<Target, 'transition' | 'as' | 'color' | OmitAdditionalProps>;
 
 export type RightJoinProps<
-  SourceProps extends object = {},
-  OverrideProps extends object = {},
+  SourceProps extends object,
+  OverrideProps extends object,
 > = OmitCommonProps<SourceProps, keyof OverrideProps> & OverrideProps;
 
 export type MergeWithAs<
   ComponentProps extends object,
   AsProps extends object,
-  AdditionalProps extends object = {},
+  AdditionalProps extends object,
   AsComponent extends As = As,
 > = (
   | RightJoinProps<ComponentProps, AdditionalProps>
@@ -45,7 +45,7 @@ export type MergeWithAs<
 
 export type InternalForwardRefRenderFunction<
   Component extends As,
-  Props extends object = {},
+  Props extends object,
   OmitKeys extends keyof any = never,
 > = {
   <AsComponent extends As = Component>(
@@ -69,9 +69,8 @@ export type PropsOf<T extends As> = React.ComponentPropsWithoutRef<T> & {
   as?: As;
 };
 
-export type Merge<M, N> = N extends Record<string, unknown>
-  ? M
-  : Omit<M, keyof N> & N;
+export type Merge<M, N> =
+  N extends Record<string, unknown> ? M : Omit<M, keyof N> & N;
 
 export type HTMLProps<
   T extends As = 'div',

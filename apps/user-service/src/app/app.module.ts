@@ -2,7 +2,7 @@ import {
   OneOfInputObjectsRule,
   useExtendedValidation,
 } from '@envelop/extended-validation';
-import { addTypes } from '@graphql-tools/utils';
+import { addTypes, DirectiveLocation } from '@graphql-tools/utils';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -41,7 +41,10 @@ import { UsersModule } from './users/users.module';
             addTypes(schema, [
               new GraphQLDirective({
                 name: 'oneOf',
-                locations: ['INPUT_OBJECT', 'FIELD_DEFINITION'] as any[],
+                locations: [
+                  'INPUT_OBJECT',
+                  'FIELD_DEFINITION',
+                ] as DirectiveLocation[],
                 args: {},
               }),
             ]),

@@ -108,7 +108,7 @@ export function useNavbar(originalProps: UseNavbarProps) {
     onScrollPositionChange,
     isMenuOpen: isMenuOpenProp,
     isMenuDefaultOpen,
-    onMenuOpenChange = () => {},
+    onMenuOpenChange = () => {return},
     motionProps,
     className,
     classNames,

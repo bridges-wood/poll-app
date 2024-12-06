@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface SpinnerProps extends React.ComponentPropsWithoutRef<'span'> {}
+type SpinnerProps = React.ComponentPropsWithoutRef<'span'>;
 
 const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
   (props, ref) => {

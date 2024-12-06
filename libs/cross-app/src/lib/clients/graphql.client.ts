@@ -34,7 +34,10 @@ export class GraphQLCrossAppClient implements CrossAppClient {
                 (e) => e.message === 'jwt expired',
               );
             },
-            async refreshAuth() {},
+            async refreshAuth() {
+              // This is where you could refresh your token
+              return;
+            },
           };
         }),
         fetchExchange,

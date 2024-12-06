@@ -10,4 +10,4 @@ import { CrossAppUserService } from './cross-app.user.service';
   providers: [CrossAppAuthService, CrossAppUserService],
   exports: [CrossAppAuthService, CrossAppUserService],
 })
-export class CrossAppModule {}
+export class CrossAppAuthModule {}

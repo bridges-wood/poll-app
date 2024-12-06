@@ -39,7 +39,7 @@ export const mapPropsVariants = <
   props: T,
   variantKeys?: K[],
   removeVariantProps = true,
-): readonly [Omit<T, K> | T, Pick<T, K> | {}] => {
+): readonly [Omit<T, K> | T, Pick<T, K> | object] => {
   if (!variantKeys) {
     return [props, {}];
   }

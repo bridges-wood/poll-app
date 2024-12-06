@@ -1,3 +1,4 @@
+export * from './lib/cross-app/cross-app.auth.module';
 export * from './lib/decorators/current-user.decorator';
 export * from './lib/decorators/public.decorator';
 export * from './lib/decorators/roles.decorator';
