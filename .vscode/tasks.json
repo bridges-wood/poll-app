@@ -1,0 +1,72 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "runDev",
+      "runOptions": {
+        "runOn": "default"
+      },
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "api-gateway",
+        "auth-service",
+        "user-service",
+        "post-service",
+        "web-app"
+      ],
+      "detail": "Run the complete app in development mode",
+      "problemMatcher": []
+    },
+    {
+      "label": "api-gateway",
+      "type": "shell",
+      "command": "nx run api-gateway:serve:development",
+      "presentation": {
+        "panel": "dedicated"
+      },
+      "icon": {
+        "id": "type-hierarchy"
+      },
+      "detail": "Run the API Gateway in development mode"
+    },
+    {
+      "label": "auth-service",
+      "type": "shell",
+      "command": "nx run auth-service:serve:development",
+      "presentation": {
+        "panel": "dedicated"
+      },
+      "detail": "Run the Auth Service in development mode"
+    },
+    {
+      "label": "user-service",
+      "type": "shell",
+      "command": "nx run user-service:serve:development",
+      "presentation": {
+        "panel": "dedicated"
+      },
+      "detail": "Run the User Service in development mode"
+    },
+    {
+      "label": "post-service",
+      "type": "shell",
+      "command": "nx run post-service:serve:development",
+      "presentation": {
+        "panel": "dedicated"
+      },
+      "detail": "Run the Post Service in development mode"
+    },
+    {
+      "label": "web-app",
+      "type": "shell",
+      "command": "nx run poll-app:serve:development",
+      "presentation": {
+        "panel": "dedicated"
+      },
+      "icon": {
+        "id": "compass"
+      },
+      "detail": "Run the Web App in development mode"
+    }
+  ]
+}

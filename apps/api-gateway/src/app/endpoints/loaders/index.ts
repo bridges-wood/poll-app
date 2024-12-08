@@ -10,7 +10,7 @@ export abstract class EndpointLoader {
 
   constructor(
     protected readonly logger: Logger,
-    private readonly initialEndpoints: Endpoint[] = [],
+    initialEndpoints: Endpoint[] = [],
   ) {
     this.endpoints$.next(initialEndpoints);
     this.endpoints$.subscribe((endpoints) => this.reload(endpoints));

@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { createHash } from 'crypto';
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { isNull, partition } from 'lodash';
 import { join } from 'path';
 import { z } from 'zod';
+import { fromError } from 'zod-validation-error';
 import { Endpoint } from '../endpoints/models/endpoint.model';
-
-interface Config {
-  endpoints: Endpoint[];
-}
 
 @Injectable()
 export class ConfigService {
@@ -21,6 +19,7 @@ export class ConfigService {
         .array(
           z.object({
             name: z.string(),
+            hash: z.string(),
             url: z.string(),
             description: z.string().optional(),
           }),
@@ -53,7 +52,7 @@ export class ConfigService {
         this.logger.log(`Successfully loaded config from ${configPath}`);
       }
     } catch (error) {
-      this.logger.error(`Invalid config: ${error.message}`);
+      this.logger.error(`Invalid config: ${fromError(error).toString()}`);
     }
   }
 
@@ -72,13 +71,14 @@ export class ConfigService {
       this.logger.error('Invalid endpoint configuration');
       return;
     } else if (hosts.length === 0) {
-      this.logger.warn('No endpoints found in environment variables');
+      this.logger.warn('No endpoints found in environment variables, skipping');
       return;
     }
 
     this.endpoints = this.endpoints.concat(
       hosts.map((host, index) => ({
         name: host.toLowerCase().split('.')[0],
+        hash: this.generateRandomHash(),
         url: `http://${process.env[host]}:${process.env[ports[index]]}/graphql`,
       })),
     );
@@ -86,6 +86,10 @@ export class ConfigService {
     if (hosts.length > 0) {
       this.logger.log('Successfully loaded config from environment variables');
     }
+  }
+
+  private generateRandomHash(): string {
+    return createHash('sha1').update(Math.random().toString()).digest('hex');
   }
 
   public isDev(): boolean {

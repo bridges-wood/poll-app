@@ -53,7 +53,7 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     return this as CrossAppClient;
   }
 
-  async query<Data = any, Variables extends AnyVariables = AnyVariables>(
+  async query<Data = unknown, Variables extends AnyVariables = AnyVariables>(
     payload: DocumentInput<Data, AnyVariables>,
     variables: Variables,
     context?: Partial<OperationContext>,
@@ -75,7 +75,7 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     return result.data;
   }
 
-  async mutate<Data = any, Variables extends AnyVariables = AnyVariables>(
+  async mutate<Data = unknown, Variables extends AnyVariables = AnyVariables>(
     payload: DocumentInput<Data, AnyVariables>,
     variables: Variables,
     context?: Partial<OperationContext>,
@@ -87,7 +87,6 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     );
 
     if (result.error) {
-      this.logger.error(result.error.message);
       throw result.error;
     }
 

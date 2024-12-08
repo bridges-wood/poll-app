@@ -20,6 +20,8 @@ export type Scalars = {
 
 /** Arguments to add a new endpoint to the gateway. Intended to be compatible with [Hashicorp Consul](https://developer.hashicorp.com/consul). */
 export type AddEndpointArgs = {
+  /** A hash denoting the version of the service. Must be a valid SHA256 hash. */
+  hash: Scalars['String']['input'];
   /** Logical name of the service, e.g. "users-service". Many nodes may share the same logical service name. Use valid DNS label. See [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-72) for more details. */
   name: Scalars['String']['input'];
   /** The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL. */
@@ -64,6 +66,8 @@ export type CreateUserArgs = {
 /** A service accessible by the API Gateway */
 export type Endpoint = {
   __typename?: 'Endpoint';
+  /** A hash denoting the version of the service. Must be a valid SHA256 hash. */
+  hash: Scalars['String']['output'];
   /** Logical name of the service, e.g. "users-service". Many nodes may share the same logical service name. Use valid DNS label. See [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-72) for more details. */
   name: Scalars['String']['output'];
   /** The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL. */
@@ -78,6 +82,8 @@ export type IPostContent = {
 /** An endpoint that has been loaded into the API Gateway */
 export type LoadedEndpoint = {
   __typename?: 'LoadedEndpoint';
+  /** A hash denoting the version of the service. Must be a valid SHA256 hash. */
+  hash: Scalars['String']['output'];
   /** The date and time the endpoint was last loaded */
   lastReload: Scalars['DateTime']['output'];
   /** Logical name of the service, e.g. "users-service". Many nodes may share the same logical service name. Use valid DNS label. See [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-72) for more details. */
@@ -382,6 +388,8 @@ export type QueryValidateTokenArgs = {
 
 export type ReloadAllEndpointsResult = {
   __typename?: 'ReloadAllEndpointsResult';
+  /** The currently loaded endpoints */
+  loadedEndpoints: Array<LoadedEndpoint>;
   /** Whether the endpoints were reloaded successfully */
   success: Scalars['Boolean']['output'];
 };

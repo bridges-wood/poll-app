@@ -5,16 +5,20 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import 'dotenv/config';
-
+import { ConfigService } from '@org/config';
+import { RegistrationService } from '@org/registration';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port =
-    process.env.NODE_ENV === 'development' ? 3001 : Number(process.env.PORT);
+  app.enableShutdownHooks();
+  const configService = app.get(ConfigService);
+  const registrationService = app.get(RegistrationService);
+
+  const port = configService.port;
   await app.listen(port);
   Logger.log(`🚀 Auth Service is running on: http://localhost:${port}/graphql`);
+  await registrationService.afterApplicationBootstrap();
 }
 
 bootstrap();

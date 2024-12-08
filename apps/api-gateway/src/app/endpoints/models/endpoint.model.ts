@@ -12,6 +12,12 @@ export class Endpoint {
 
   @Field({
     description:
+      'A hash denoting the version of the service. Must be a valid SHA256 hash.',
+  })
+  hash!: string;
+
+  @Field({
+    description:
       'The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL.',
   })
   url!: string;

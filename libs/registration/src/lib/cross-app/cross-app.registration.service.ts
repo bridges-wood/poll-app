@@ -8,7 +8,9 @@ import {
   RegisterServiceMutation,
   RegisterServiceMutationVariables,
 } from '@org/graphql';
-import ip from 'ip';
+import { exec } from 'child_process';
+import { backOff } from 'exponential-backoff';
+import { promisify } from 'util';
 
 @Injectable()
 export class CrossAppRegistrationService {
@@ -19,17 +21,41 @@ export class CrossAppRegistrationService {
    * Register a service with the GraphQL gateway
    */
   async register(name: string, port: number): Promise<boolean> {
-    const res = await this.client.mutate<
-      RegisterServiceMutation,
-      RegisterServiceMutationVariables
-    >(RegisterServiceDocument, {
-      args: {
-        name: name,
-        url: `http://${ip.address()}:${port}/graphql`,
+    const hash = await this.getHash();
+    this.logger.debug(`Found latest commit hash: ${hash}`);
+
+    const res = await backOff(
+      () =>
+        this.client.mutate<
+          RegisterServiceMutation,
+          RegisterServiceMutationVariables
+        >(RegisterServiceDocument, {
+          args: {
+            name: name,
+            hash,
+            url: `http://localhost:${port}/graphql`,
+          },
+        }),
+      {
+        numOfAttempts: 10,
+        maxDelay: 10000,
+        retry: (e, attemptNumber) => {
+          this.logger.warn(
+            `Attempt ${attemptNumber} failed. Reason: ${e.message}`,
+          );
+          return true;
+        },
       },
-    });
+    );
 
     return res.addEndpoint.success;
+  }
+
+  private async getHash(): Promise<string> {
+    const { stdout, stderr } = await promisify(exec)('git rev-parse HEAD');
+    if (!stdout) throw new Error(stderr);
+
+    return stdout.trim();
   }
 
   async unregister(name: string): Promise<boolean> {
@@ -40,7 +66,6 @@ export class CrossAppRegistrationService {
       name: name,
     });
 
-    this.logger.debug(`Response for deRegisterService`, res);
     return res.removeEndpoint.success;
   }
 }

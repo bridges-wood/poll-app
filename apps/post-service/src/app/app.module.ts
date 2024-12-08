@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { HealthModule } from '@org/health';
+import { RegistrationModule } from '@org/registration';
 import { GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
 import { ResponsesModule } from './responses/responses.module';
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     PostsModule,
     UsersModule,
     ResponsesModule,
+    RegistrationModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       imports: [ConfigModule, ErrorsModule],
       inject: [ConfigService, ErrorFormatter],
