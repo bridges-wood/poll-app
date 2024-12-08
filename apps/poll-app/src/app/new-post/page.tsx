@@ -105,7 +105,6 @@ const NewPostContent: FC<{
   switch (contentType) {
     case PostContentType.MultipleChoice: {
       const options = form.watch('content.options');
-      console.log(form.getFieldState('content.options'));
 
       return (
         <>

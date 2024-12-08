@@ -6,10 +6,7 @@ import { registerUrql } from '@urql/next/rsc';
 import { cookies } from 'next/headers';
 
 const { getClient } = registerUrql(() => {
-  const url =
-    process.env.NODE_ENV === 'production'
-      ? `http://localhost:${process.env['API_GATEWAY_SERVICE_PORT']}/graphql`
-      : 'http://localhost:3000/graphql';
+  const url = 'http://localhost:3000/graphql';
 
   console.info('Creating client with url:', url);
   return createClient({

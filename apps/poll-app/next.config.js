@@ -23,6 +23,7 @@ const plugins = [
   // Add more Next.js plugins to this list if needed.
   withNx,
   withBundleAnalyzer({
+    openAnalyzer: false,
     enabled: process.env.ANALYZE === 'true',
   }),
 ];
