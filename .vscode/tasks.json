@@ -20,7 +20,7 @@
     {
       "label": "api-gateway",
       "type": "shell",
-      "command": "nx run api-gateway:serve:development",
+      "command": "yarn nx run api-gateway:serve:development",
       "presentation": {
         "panel": "dedicated"
       },
@@ -32,7 +32,7 @@
     {
       "label": "auth-service",
       "type": "shell",
-      "command": "nx run auth-service:serve:development",
+      "command": "yarn nx run auth-service:serve:development",
       "presentation": {
         "panel": "dedicated"
       },
@@ -41,7 +41,7 @@
     {
       "label": "user-service",
       "type": "shell",
-      "command": "nx run user-service:serve:development",
+      "command": "yarn nx run user-service:serve:development",
       "presentation": {
         "panel": "dedicated"
       },
@@ -50,7 +50,7 @@
     {
       "label": "post-service",
       "type": "shell",
-      "command": "nx run post-service:serve:development",
+      "command": "yarn nx run post-service:serve:development",
       "presentation": {
         "panel": "dedicated"
       },
@@ -59,7 +59,7 @@
     {
       "label": "web-app",
       "type": "shell",
-      "command": "nx run poll-app:serve:development",
+      "command": "yarn nx run poll-app:serve:development",
       "presentation": {
         "panel": "dedicated"
       },
