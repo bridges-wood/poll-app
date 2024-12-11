@@ -66,7 +66,9 @@ export class SchemaStitcher {
       subschemaConfigTransforms: [stitchingDirectivesTransformer],
       subschemas,
     });
-    this.logger.log('🪡  Successfully stitched subschemas');
+    this.logger.log(
+      `🪡  Successfully stitched ${subschemas.length} subschema(s) into complete schema`,
+    );
 
     return stitchedSchema;
   }

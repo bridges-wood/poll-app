@@ -11,6 +11,8 @@ import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+  app.enableShutdownHooks();
+
   const port =
     process.env.NODE_ENV === 'development' ? 3000 : Number(process.env.PORT);
   await app.listen(port);

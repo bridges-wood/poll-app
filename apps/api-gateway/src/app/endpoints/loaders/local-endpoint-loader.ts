@@ -10,7 +10,7 @@ import { Endpoint } from '../models/endpoint.model';
 
 @Injectable()
 export class LocalEndpointLoader extends EndpointLoader {
-  constructor(private readonly configService: ConfigService) {
+  constructor(configService: ConfigService) {
     super(new Logger(LocalEndpointLoader.name), configService.getEndpoints());
   }
 

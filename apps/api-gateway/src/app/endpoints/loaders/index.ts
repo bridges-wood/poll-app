@@ -1,4 +1,7 @@
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Logger } from '@nestjs/common';
+import { parse } from 'graphql';
+import { isAsyncIterable } from 'graphql-yoga';
 import { defaultTo } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { Endpoint } from '../models/endpoint.model';
@@ -38,6 +41,49 @@ export abstract class EndpointLoader {
       const endpoints = [...this.endpoints$.value];
       endpoints.splice(index, 1);
       this.endpoints$.next(endpoints);
+    }
+  }
+
+  public async unRegisterAllEndpoints(): Promise<void> {
+    this.logger.log('⛓️‍💥 Unregistering all endpoints...');
+    const endpoints = this.endpoints$.value;
+
+    await Promise.all(
+      endpoints.map((endpoint) => this.unRegisterEndpoint.bind(this)(endpoint)),
+    );
+    this.logger.log('⛓️‍💥 Unregistered all endpoints');
+  }
+
+  private async unRegisterEndpoint(endpoint: Endpoint): Promise<boolean> {
+    const fetcher = buildHTTPExecutor({
+      endpoint: endpoint.url,
+      timeout: 300,
+    });
+
+    this.logger.debug(`Unregistering endpoint ${endpoint.name}`);
+    try {
+      const result = await fetcher({
+        document: parse(`mutation { _reRegister}`),
+      });
+
+      if (isAsyncIterable(result)) {
+        throw new Error('Expected executor to return a single result');
+      }
+
+      const success = result?.data?._unRegister;
+      if (!success) throw new Error('Failed to unregister');
+
+      this.logger.debug(
+        `✅ Successfully unregistered endpoint ${endpoint.name}`,
+      );
+
+      return success;
+    } catch (error) {
+      this.logger.error(
+        `Failed to unregister endpoint ${endpoint.name}: ${error.message}`,
+      );
+      this.logger.error(error);
+      return false;
     }
   }
 

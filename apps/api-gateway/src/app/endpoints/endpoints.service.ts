@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { EndpointLoader } from './loaders';
 import { AddEndpointArgs } from './models/add-endpoint.args';
 import { AddEndpointResult } from './models/add-endpoint.result';
@@ -8,7 +8,7 @@ import { ReloadAllEndpointsResult } from './models/reload-all-endpoints.result';
 import { RemoveEndpointResult } from './models/remove-endpoint.result';
 
 @Injectable()
-export class EndpointsService {
+export class EndpointsService implements OnApplicationShutdown {
   private readonly logger = new Logger(EndpointsService.name);
 
   constructor(private endpointLoader: EndpointLoader) {}
@@ -63,5 +63,10 @@ export class EndpointsService {
         loadedEndpoints: this.endpointLoader.getEndpoints(),
       };
     }
+  }
+
+  async onApplicationShutdown(_signal?: string) {
+    this.logger.log(`Received shutdown signal: ${_signal}`);
+    await this.endpointLoader.unRegisterAllEndpoints();
   }
 }

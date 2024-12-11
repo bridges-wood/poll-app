@@ -59,4 +59,15 @@ export class RegistrationService implements BeforeApplicationShutdown {
       );
     } else throw new Error('Failed to unregister');
   }
+
+  /**
+   * Disconnects the service from the gateway. Re-initiates the registration process. Called by the gateway.
+   */
+  async reRegister(): Promise<boolean> {
+    this.logger.log(
+      `📡 Gateway requested ${this.configService.name} to re-register`,
+    );
+    this.registerSelf();
+    return true;
+  }
 }
