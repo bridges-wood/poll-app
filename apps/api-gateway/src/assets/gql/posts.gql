@@ -1,0 +1,52 @@
+query Posts {
+  posts(last: 1, orderBy: "createdAt") {
+    edges {
+      node {
+        id
+        content {
+          ... on MultipleChoiceQuestion {
+            type
+            question
+            options
+            voteTotals
+          }
+        }
+        caption
+        responses(last: 10, orderBy: "updatedAt") {
+          edges {
+            node {
+              type
+              ... on MultipleChoiceResponse {
+                selectedOption
+              }
+              id
+              author {
+                displayName
+              }
+              updatedAt
+            }
+          }
+        }
+        myResponses(first: 1) {
+          edges {
+            node {
+              type
+              ... on MultipleChoiceResponse {
+                selectedOption
+              }
+              id
+              author {
+                displayName
+              }
+              updatedAt
+            }
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}

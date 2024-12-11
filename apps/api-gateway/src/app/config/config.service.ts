@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService as BaseConfigService } from '@org/config';
 import { createHash } from 'crypto';
-import { readFileSync } from 'fs';
+import { readdirSync, readFileSync } from 'fs';
+import { parse } from 'graphql';
 import * as yaml from 'js-yaml';
 import { isEmpty, partition } from 'lodash';
 import { join } from 'path';
@@ -14,6 +15,7 @@ export class ConfigService extends BaseConfigService {
   override logger = new Logger(ConfigService.name);
   private environment: string;
   private endpoints: Endpoint[] = [];
+  private queries: string[] = [];
   private ConfigSchema = z
     .object({
       endpoints: z
@@ -33,7 +35,31 @@ export class ConfigService extends BaseConfigService {
     super('');
     this.environment = process.env.NODE_ENV || 'development';
     this.loadConfigFromFile();
+    this.loadConfigFromGql();
     this.loadConfigFromEnv();
+  }
+
+  loadConfigFromGql() {
+    const path = join(__dirname, 'assets/gql');
+    const files = readdirSync(path).filter(
+      (file) => file.endsWith('.gql') || file.endsWith('.graphql'),
+    );
+    this.logger.log(`Loading ${files.length} queries from ${path}`);
+    for (const file of files) {
+      try {
+        this.logger.debug(`Loading query ${file}`);
+        const content = readFileSync(join(path, file), 'utf8');
+        // Check if the file is a valid query
+        parse(content);
+
+        this.queries.push(content);
+      } catch (error) {
+        this.logger.error(
+          `Failed to load query ${file}: ${fromError(error).toString()}`,
+        );
+      }
+    }
+    this.logger.log(`Successfully loaded ${files.length} queries`);
   }
 
   private loadConfigFromFile(): void {
@@ -100,5 +126,9 @@ export class ConfigService extends BaseConfigService {
 
   public getEndpoints(): Endpoint[] {
     return this.endpoints;
+  }
+
+  public getQueries(): string[] {
+    return this.queries;
   }
 }

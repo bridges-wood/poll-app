@@ -1,0 +1,11 @@
+mutation Reload {
+  reloadAllEndpoints {
+    success
+    loadedEndpoints {
+      hash
+      name
+      url
+      lastReload
+    }
+  }
+}

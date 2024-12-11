@@ -31,7 +31,12 @@ import { SchemaModule } from './schema/schema.module';
       ) => {
         return {
           introspection: true,
-          graphiql: config.isDev(),
+          graphiql: {
+            defaultTabs: config.getQueries().map((query) => ({
+              query,
+            })),
+            shouldPersistHeaders: true,
+          },
           autoSchemaFile: true,
           transformAutoSchemaFile: true,
           transformSchema: async (localSchema) => {
