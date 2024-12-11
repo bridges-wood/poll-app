@@ -5,7 +5,9 @@ import { RegistrationService } from '@org/registration';
 import { isUndefined, range, sample } from 'lodash';
 
 export async function bootstrap(appModule: unknown, appName: string) {
-  const app = await NestFactory.create(appModule);
+  const app = await NestFactory.create(appModule, {
+    logger: ['error', 'warn', 'log', 'debug'],
+  });
   app.enableShutdownHooks();
   const registrationService = app.get(RegistrationService);
   const configService = app.get(ConfigService);
