@@ -6434,6 +6434,7 @@ __metadata:
     "@types/node": "npm:22.9.3"
     "@types/passport-jwt": "npm:^4.0.1"
     "@types/passport-local": "npm:^1.0.38"
+    "@types/portscanner": "npm:^2"
     "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     "@urql/core": "npm:^5.0.8"
@@ -6492,6 +6493,7 @@ __metadata:
     passport-custom: "npm:^1.1.1"
     passport-jwt: "npm:^4.0.1"
     passport-local: "npm:^1.0.0"
+    portscanner: "npm:^2.2.0"
     postcss: "npm:8.4.49"
     postcss-import: "npm:^16.1.0"
     prettier: "npm:^3.3.3"
@@ -10142,6 +10144,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/portscanner@npm:^2":
+  version: 2.1.4
+  resolution: "@types/portscanner@npm:2.1.4"
+  checksum: 10c0/960fd05d2db4b1e35e6a48fba799361d794ce156ed3d4ffa20e64db6de505f9f88ba6bf7172f6545b25f8b7e5cf14f869f897675ecbef39d7ba090b20c681373
+  languageName: node
+  linkType: hard
+
 "@types/prop-types@npm:*":
   version: 15.7.14
   resolution: "@types/prop-types@npm:15.7.14"
@@ -11373,7 +11382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^2.6.4":
+"async@npm:^2.6.0, async@npm:^2.6.4":
   version: 2.6.4
   resolution: "async@npm:2.6.4"
   dependencies:
@@ -17175,6 +17184,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-number-like@npm:^1.0.3":
+  version: 1.0.8
+  resolution: "is-number-like@npm:1.0.8"
+  dependencies:
+    lodash.isfinite: "npm:^3.3.2"
+  checksum: 10c0/082f407c5f463b3618b5941f7f54541f6cb58bd6af1a80e42daaba7f81ed49785bb11f7ef3010051f6916cc3f97ed6cb40e7e87d15cea81f95306d34a1926ead
+  languageName: node
+  linkType: hard
+
 "is-number-object@npm:^1.1.0":
   version: 1.1.0
   resolution: "is-number-object@npm:1.1.0"
@@ -18841,6 +18859,13 @@ __metadata:
   version: 3.0.3
   resolution: "lodash.isboolean@npm:3.0.3"
   checksum: 10c0/0aac604c1ef7e72f9a6b798e5b676606042401dd58e49f051df3cc1e3adb497b3d7695635a5cbec4ae5f66456b951fdabe7d6b387055f13267cde521f10ec7f7
+  languageName: node
+  linkType: hard
+
+"lodash.isfinite@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "lodash.isfinite@npm:3.3.2"
+  checksum: 10c0/997f5f2e96daf3f9f7e27a46cf5b409097d6426e137357f95b1aa357b3abfdf6c61225d451aab40be58941a87df5d5ca85617e85960f6fe50ee09aba41a974de
   languageName: node
   linkType: hard
 
@@ -20824,6 +20849,16 @@ __metadata:
     debug: "npm:^3.2.7"
     mkdirp: "npm:^0.5.6"
   checksum: 10c0/cef8b567b78aabccc59fe8e103bac8b394bb45a6a69be626608f099f454124c775aaf47b274c006332c07ab3f501cde55e49aaeb9d49d78d90362d776a565cbf
+  languageName: node
+  linkType: hard
+
+"portscanner@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "portscanner@npm:2.2.0"
+  dependencies:
+    async: "npm:^2.6.0"
+    is-number-like: "npm:^1.0.3"
+  checksum: 10c0/d61af2143af13b27be0be767f40a34801e203d811c81c637828e6b07f78e667f175df276832638eeefb4ecf88aad78777061cea101fdae15f2f1c4939a6bc14a
   languageName: node
   linkType: hard
 

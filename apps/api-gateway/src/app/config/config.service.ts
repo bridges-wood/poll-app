@@ -1,16 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService as BaseConfigService } from '@org/config';
 import { createHash } from 'crypto';
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
-import { isNull, partition } from 'lodash';
+import { isEmpty, partition } from 'lodash';
 import { join } from 'path';
 import { z } from 'zod';
 import { fromError } from 'zod-validation-error';
 import { Endpoint } from '../endpoints/models/endpoint.model';
 
 @Injectable()
-export class ConfigService {
-  private readonly logger = new Logger(ConfigService.name);
+export class ConfigService extends BaseConfigService {
+  override logger = new Logger(ConfigService.name);
   private environment: string;
   private endpoints: Endpoint[] = [];
   private ConfigSchema = z
@@ -26,9 +27,10 @@ export class ConfigService {
         )
         .default([]),
     })
-    .or(z.null());
+    .optional();
 
   constructor() {
+    super('');
     this.environment = process.env.NODE_ENV || 'development';
     this.loadConfigFromFile();
     this.loadConfigFromEnv();
@@ -46,7 +48,7 @@ export class ConfigService {
         this.endpoints = this.endpoints.concat(parsedConfig.endpoints);
       }
 
-      if (isNull(parsedConfig)) {
+      if (isEmpty(parsedConfig)) {
         this.logger.warn(`No valid config found in ${configPath}`);
       } else {
         this.logger.log(`Successfully loaded config from ${configPath}`);

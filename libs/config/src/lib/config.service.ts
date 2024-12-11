@@ -4,22 +4,19 @@ import { ConfigTokens } from './tokens';
 
 @Injectable()
 export class ConfigService {
-  private readonly logger = new Logger(ConfigService.name);
+  protected readonly logger = new Logger(ConfigService.name);
   private _environment: string;
   private _schemaFile: string;
-  private _gatewayUrl: string;
   private _name: string;
-  private _port: number;
+  private _port: number | undefined;
 
-  constructor(@Inject(ConfigTokens.GATEWAY_URL) gatewayUrl: string) {
+  constructor(@Inject(ConfigTokens.GATEWAY_URL) readonly gatewayUrl: string) {
     this._environment = process.env['NODE_ENV'] || 'development';
     this._schemaFile = join(
       process.cwd(),
       `generated/${process.env['SCHEMA_FILE'] || 'schema.gql'}`,
     );
-    this._gatewayUrl = gatewayUrl;
     this._name = process.env['NAME'] || 'service';
-    this._port = parseInt(process.env['PORT'] || '3000', 10);
 
     if (this.isDev()) {
       this.logger.log(`Configuring for development environment`);
@@ -30,6 +27,21 @@ export class ConfigService {
     }
   }
 
+  public setPort(port: number) {
+    if (this._port === undefined) {
+      this._port = port;
+    } else {
+      throw new Error('Port is already set');
+    }
+  }
+
+  get port(): number {
+    if (this._port === undefined) {
+      throw new Error('Port is not set');
+    }
+    return this._port;
+  }
+
   get schemaFile() {
     return this._schemaFile;
   }
@@ -38,15 +50,7 @@ export class ConfigService {
     return this._environment === 'development';
   }
 
-  get gatewayUrl() {
-    return this._gatewayUrl;
-  }
-
   get name() {
     return this._name;
-  }
-
-  get port() {
-    return this._port;
   }
 }
