@@ -17,6 +17,9 @@ export class ConfigService {
       `generated/${process.env['SCHEMA_FILE'] || 'schema.gql'}`,
     );
     this._name = process.env['NAME'] || 'service';
+    this._port = process.env['PORT']
+      ? parseInt(process.env['PORT'], 10)
+      : undefined;
 
     if (this.isDev()) {
       this.logger.log(`Configuring for development environment`);
@@ -35,10 +38,7 @@ export class ConfigService {
     }
   }
 
-  get port(): number {
-    if (this._port === undefined) {
-      throw new Error('Port is not set');
-    }
+  get port(): number | undefined {
     return this._port;
   }
 

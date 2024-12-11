@@ -1,5 +1,6 @@
 import { BeforeApplicationShutdown, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@org/config';
+import assert from 'assert';
 import { CrossAppRegistrationService } from './cross-app/cross-app.registration.service';
 
 @Injectable()
@@ -22,6 +23,8 @@ export class RegistrationService implements BeforeApplicationShutdown {
     this.logger.log(
       `📡 Attempting to register ${this.configService.name} with the gateway...`,
     );
+    assert(this.configService.port, 'Port must be set before registering');
+
     const success = await this.crossAppRegistrationService.register(
       this.configService.name,
       this.configService.port,

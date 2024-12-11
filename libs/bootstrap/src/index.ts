@@ -2,7 +2,7 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@org/config';
 import { RegistrationService } from '@org/registration';
-import { range, sample } from 'lodash';
+import { isUndefined, range, sample } from 'lodash';
 
 export async function bootstrap(appModule: unknown, appName: string) {
   const app = await NestFactory.create(appModule);
@@ -10,8 +10,14 @@ export async function bootstrap(appModule: unknown, appName: string) {
   const registrationService = app.get(RegistrationService);
   const configService = app.get(ConfigService);
 
-  const port = await findAndListenOnPort(app, 4000, 5000);
-  configService.setPort(port);
+  let port = configService.port;
+  if (isUndefined(configService.port)) {
+    // Only look for a port if one is not already set
+    port = await findAndListenOnPort(app, 4000, 5000);
+    configService.setPort(port);
+  } else {
+    await app.listen(configService.port);
+  }
 
   Logger.log(`🚀 ${appName} is running on: http://localhost:${port}/graphql`);
   await registrationService.afterApplicationBootstrap();
