@@ -32,8 +32,6 @@ export type AddEndpointResult = {
   __typename?: 'AddEndpointResult';
   /** The endpoint that was added */
   endpoint?: Maybe<Endpoint>;
-  /** Public key of the gateway. Used to verify incoming requests from the gateway. */
-  publicKey: Scalars['String']['output'];
   /** Whether the endpoint was added successfully */
   success: Scalars['Boolean']['output'];
 };
@@ -581,7 +579,7 @@ export type RegisterServiceMutationVariables = Exact<{
 }>;
 
 
-export type RegisterServiceMutation = { __typename?: 'Mutation', addEndpoint: { __typename?: 'AddEndpointResult', success: boolean, publicKey: string, endpoint?: { __typename?: 'Endpoint', name: string } | null } };
+export type RegisterServiceMutation = { __typename?: 'Mutation', addEndpoint: { __typename?: 'AddEndpointResult', success: boolean, endpoint?: { __typename?: 'Endpoint', name: string } | null } };
 
 export type UpdateUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -740,7 +738,6 @@ export const RegisterServiceDocument = gql`
     mutation RegisterService($args: AddEndpointArgs!) {
   addEndpoint(args: $args) {
     success
-    publicKey
     endpoint {
       name
     }
