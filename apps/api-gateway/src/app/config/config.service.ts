@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService as BaseConfigService } from '@org/config';
+import { BaseConfigService } from '@org/config';
 import { createHash } from 'crypto';
 import { readdirSync, readFileSync } from 'fs';
 import { parse } from 'graphql';
@@ -16,6 +16,7 @@ export class ConfigService extends BaseConfigService {
   private environment: string;
   private endpoints: Endpoint[] = [];
   private queries: string[] = [];
+  private passphrase: string;
   private ConfigSchema = z
     .object({
       endpoints: z
@@ -32,14 +33,14 @@ export class ConfigService extends BaseConfigService {
     .optional();
 
   constructor() {
-    super('');
+    super();
     this.environment = process.env.NODE_ENV || 'development';
     this.loadConfigFromFile();
-    this.loadConfigFromGql();
     this.loadConfigFromEnv();
+    this.loadDefaultQueries();
   }
 
-  loadConfigFromGql() {
+  loadDefaultQueries() {
     const path = join(__dirname, 'assets/gql');
     const files = readdirSync(path).filter(
       (file) => file.endsWith('.gql') || file.endsWith('.graphql'),
@@ -107,7 +108,7 @@ export class ConfigService extends BaseConfigService {
       hosts.map((host, index) => ({
         name: host.toLowerCase().split('.')[0],
         hash: this.generateRandomHash(),
-        url: `http://${process.env[host]}:${process.env[ports[index]]}/graphql`,
+        url: `https://${process.env[host]}:${process.env[ports[index]]}/graphql`,
       })),
     );
 

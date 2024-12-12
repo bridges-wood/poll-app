@@ -16,7 +16,7 @@ export class DnsEndpointLoader extends EndpointLoader {
     const fetcher: AsyncExecutor = async (args) => {
       const service = await this.resolveService(endpoint.name);
       const executor = buildHTTPExecutor({
-        endpoint: `http://${service}`,
+        endpoint: `https://${service}`,
         timeout: 300,
       });
       return executor(args);

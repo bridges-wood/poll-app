@@ -79,6 +79,7 @@ export class SchemaStitcher {
   }: LoadedEndpoint): SubschemaConfig {
     return {
       schema: buildSchema(sdl),
+      
       executor: buildHTTPExecutor({
         endpoint: url,
         fetch,
@@ -86,6 +87,7 @@ export class SchemaStitcher {
           pick(context?.request?.headers?.headersInit, ['authorization']),
         // TODO make this function pure and configurable
         // TODO create trust mechanism for headers - don't trust the client, but trust the gateway
+        // TODO setup HMAC for 
       }),
       batch: true,
       transforms: [

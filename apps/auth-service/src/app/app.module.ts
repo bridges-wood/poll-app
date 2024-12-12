@@ -1,7 +1,7 @@
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ConfigModule, ConfigService } from '@org/config';
+import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { HealthModule } from '@org/health';
@@ -15,9 +15,12 @@ import { AuthModule } from './auth/auth.module';
     RegistrationModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       imports: [ConfigModule, ErrorsModule],
-      inject: [ConfigService, ErrorFormatter],
+      inject: [ClientConfigService, ErrorFormatter],
       driver: YogaDriver,
-      useFactory: (config: ConfigService, errorFormatter: ErrorFormatter) => {
+      useFactory: (
+        config: ClientConfigService,
+        errorFormatter: ErrorFormatter,
+      ) => {
         return {
           introspection: true,
           graphiql: config.isDev(),

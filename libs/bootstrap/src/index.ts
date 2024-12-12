@@ -1,16 +1,22 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@org/config';
+import { ClientConfigService } from '@org/config';
 import { RegistrationService } from '@org/registration';
+import { readFileSync } from 'fs';
 import { isUndefined, range, sample } from 'lodash';
+import { join } from 'path';
 
 export async function bootstrap(appModule: unknown, appName: string) {
   const app = await NestFactory.create(appModule, {
     logger: ['error', 'warn', 'log', 'debug'],
+    httpsOptions: {
+      key: readFileSync(join(__dirname, 'assets/ssl/key.pem')),
+      cert: readFileSync(join(__dirname, 'assets/ssl/cert.pem')),
+    },
   });
   app.enableShutdownHooks();
   const registrationService = app.get(RegistrationService);
-  const configService = app.get(ConfigService);
+  const configService = app.get(ClientConfigService);
 
   let port = configService.port;
   if (isUndefined(configService.port)) {
@@ -21,7 +27,7 @@ export async function bootstrap(appModule: unknown, appName: string) {
     await app.listen(configService.port);
   }
 
-  Logger.log(`🚀 ${appName} is running on: http://localhost:${port}/graphql`);
+  Logger.log(`🚀 ${appName} is running on: https://localhost:${port}/graphql`);
   await registrationService.afterApplicationBootstrap();
 }
 

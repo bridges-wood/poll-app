@@ -64,7 +64,7 @@
     "build-generator": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
-      "inputs": ["{projectRoot}/src/*.ts"],
+      "inputs": ["{projectRoot}/src/**/*.ts"],
       "options": {
         "target": "node",
         "compiler": "tsc",
@@ -102,6 +102,25 @@
       "configurations": {
         "ci": {
           "push": true
+        }
+      }
+    },
+    "ssl": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "mkdir -p {projectRoot}/src/assets/ssl",
+          "openssl req -x509 -newkey rsa:2048 -nodes -subj '/CN={projectName}' -addext 'subjectAltName=DNS:localhost' -keyout {args.private-key-location} -out {args.certificate-location} -CA ~/certs/myCA.pem -CAkey ~/certs/myCA.key -passin pass:{args.ca-password} -days 365"
+        ]
+      },
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "args": [
+            "--private-key-location={projectRoot}/src/assets/ssl/key.pem",
+            "--certificate-location={projectRoot}/src/assets/ssl/cert.pem",
+            "--ca-password=$SSL_ROOT_PASSWORD"
+          ]
         }
       }
     }

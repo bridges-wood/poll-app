@@ -7,9 +7,6 @@
     "postinstall": "husky"
   },
   "dependencies": {
-    "@apollo/client": "^3.11.10",
-    "@apollo/gateway": "^2.9.3",
-    "@apollo/server": "^4.11.2",
     "@bridges-wood/graphql-firestore-subscriptions": "^1.1.2",
     "@envelop/core": "^5.0.2",
     "@envelop/extended-validation": "^4.1.0",
@@ -80,6 +77,7 @@
     "lodash": "^4.17.21",
     "next": "15.0.3",
     "next-themes": "^0.4.3",
+    "node-fetch": "^3.3.2",
     "nookies": "^2.5.2",
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",

@@ -9,6 +9,7 @@ import { LocalEndpointLoader } from './loaders/local-endpoint-loader';
 @Module({
   imports: [ConfigModule],
   providers: [
+    ConfigService,
     EndpointsResolver,
     EndpointsService,
     {

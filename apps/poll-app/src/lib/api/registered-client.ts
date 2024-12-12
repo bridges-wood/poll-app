@@ -6,7 +6,7 @@ import { registerUrql } from '@urql/next/rsc';
 import { cookies } from 'next/headers';
 
 const { getClient } = registerUrql(() => {
-  const url = 'http://localhost:3000/graphql';
+  const url = 'https://localhost:3000/graphql';
 
   console.info('Creating client with url:', url);
   return createClient({

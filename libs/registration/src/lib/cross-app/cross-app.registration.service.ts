@@ -20,7 +20,10 @@ export class CrossAppRegistrationService {
   /**
    * Register a service with the GraphQL gateway
    */
-  async register(name: string, port: number): Promise<boolean> {
+  async register(
+    name: string,
+    port: number,
+  ): Promise<RegisterServiceMutation['addEndpoint']> {
     const hash = await this.getHash();
     this.logger.debug(`Found latest commit hash: ${hash}`);
 
@@ -33,7 +36,7 @@ export class CrossAppRegistrationService {
           args: {
             name: name,
             hash,
-            url: `http://localhost:${port}/graphql`,
+            url: `https://localhost:${port}/graphql`,
           },
         }),
       {
@@ -48,7 +51,7 @@ export class CrossAppRegistrationService {
       },
     );
 
-    return res.addEndpoint.success;
+    return res.addEndpoint;
   }
 
   private async getHash(): Promise<string> {
