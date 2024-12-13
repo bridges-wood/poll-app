@@ -22,14 +22,14 @@ export class LocalEndpointLoader extends EndpointLoader {
 
     try {
       const result = await backOff(
-        () => fetcher({ document: parse(`{ _sdl }`) }),
+        () => fetcher({ document: parse(`{ _service { _sdl} }`) }),
         { numOfAttempts: 10 },
       );
       if (isAsyncIterable(result)) {
         throw new Error('Expected executor to return a single result');
       }
 
-      const sdl = result?.data?._sdl;
+      const sdl = result?.data?._service._sdl;
       if (!sdl) {
         this.logger.debug(result);
         throw new Error('No SDL found in response');

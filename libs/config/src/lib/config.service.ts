@@ -20,10 +20,10 @@ export abstract class BaseConfigService {
       : undefined;
 
     if (this.isDev()) {
-      this.logger.log(`Configuring for development environment`);
+      this.logger.log(`⚙️ Configuring for development environment`);
       // Add development-specific configuration here
     } else {
-      this.logger.log(`Configuring for production environment`);
+      this.logger.log(`⚙ Configuring for production environment`);
       // Add production-specific configuration here
     }
   }
