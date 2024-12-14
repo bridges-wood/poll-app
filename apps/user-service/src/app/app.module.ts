@@ -2,6 +2,7 @@ import {
   OneOfInputObjectsRule,
   useExtendedValidation,
 } from '@envelop/extended-validation';
+import { useHmacSignatureValidation } from '@graphql-hive/gateway';
 import { addTypes, DirectiveLocation } from '@graphql-tools/utils';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
@@ -47,14 +48,15 @@ import { UsersModule } from './users/users.module';
               new GraphQLDirective({
                 name: 'oneOf',
                 locations: [
-                  'INPUT_OBJECT',
-                  'FIELD_DEFINITION',
-                ] as DirectiveLocation[],
+                  DirectiveLocation.INPUT_OBJECT,
+                  DirectiveLocation.FIELD_DEFINITION,
+                ],
                 args: {},
               }),
             ]),
           ),
           plugins: [
+            useHmacSignatureValidation({ secret: 'secret' }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

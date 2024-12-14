@@ -7,6 +7,7 @@ import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { HealthModule } from '@org/health';
 import { RegistrationModule } from '@org/registration';
 import { AuthModule } from './auth/auth.module';
+import { useHmacSignatureValidation } from '@graphql-hive/gateway';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AuthModule } from './auth/auth.module';
           },
           transformAutoSchemaFile: true,
           transformSchema: prepareSchemaForFederation(),
+          plugins: [useHmacSignatureValidation({ secret: 'secret' })],
           path: 'graphql',
         };
       },

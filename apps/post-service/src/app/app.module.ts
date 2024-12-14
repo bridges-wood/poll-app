@@ -13,10 +13,11 @@ import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { HealthModule } from '@org/health';
 import { RegistrationModule } from '@org/registration';
-import { GraphQLDirective } from 'graphql';
+import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
 import { ResponsesModule } from './responses/responses.module';
 import { UsersModule } from './users/users.module';
+import { useHmacSignatureValidation } from '@graphql-hive/gateway';
 
 @Module({
   imports: [
@@ -48,12 +49,13 @@ import { UsersModule } from './users/users.module';
             addTypes(schema, [
               new GraphQLDirective({
                 name: 'oneOf',
-                locations: ['INPUT_OBJECT', 'FIELD_DEFINITION'] as any[],
+                locations: [DirectiveLocation.INPUT_OBJECT, DirectiveLocation.FIELD_DEFINITION],
                 args: {},
               }),
             ]),
           ),
           plugins: [
+            useHmacSignatureValidation({ secret: 'secret' }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

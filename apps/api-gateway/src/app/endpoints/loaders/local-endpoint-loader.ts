@@ -1,28 +1,49 @@
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
-import { isAsyncIterable } from '@graphql-tools/utils';
+import { ExecutionRequest, isAsyncIterable } from '@graphql-tools/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import {
+  computeHmacSignature,
+  HMAC_SIGNATURE_EXTENSION,
+} from '@org/graphql/plugins';
 import { backOff } from 'exponential-backoff';
-import { parse } from 'graphql';
+import { parse, print } from 'graphql';
 import { EndpointLoader } from '.';
 import { ConfigService } from '../../config/config.service';
+import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 
 @Injectable()
 export class LocalEndpointLoader extends EndpointLoader {
-  constructor(configService: ConfigService) {
+  private static readonly INTROSPECTION_QUERY = parse(`{ _service { _sdl } }`);
+
+  private readonly introspectionExecutionRequest: ExecutionRequest;
+
+  constructor(
+    configService: ConfigService,
+    private executorFactory: ExecutorFactory,
+  ) {
     super(new Logger(LocalEndpointLoader.name), configService.getEndpoints());
+
+    this.introspectionExecutionRequest = {
+      document: LocalEndpointLoader.INTROSPECTION_QUERY,
+      extensions: {
+        [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
+          {
+            // Note: Need to use `print` here to ensure that the query is consistently stringified
+            query: print(LocalEndpointLoader.INTROSPECTION_QUERY),
+          },
+          'secret',
+        ),
+      },
+    };
   }
 
   override async loadEndpoint(endpoint: Endpoint): Promise<string | null> {
-    const fetcher = buildHTTPExecutor({
-      endpoint: endpoint.url,
-      timeout: 300,
-    });
+    const fetcher = this.executorFactory.createExecutor(endpoint.url);
 
     try {
       const result = await backOff(
-        () => fetcher({ document: parse(`{ _service { _sdl} }`) }),
+        () => fetcher(this.introspectionExecutionRequest),
         { numOfAttempts: 10 },
       );
       if (isAsyncIterable(result)) {

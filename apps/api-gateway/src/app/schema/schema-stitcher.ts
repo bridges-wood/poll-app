@@ -1,12 +1,10 @@
 import { SubschemaConfig, Transform } from '@graphql-tools/delegate';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { stitchSchemas } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import { ExecutionRequest } from '@graphql-tools/utils';
 import { FilterRootFields } from '@graphql-tools/wrap';
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLSchema, buildSchema } from 'graphql';
-import { isNil, pick } from 'lodash';
+import { isNil } from 'lodash';
 import {
   BehaviorSubject,
   Subject,
@@ -17,6 +15,7 @@ import {
 } from 'rxjs';
 import { EndpointLoader } from '../endpoints/loaders';
 import { LoadedEndpoint } from '../endpoints/models/loaded-endpoint.model';
+import { ExecutorFactory } from '../executors/executor-factory';
 
 @Injectable()
 export class SchemaStitcher {
@@ -26,7 +25,10 @@ export class SchemaStitcher {
     undefined as unknown as GraphQLSchema,
   );
 
-  constructor(private endpointLoader: EndpointLoader) {
+  constructor(
+    private endpointLoader: EndpointLoader,
+    private readonly executorFactory: ExecutorFactory,
+  ) {
     combineLatest([this.endpointLoader.loadedEndpoints$, this.localSchema$])
       .pipe(filter(([_endpoints, localSchema]) => !isNil(localSchema)))
       .subscribe(async ([endpoints, localSchema]) => {
@@ -55,7 +57,9 @@ export class SchemaStitcher {
 
     const { stitchingDirectivesTransformer } = stitchingDirectives();
     const subschemas: SubschemaConfig[] = [
-      ...endpoints.map(this.convertRemoteSchemaToSubschemaConfig),
+      ...endpoints.map((endpoint) =>
+        this.convertRemoteSchemaToSubschemaConfig.bind(this)(endpoint),
+      ),
       {
         schema: localSchema,
       },
@@ -73,22 +77,12 @@ export class SchemaStitcher {
     return stitchedSchema;
   }
 
-  private convertRemoteSchemaToSubschemaConfig({
-    url,
-    sdl,
-  }: LoadedEndpoint): SubschemaConfig {
+  private convertRemoteSchemaToSubschemaConfig(
+    endpoint: LoadedEndpoint,
+  ): SubschemaConfig {
     return {
-      schema: buildSchema(sdl),
-      
-      executor: buildHTTPExecutor({
-        endpoint: url,
-        fetch,
-        headers: ({ context }: ExecutionRequest) =>
-          pick(context?.request?.headers?.headersInit, ['authorization']),
-        // TODO make this function pure and configurable
-        // TODO create trust mechanism for headers - don't trust the client, but trust the gateway
-        // TODO setup HMAC for 
-      }),
+      schema: buildSchema(endpoint.sdl),
+      executor: this.executorFactory.createExecutor(endpoint.url),
       batch: true,
       transforms: [
         new FilterRootFields(

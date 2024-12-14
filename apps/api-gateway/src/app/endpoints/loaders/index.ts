@@ -25,7 +25,7 @@ export abstract class EndpointLoader {
 
   public async addEndpoint(endpoint: Endpoint): Promise<Endpoint> {
     // Attempt to load the endpoint
-    const sdl = await this.loadEndpoint(endpoint);
+    const sdl = await this.loadEndpoint.bind(this)(endpoint);
     if (sdl) {
       this.endpoints$.next([...this.endpoints$.value, endpoint]);
     }
@@ -49,7 +49,7 @@ export abstract class EndpointLoader {
     const endpoints = this.endpoints$.value;
 
     await Promise.all(
-      endpoints.map((endpoint) => this.unRegisterEndpoint.bind(this)(endpoint)),
+      endpoints.map((endpoint) => this.unRegisterEndpoint(endpoint)),
     );
     this.logger.log('⛓️‍💥 Unregistered all endpoints');
   }
