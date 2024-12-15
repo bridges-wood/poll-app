@@ -22,6 +22,14 @@ export class RegistrationService implements BeforeApplicationShutdown {
     }
   }
 
+  async beforeApplicationShutdown(_signal?: string | undefined) {
+    try {
+      await this.unregisterSelf();
+    } catch (error) {
+      this.logger.error(`Error during application shutdown: ${error}`);
+    }
+  }
+
   async registerSelf(): Promise<void> {
     this.logger.log(
       `📡 Attempting to register ${this.configService.name} with the gateway...`,
@@ -38,14 +46,6 @@ export class RegistrationService implements BeforeApplicationShutdown {
         `✅ Successfully registered ${this.configService.name} with the gateway`,
       );
     } else throw new Error('Failed to register');
-  }
-
-  async beforeApplicationShutdown(_signal?: string | undefined) {
-    try {
-      await this.unregisterSelf();
-    } catch (error) {
-      this.logger.error(`Error during application shutdown: ${error}`);
-    }
   }
 
   async unregisterSelf(): Promise<void> {
@@ -79,10 +79,10 @@ export class RegistrationService implements BeforeApplicationShutdown {
     this.logger.log(`🤖 Checking in with the gateway...`);
     try {
       await this.crossAppHealthService.checkIn();
-      this.logger.log(`✅ Successfully checked in with the gateway`);
+      this.logger.log(`🦾 Successfully checked in with the gateway`);
     } catch (error) {
       this.logger.error(
-        `❌ Failed to check in with the gateway, reason: ${error}`,
+        `❗️ Failed to check in with the gateway, reason: ${error}`,
       );
       return this.registerSelf();
     }
