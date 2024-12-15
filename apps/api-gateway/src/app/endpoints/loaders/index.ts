@@ -33,15 +33,18 @@ export abstract class EndpointLoader {
     return endpoint;
   }
 
-  public async removeEndpoint(endpoint: Pick<Endpoint, 'name'>): Promise<void> {
+  public async removeEndpoint(
+    endpoint: Pick<Endpoint, 'name'>,
+  ): Promise<Endpoint | undefined> {
     const index = this.endpoints$.value.findIndex(
       (e) => e.name === endpoint.name,
     );
-    if (index !== -1) {
-      const endpoints = [...this.endpoints$.value];
-      endpoints.splice(index, 1);
-      this.endpoints$.next(endpoints);
-    }
+    if (index === -1) return;
+
+    const endpoints = [...this.endpoints$.value];
+    const removed = endpoints.splice(index, 1)[0];
+    this.endpoints$.next(endpoints);
+    return removed;
   }
 
   public async unRegisterAllEndpoints(): Promise<void> {

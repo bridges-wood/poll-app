@@ -38,6 +38,16 @@ export class LocalEndpointLoader extends EndpointLoader {
     };
   }
 
+  public override async removeEndpoint(
+    endpoint: Pick<Endpoint, 'name'>,
+  ): Promise<Endpoint | undefined> {
+    const removed = await super.removeEndpoint(endpoint);
+    if (!removed) return;
+
+    this.executorFactory.invalidateExecutor(removed.url);
+    return removed;
+  }
+
   override async loadEndpoint(endpoint: Endpoint): Promise<string | null> {
     const fetcher = this.executorFactory.createExecutor(endpoint.url);
 

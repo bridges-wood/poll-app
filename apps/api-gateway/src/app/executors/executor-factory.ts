@@ -17,6 +17,11 @@ export class ExecutorFactory {
     return this.initializeExecutor(url);
   }
 
+  public invalidateExecutor(url: string): void {
+    this.logger.debug(`Invalidating executor for endpoint: ${url}`);
+    this.executorCache.delete(url);
+  }
+
   private initializeExecutor(url: string): AsyncExecutor {
     this.logger.debug(`Creating executor for endpoint: ${url}`);
     const executor: AsyncExecutor = async ({
