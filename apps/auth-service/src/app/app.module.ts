@@ -1,17 +1,17 @@
+import { useHmacSignatureValidation } from '@graphql-hive/gateway';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
-import { HealthModule } from '@org/health';
 import { RegistrationModule } from '@org/registration';
 import { AuthModule } from './auth/auth.module';
-import { useHmacSignatureValidation } from '@graphql-hive/gateway';
 
 @Module({
   imports: [
-    HealthModule,
+    ScheduleModule.forRoot(), // For Cron
     AuthModule,
     RegistrationModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
@@ -23,6 +23,7 @@ import { useHmacSignatureValidation } from '@graphql-hive/gateway';
         errorFormatter: ErrorFormatter,
       ) => {
         return {
+          healthCheckEndpoint: '/health',
           introspection: true,
           graphiql: config.isDev(),
           autoSchemaFile: { path: config.schemaFile, federation: 2 },

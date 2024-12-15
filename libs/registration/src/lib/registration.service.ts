@@ -1,5 +1,7 @@
 import { BeforeApplicationShutdown, Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { ClientConfigService } from '@org/config';
+import { CrossAppHealthService } from '@org/health';
 import assert from 'assert';
 import { CrossAppRegistrationService } from './cross-app/cross-app.registration.service';
 
@@ -9,6 +11,7 @@ export class RegistrationService implements BeforeApplicationShutdown {
   constructor(
     private configService: ClientConfigService,
     private readonly crossAppRegistrationService: CrossAppRegistrationService,
+    private readonly crossAppHealthService: CrossAppHealthService,
   ) {}
 
   async afterApplicationBootstrap() {
@@ -69,5 +72,19 @@ export class RegistrationService implements BeforeApplicationShutdown {
     );
     this.registerSelf();
     return true;
+  }
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  private async checkIn() {
+    this.logger.log(`🤖 Checking in with the gateway...`);
+    try {
+      await this.crossAppHealthService.checkIn();
+      this.logger.log(`✅ Successfully checked in with the gateway`);
+    } catch (error) {
+      this.logger.error(
+        `❌ Failed to check in with the gateway, reason: ${error}`,
+      );
+      return this.registerSelf();
+    }
   }
 }

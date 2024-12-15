@@ -7,7 +7,6 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { useHmacUpstreamSignature } from '@org/graphql/plugins';
-import { HealthModule } from '@org/health';
 import { useSchema } from 'graphql-yoga';
 import { firstValueFrom } from 'rxjs';
 import { ConfigModule } from './config/config.module';
@@ -18,7 +17,6 @@ import { SchemaModule } from './schema/schema.module';
 
 @Module({
   imports: [
-    HealthModule,
     EndpointsModule,
     SchemaModule,
     ScheduleModule.forRoot(),
@@ -31,6 +29,7 @@ import { SchemaModule } from './schema/schema.module';
         schemaStitcher: SchemaStitcher,
       ) => {
         return {
+          healthCheckEndpoint: '/health',
           introspection: true,
           graphiql: {
             defaultTabs: config.getQueries().map((query) => ({

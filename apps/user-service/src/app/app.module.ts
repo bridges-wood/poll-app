@@ -8,11 +8,11 @@ import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AuthGuardModule, DistributedAuthGuard } from '@org/auth';
 import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
-import { HealthModule } from '@org/health';
 import { RegistrationModule } from '@org/registration';
 import { GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
@@ -20,7 +20,7 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    HealthModule,
+    ScheduleModule.forRoot(), // For Cron
     AuthGuardModule,
     UsersModule,
     PostsModule,
@@ -34,6 +34,7 @@ import { UsersModule } from './users/users.module';
         errorFormatter: ErrorFormatter,
       ) => {
         return {
+          healthCheckEndpoint: '/health',
           introspection: true,
           graphiql: config.isDev(),
           autoSchemaFile: { path: config.schemaFile, federation: 2 },

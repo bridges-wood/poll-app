@@ -2,6 +2,7 @@ import {
   OneOfInputObjectsRule,
   useExtendedValidation,
 } from '@envelop/extended-validation';
+import { useHmacSignatureValidation } from '@graphql-hive/gateway';
 import { addTypes } from '@graphql-tools/utils';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
@@ -11,17 +12,16 @@ import { AuthGuardModule, DistributedAuthGuard } from '@org/auth';
 import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
-import { HealthModule } from '@org/health';
 import { RegistrationModule } from '@org/registration';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
 import { ResponsesModule } from './responses/responses.module';
 import { UsersModule } from './users/users.module';
-import { useHmacSignatureValidation } from '@graphql-hive/gateway';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
-    HealthModule,
+    ScheduleModule.forRoot(), // For Cron
     AuthGuardModule,
     PostsModule,
     UsersModule,
@@ -36,6 +36,7 @@ import { useHmacSignatureValidation } from '@graphql-hive/gateway';
         errorFormatter: ErrorFormatter,
       ) => {
         return {
+          healthCheckEndpoint: '/health',
           introspection: true,
           graphiql: config.isDev(),
           autoSchemaFile: { path: config.schemaFile, federation: 2 },
@@ -49,7 +50,10 @@ import { useHmacSignatureValidation } from '@graphql-hive/gateway';
             addTypes(schema, [
               new GraphQLDirective({
                 name: 'oneOf',
-                locations: [DirectiveLocation.INPUT_OBJECT, DirectiveLocation.FIELD_DEFINITION],
+                locations: [
+                  DirectiveLocation.INPUT_OBJECT,
+                  DirectiveLocation.FIELD_DEFINITION,
+                ],
                 args: {},
               }),
             ]),
