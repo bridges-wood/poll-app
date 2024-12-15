@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { parse } from 'graphql';
 import { isAsyncIterable } from 'graphql-yoga';
 import { defaultTo } from 'lodash';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, debounceTime } from 'rxjs';
 import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 import { LoadedEndpoint } from '../models/loaded-endpoint.model';
@@ -17,7 +17,9 @@ export abstract class EndpointLoader {
     initialEndpoints: Endpoint[] = [],
   ) {
     this.endpoints$.next(initialEndpoints);
-    this.endpoints$.subscribe((endpoints) => this.reload(endpoints));
+    this.endpoints$
+      .pipe(debounceTime(600))
+      .subscribe((endpoints) => this.reload(endpoints));
   }
 
   public getEndpoints(): LoadedEndpoint[] {

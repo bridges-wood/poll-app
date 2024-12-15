@@ -9,6 +9,7 @@ import {
   BehaviorSubject,
   Subject,
   combineLatest,
+  debounceTime,
   filter,
   firstValueFrom,
   skip,
@@ -30,7 +31,10 @@ export class SchemaStitcher {
     private readonly executorFactory: ExecutorFactory,
   ) {
     combineLatest([this.endpointLoader.loadedEndpoints$, this.localSchema$])
-      .pipe(filter(([_endpoints, localSchema]) => !isNil(localSchema)))
+      .pipe(
+        filter(([_endpoints, localSchema]) => !isNil(localSchema)),
+        debounceTime(600),
+      )
       .subscribe(async ([endpoints, localSchema]) => {
         const newSchema = await this.stitch(endpoints, localSchema);
         this.stitchedSchema$.next(newSchema);
