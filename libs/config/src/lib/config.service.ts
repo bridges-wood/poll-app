@@ -1,9 +1,11 @@
 import { Logger } from '@nestjs/common';
+import { isEmpty } from 'lodash';
 import { join } from 'path';
 
 export abstract class BaseConfigService {
   protected readonly logger = new Logger(BaseConfigService.name);
   private _environment: string;
+  private _HMACSecret: string;
   private _schemaFile: string;
   private _name: string;
   private _port: number | undefined;
@@ -17,7 +19,14 @@ export abstract class BaseConfigService {
     this._name = process.env['NAME'] || 'service';
     this._port = process.env['PORT']
       ? parseInt(process.env['PORT'], 10)
-      : undefined;
+      : undefined; // If PORT is not set, we'll find a random port later
+    
+    const hmacSecretValue = process.env['HMAC_SECRET'];
+    if (!hmacSecretValue || isEmpty(hmacSecretValue)) {
+      throw new Error('HMAC_SECRET must be set');
+    } else {
+      this._HMACSecret = hmacSecretValue;
+    }
 
     if (this.isDev()) {
       this.logger.log(`⚙️ Configuring for development environment`);
@@ -50,5 +59,9 @@ export abstract class BaseConfigService {
 
   get name() {
     return this._name;
+  }
+
+  get HMACSecret() {
+    return this._HMACSecret;
   }
 }

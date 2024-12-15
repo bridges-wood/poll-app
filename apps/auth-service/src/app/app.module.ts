@@ -34,7 +34,7 @@ import { AuthModule } from './auth/auth.module';
           },
           transformAutoSchemaFile: true,
           transformSchema: prepareSchemaForFederation(),
-          plugins: [useHmacSignatureValidation({ secret: 'secret' })],
+          plugins: [useHmacSignatureValidation({ secret: config.HMACSecret })],
           path: 'graphql',
         };
       },

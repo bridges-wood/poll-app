@@ -57,7 +57,7 @@ import { UsersModule } from './users/users.module';
             ]),
           ),
           plugins: [
-            useHmacSignatureValidation({ secret: 'secret' }),
+            useHmacSignatureValidation({ secret: config.HMACSecret }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

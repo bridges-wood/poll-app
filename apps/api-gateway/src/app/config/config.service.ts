@@ -13,10 +13,8 @@ import { Endpoint } from '../endpoints/models/endpoint.model';
 @Injectable()
 export class ConfigService extends BaseConfigService {
   override logger = new Logger(ConfigService.name);
-  private environment: string;
   private endpoints: Endpoint[] = [];
   private queries: string[] = [];
-  private passphrase: string;
   private ConfigSchema = z
     .object({
       endpoints: z
@@ -34,7 +32,6 @@ export class ConfigService extends BaseConfigService {
 
   constructor() {
     super();
-    this.environment = process.env.NODE_ENV || 'development';
     this.loadConfigFromFile();
     this.loadConfigFromEnv();
     this.loadDefaultQueries();
@@ -119,10 +116,6 @@ export class ConfigService extends BaseConfigService {
 
   private generateRandomHash(): string {
     return createHash('sha1').update(Math.random().toString()).digest('hex');
-  }
-
-  public isDev(): boolean {
-    return this.environment === 'development';
   }
 
   public getEndpoints(): Endpoint[] {

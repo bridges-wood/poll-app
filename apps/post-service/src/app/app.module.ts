@@ -59,7 +59,7 @@ import { ScheduleModule } from '@nestjs/schedule';
             ]),
           ),
           plugins: [
-            useHmacSignatureValidation({ secret: 'secret' }),
+            useHmacSignatureValidation({ secret: config.HMACSecret }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

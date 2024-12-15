@@ -1,9 +1,8 @@
-import { ExecutionRequest, isAsyncIterable } from '@graphql-tools/utils';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { buildHmacSignedExecutionRequest } from '@org/graphql/plugins';
 import { backOff } from 'exponential-backoff';
-import { parse, print } from 'graphql';
+import { parse } from 'graphql';
 import { EndpointLoader } from '.';
 import { ConfigService } from '../../config/config.service';
 import { ExecutorFactory } from '../../executors/executor-factory';
@@ -11,22 +10,11 @@ import { Endpoint } from '../models/endpoint.model';
 
 @Injectable()
 export class LocalEndpointLoader extends EndpointLoader {
-  private static readonly INTROSPECTION_QUERY = parse(`{ _service { _sdl } }`);
-
-  private readonly introspectionExecutionRequest: ExecutionRequest;
-
   constructor(configService: ConfigService, executorFactory: ExecutorFactory) {
     super(
       new Logger(LocalEndpointLoader.name),
       executorFactory,
       configService.getEndpoints(),
-    );
-
-    this.introspectionExecutionRequest = buildHmacSignedExecutionRequest(
-      {
-        query: print(LocalEndpointLoader.INTROSPECTION_QUERY),
-      },
-      'secret',
     );
   }
 
@@ -45,7 +33,10 @@ export class LocalEndpointLoader extends EndpointLoader {
 
     try {
       const result = await backOff(
-        () => fetcher(this.introspectionExecutionRequest),
+        () =>
+          fetcher({
+            document: parse('{ _service { _sdl } }'),
+          }),
         { numOfAttempts: 10 },
       );
       if (isAsyncIterable(result)) {

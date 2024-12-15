@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { buildHmacSignedExecutionRequest } from '@org/graphql/plugins';
-import { parse, print } from 'graphql';
+import { parse } from 'graphql';
 import { isAsyncIterable } from 'graphql-yoga';
 import { defaultTo } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
@@ -61,16 +60,12 @@ export abstract class EndpointLoader {
 
   private async unRegisterEndpoint(endpoint: Endpoint): Promise<boolean> {
     const fetcher = this.executorFactory.createExecutor(endpoint.url);
-    const unRegisterQuery = parse(`mutation { _reRegister }`);
 
     this.logger.debug(`Unregistering endpoint ${endpoint.name}`);
     try {
-      const result = await fetcher(
-        buildHmacSignedExecutionRequest(
-          { query: print(unRegisterQuery) },
-          'secret',
-        ),
-      );
+      const result = await fetcher({
+        document: parse(`mutation { _reRegister }`),
+      });
 
       if (isAsyncIterable(result)) {
         throw new Error('Expected executor to return a single result');

@@ -6,11 +6,14 @@ import {
 } from '@org/graphql/plugins';
 import { fetch } from '@whatwg-node/fetch';
 import { print } from 'graphql';
+import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class ExecutorFactory {
   protected readonly logger = new Logger(ExecutorFactory.name);
   private executorCache = new Map<string, AsyncExecutor>();
+
+  constructor(private readonly configService: ConfigService) {}
 
   public createExecutor(url: string): AsyncExecutor {
     if (this.executorExistsInCache(url)) {
@@ -49,7 +52,7 @@ export class ExecutorFactory {
             ...extensions,
             [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
               { query, variables },
-              'secret',
+              this.configService.HMACSecret,
             ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
           },
         }),
