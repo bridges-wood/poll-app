@@ -6,7 +6,6 @@ import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
-import { useHmacUpstreamSignature } from '@org/graphql/plugins';
 import { useSchema } from 'graphql-yoga';
 import { firstValueFrom } from 'rxjs';
 import { ConfigModule } from './config/config.module';
@@ -43,7 +42,6 @@ import { SchemaModule } from './schema/schema.module';
             return await schemaStitcher.stitchWithRemotes(localSchema);
           },
           plugins: [
-            useHmacUpstreamSignature({ secret: 'secret' }),
             useSchema(() => firstValueFrom(schemaStitcher.stitchedSchema$)),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],

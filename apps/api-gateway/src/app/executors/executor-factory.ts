@@ -1,5 +1,9 @@
 import { AsyncExecutor } from '@graphql-tools/utils';
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  computeHmacSignature,
+  HMAC_SIGNATURE_EXTENSION,
+} from '@org/graphql/plugins';
 import { fetch } from '@whatwg-node/fetch';
 import { print } from 'graphql';
 
@@ -37,7 +41,18 @@ export class ExecutorFactory {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({ query, variables, operationName, extensions }),
+        body: JSON.stringify({
+          query,
+          variables,
+          operationName,
+          extensions: {
+            ...extensions,
+            [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
+              { query, variables },
+              'secret',
+            ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
+          },
+        }),
       });
       return fetchResult.json();
     };

@@ -1,10 +1,7 @@
 import { ExecutionRequest, isAsyncIterable } from '@graphql-tools/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import {
-  computeHmacSignature,
-  HMAC_SIGNATURE_EXTENSION,
-} from '@org/graphql/plugins';
+import { buildHmacSignedExecutionRequest } from '@org/graphql/plugins';
 import { backOff } from 'exponential-backoff';
 import { parse, print } from 'graphql';
 import { EndpointLoader } from '.';
@@ -18,24 +15,19 @@ export class LocalEndpointLoader extends EndpointLoader {
 
   private readonly introspectionExecutionRequest: ExecutionRequest;
 
-  constructor(
-    configService: ConfigService,
-    private executorFactory: ExecutorFactory,
-  ) {
-    super(new Logger(LocalEndpointLoader.name), configService.getEndpoints());
+  constructor(configService: ConfigService, executorFactory: ExecutorFactory) {
+    super(
+      new Logger(LocalEndpointLoader.name),
+      executorFactory,
+      configService.getEndpoints(),
+    );
 
-    this.introspectionExecutionRequest = {
-      document: LocalEndpointLoader.INTROSPECTION_QUERY,
-      extensions: {
-        [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
-          {
-            // Note: Need to use `print` here to ensure that the query is consistently stringified
-            query: print(LocalEndpointLoader.INTROSPECTION_QUERY),
-          },
-          'secret',
-        ),
+    this.introspectionExecutionRequest = buildHmacSignedExecutionRequest(
+      {
+        query: print(LocalEndpointLoader.INTROSPECTION_QUERY),
       },
-    };
+      'secret',
+    );
   }
 
   public override async removeEndpoint(

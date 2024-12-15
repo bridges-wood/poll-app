@@ -1,9 +1,10 @@
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { Logger } from '@nestjs/common';
-import { parse } from 'graphql';
+import { buildHmacSignedExecutionRequest } from '@org/graphql/plugins';
+import { parse, print } from 'graphql';
 import { isAsyncIterable } from 'graphql-yoga';
 import { defaultTo } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
+import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 import { LoadedEndpoint } from '../models/loaded-endpoint.model';
 
@@ -13,6 +14,7 @@ export abstract class EndpointLoader {
 
   constructor(
     protected readonly logger: Logger,
+    protected readonly executorFactory: ExecutorFactory,
     initialEndpoints: Endpoint[] = [],
   ) {
     this.endpoints$.next(initialEndpoints);
@@ -52,28 +54,29 @@ export abstract class EndpointLoader {
     const endpoints = this.endpoints$.value;
 
     await Promise.all(
-      endpoints.map((endpoint) => this.unRegisterEndpoint(endpoint)),
+      endpoints.map((endpoint) => this.unRegisterEndpoint.bind(this)(endpoint)),
     );
     this.logger.log('⛓️‍💥 Unregistered all endpoints');
   }
 
   private async unRegisterEndpoint(endpoint: Endpoint): Promise<boolean> {
-    const fetcher = buildHTTPExecutor({
-      endpoint: endpoint.url,
-      timeout: 300,
-    });
+    const fetcher = this.executorFactory.createExecutor(endpoint.url);
+    const unRegisterQuery = parse(`mutation { _reRegister }`);
 
     this.logger.debug(`Unregistering endpoint ${endpoint.name}`);
     try {
-      const result = await fetcher({
-        document: parse(`mutation { _reRegister}`),
-      });
+      const result = await fetcher(
+        buildHmacSignedExecutionRequest(
+          { query: print(unRegisterQuery) },
+          'secret',
+        ),
+      );
 
       if (isAsyncIterable(result)) {
         throw new Error('Expected executor to return a single result');
       }
 
-      const success = result?.data?._unRegister;
+      const success = result?.data?._reRegister;
       if (!success) throw new Error('Failed to unregister');
 
       this.logger.debug(

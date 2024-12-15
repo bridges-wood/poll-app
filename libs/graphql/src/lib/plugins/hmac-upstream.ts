@@ -1,12 +1,10 @@
+import { ExecutionRequest } from '@graphql-tools/utils';
 import { createHmac } from 'crypto';
-import { GraphQLParams, Plugin, YogaLogger } from 'graphql-yoga';
+import { parse } from 'graphql';
+import { GraphQLParams } from 'graphql-yoga';
 import jsonStableStringify from 'json-stable-stringify';
 
 export const HMAC_SIGNATURE_EXTENSION = 'hmac-signature';
-
-type HmacUpstreamOptions = {
-  secret: string;
-};
 
 export function computeHmacSignature(
   { query, variables }: Pick<GraphQLParams, 'query' | 'variables'>,
@@ -17,31 +15,19 @@ export function computeHmacSignature(
     .digest('base64');
 }
 
-export function useHmacUpstreamSignature(options: HmacUpstreamOptions): Plugin {
-  if (!options.secret)
-    throw new Error(
-      'Property "secret" is is required for useHmacUpstreamSignature plugin',
-    );
-
-  let logger: YogaLogger;
-
+export function buildHmacSignedExecutionRequest(
+  {
+    query,
+    variables,
+  }: Pick<Required<GraphQLParams>, 'query'> & Pick<GraphQLParams, 'variables'>,
+  key: string,
+): ExecutionRequest {
+  const signature = computeHmacSignature({ query, variables }, key);
   return {
-    onYogaInit({ yoga }) {
-      logger = yoga.logger;
-    },
-    onParams({ params, setParams }) {
-      logger.debug('Adding HMAC signature extension');
-
-      setParams({
-        ...params,
-        extensions: {
-          ...params.extensions,
-          [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
-            params,
-            options.secret,
-          ),
-        },
-      });
+    document: parse(query),
+    variables,
+    extensions: {
+      [HMAC_SIGNATURE_EXTENSION]: signature,
     },
   };
 }

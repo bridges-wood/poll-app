@@ -4,12 +4,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { resolveSrv } from 'dns/promises';
 import { parse } from 'graphql';
 import { EndpointLoader } from '.';
+import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 
 @Injectable()
 export class DnsEndpointLoader extends EndpointLoader {
-  constructor() {
-    super(new Logger(DnsEndpointLoader.name));
+  constructor(executorFactory: ExecutorFactory) {
+    super(new Logger(DnsEndpointLoader.name), executorFactory);
   }
 
   protected async loadEndpoint(endpoint: Endpoint): Promise<string> {
