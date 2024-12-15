@@ -2,6 +2,9 @@
  * Part of this code is taken from @chakra-ui/system ❤️
  */
 
+import { WeakValidationMap } from 'prop-types';
+import { JSX } from 'react';
+
 export type As<Props = any> = React.ElementType<Props>;
 export type DOMElements = keyof JSX.IntrinsicElements;
 export type CapitalizedDOMElements = Capitalize<DOMElements>;
@@ -58,7 +61,7 @@ export type InternalForwardRefRenderFunction<
   ): React.ReactElement | null;
   readonly $$typeof: symbol;
   defaultProps?: Partial<Props> | undefined;
-  propTypes?: React.WeakValidationMap<Props> | undefined;
+  propTypes?: WeakValidationMap<Props> | undefined;
   displayName?: string | undefined;
 };
 

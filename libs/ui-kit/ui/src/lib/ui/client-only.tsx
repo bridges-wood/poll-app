@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { JSX, PropsWithChildren, useEffect, useState } from 'react';
 
 export function ClientOnly({
   children,
