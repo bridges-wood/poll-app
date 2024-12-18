@@ -23,6 +23,7 @@ export class CrossAppRegistrationService {
   async register(
     name: string,
     port: number,
+    hasJwks = false,
   ): Promise<RegisterServiceMutation['addEndpoint']> {
     const hash = await this.getHash();
     this.logger.debug(`Found latest commit hash: ${hash}`);
@@ -37,6 +38,9 @@ export class CrossAppRegistrationService {
             name: name,
             hash,
             url: `https://localhost:${port}/graphql`,
+            jwksUri: hasJwks
+              ? `https://localhost:${port}/.well-known/jwks.json`
+              : undefined,
           },
         }),
       {

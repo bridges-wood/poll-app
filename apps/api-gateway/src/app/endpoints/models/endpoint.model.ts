@@ -18,7 +18,14 @@ export class Endpoint {
 
   @Field({
     description:
-      'The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL.',
+      'The root URL of the service, e.g. "http://localhost:3000". Must be a valid URL.',
   })
   url!: string;
+
+  @Field({
+    description:
+      'The URL of the JWKS endpoint for the service. Must be a valid URL.',
+    nullable: true,
+  })
+  jwksUri?: string;
 }

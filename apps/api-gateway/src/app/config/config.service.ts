@@ -24,6 +24,7 @@ export class ConfigService extends BaseConfigService {
             hash: z.string(),
             url: z.string(),
             description: z.string().optional(),
+            hasJwks: z.boolean().optional().default(false),
           }),
         )
         .default([]),
@@ -106,6 +107,7 @@ export class ConfigService extends BaseConfigService {
         name: host.toLowerCase().split('.')[0],
         hash: this.generateRandomHash(),
         url: `https://${process.env[host]}:${process.env[ports[index]]}/graphql`,
+        hasJwks: false,
       })),
     );
 

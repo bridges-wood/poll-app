@@ -22,9 +22,11 @@ export type Scalars = {
 export type AddEndpointArgs = {
   /** A hash denoting the version of the service. Must be a valid SHA256 hash. */
   hash: Scalars['String']['input'];
+  /** The URL of the JWKS endpoint for the service. Must be a valid URL. */
+  jwksUri?: InputMaybe<Scalars['String']['input']>;
   /** Logical name of the service, e.g. "users-service". Many nodes may share the same logical service name. Use valid DNS label. See [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-72) for more details. */
   name: Scalars['String']['input'];
-  /** The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL. */
+  /** The root URL of the service, e.g. "http://localhost:3000". Must be a valid URL. */
   url: Scalars['String']['input'];
 };
 
@@ -68,9 +70,11 @@ export type Endpoint = {
   __typename?: 'Endpoint';
   /** A hash denoting the version of the service. Must be a valid SHA256 hash. */
   hash: Scalars['String']['output'];
+  /** The URL of the JWKS endpoint for the service. Must be a valid URL. */
+  jwksUri?: Maybe<Scalars['String']['output']>;
   /** Logical name of the service, e.g. "users-service". Many nodes may share the same logical service name. Use valid DNS label. See [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-72) for more details. */
   name: Scalars['String']['output'];
-  /** The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL. */
+  /** The root URL of the service, e.g. "http://localhost:3000". Must be a valid URL. */
   url: Scalars['String']['output'];
 };
 
@@ -84,13 +88,15 @@ export type LoadedEndpoint = {
   __typename?: 'LoadedEndpoint';
   /** A hash denoting the version of the service. Must be a valid SHA256 hash. */
   hash: Scalars['String']['output'];
+  /** The URL of the JWKS endpoint for the service. Must be a valid URL. */
+  jwksUri?: Maybe<Scalars['String']['output']>;
   /** The date and time the endpoint was last loaded */
   lastReload: Scalars['DateTime']['output'];
   /** Logical name of the service, e.g. "users-service". Many nodes may share the same logical service name. Use valid DNS label. See [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-72) for more details. */
   name: Scalars['String']['output'];
   /** The GraphQL SDL of the endpoint */
   sdl: Scalars['String']['output'];
-  /** The URL of the service, e.g. "http://localhost:3000/graphql". Must be a valid URL. */
+  /** The root URL of the service, e.g. "http://localhost:3000". Must be a valid URL. */
   url: Scalars['String']['output'];
 };
 

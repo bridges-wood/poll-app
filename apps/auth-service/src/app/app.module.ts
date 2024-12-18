@@ -5,13 +5,16 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
+import { serializeParams } from '@org/graphql/plugins';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { RegistrationModule } from '@org/registration';
 import { AuthModule } from './auth/auth.module';
+import { CryptoModule } from './crypto/crypto.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(), // For Cron
+    CryptoModule,
     AuthModule,
     RegistrationModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
@@ -34,7 +37,12 @@ import { AuthModule } from './auth/auth.module';
           },
           transformAutoSchemaFile: true,
           transformSchema: prepareSchemaForFederation(),
-          plugins: [useHmacSignatureValidation({ secret: config.HMACSecret })],
+          plugins: [
+            useHmacSignatureValidation({
+              secret: config.HMACSecret,
+              serializeParams: serializeParams,
+            }),
+          ],
           path: 'graphql',
         };
       },

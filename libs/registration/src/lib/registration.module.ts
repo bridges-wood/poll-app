@@ -9,7 +9,6 @@ import { RegistrationService } from './registration.service';
 @Module({
   imports: [CrossAppRegistrationModule, ConfigModule],
   providers: [
-    ClientConfigService,
     RegistrationResolver,
     RegistrationService,
     {

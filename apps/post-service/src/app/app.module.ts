@@ -18,6 +18,7 @@ import { PostsModule } from './posts/posts.module';
 import { ResponsesModule } from './responses/responses.module';
 import { UsersModule } from './users/users.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { serializeParams } from '@org/graphql/plugins';
 
 @Module({
   imports: [
@@ -59,7 +60,10 @@ import { ScheduleModule } from '@nestjs/schedule';
             ]),
           ),
           plugins: [
-            useHmacSignatureValidation({ secret: config.HMACSecret }),
+            useHmacSignatureValidation({ secret: config.HMACSecret, 
+              serializeParams: serializeParams,
+
+             }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

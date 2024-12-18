@@ -26,7 +26,7 @@ export class GraphQLCrossAppClient implements CrossAppClient {
             addAuthToOperation: (operation) => {
               if (!token) return operation;
               return utils.appendHeaders(operation, {
-                Authorization: `Bearer ${token}`,
+                authorization: `Bearer ${token}`,
               });
             },
             didAuthError: (error) => {

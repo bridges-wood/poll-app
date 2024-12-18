@@ -4,6 +4,7 @@ import {
   computeHmacSignature,
   HMAC_SIGNATURE_EXTENSION,
 } from '@org/graphql/plugins';
+import { DecodedIdToken } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { print } from 'graphql';
 import { ConfigService } from '../config/config.service';
@@ -36,8 +37,11 @@ export class ExecutorFactory {
       variables,
       operationName,
       extensions,
+      context,
     }) => {
       const query = print(document);
+      const completeExtensions = this.addAuthExtensions(extensions, context);
+
       const fetchResult = await fetch(url, {
         method: 'POST',
         headers: {
@@ -49,9 +53,9 @@ export class ExecutorFactory {
           variables,
           operationName,
           extensions: {
-            ...extensions,
+            ...completeExtensions,
             [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
-              { query, variables },
+              { query, variables, extensions: completeExtensions },
               this.configService.HMACSecret,
             ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
           },
@@ -62,6 +66,19 @@ export class ExecutorFactory {
 
     this.addExecutorToCache(url, executor);
     return executor;
+  }
+
+  private addAuthExtensions(
+    extensions: Record<string, unknown> | undefined,
+    context: { jwt?: { payload: DecodedIdToken } } | undefined,
+  ) {
+    const jwt = context?.jwt;
+
+    return {
+      ...extensions,
+      trusted: jwt ? true : false,
+      sub: jwt?.payload.sub,
+    };
   }
 
   private addExecutorToCache(url: string, executor: AsyncExecutor): void {

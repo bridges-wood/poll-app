@@ -8,7 +8,8 @@ import { cookies } from 'next/headers';
  * @returns The ID of the currently logged in user.
  */
 export const getLoggedInUserId = async (): Promise<User['id']> => {
-  const token = (await cookies()).get('token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
   if (!token) throw new Error('No token found');
 
   const userId = (jwtDecode(token) as DecodedIdToken).sub;

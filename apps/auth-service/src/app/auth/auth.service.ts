@@ -68,22 +68,14 @@ export class AuthService {
   async generateUserToken(
     user: Pick<User, 'id'>,
     authMethods: string[],
+    iss = 'poll-app:auth',
+    aud = 'poll-app:api',
   ): Promise<string> {
     const payload: Pick<DecodedIdToken, 'iss' | 'sub' | 'aud' | 'amr'> = {
-      iss: `https://${process.env['DOMAIN'] || 'localhost'}/`,
+      iss,
       sub: user.id,
-      aud: process.env['CLIENT_ID'] || 'clientId',
+      aud,
       amr: authMethods,
-    };
-    return this.jwtService.sign(payload);
-  }
-
-  async generateCrossAppToken(): Promise<string> {
-    const payload: Pick<DecodedIdToken, 'iss' | 'sub' | 'aud' | 'amr'> = {
-      iss: `https://${process.env['DOMAIN'] || 'localhost'}/`,
-      sub: process.env['CLIENT_ID'] || 'clientId',
-      aud: process.env['CROSS_APP_CLIENT_ID'] || 'crossAppClientId',
-      amr: ['internal'],
     };
     return this.jwtService.sign(payload);
   }

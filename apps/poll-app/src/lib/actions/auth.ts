@@ -13,6 +13,10 @@ export async function signInWithOAuthToken(
   token: string,
   provider = 'google',
 ): Promise<string> {
+  // Delete old token
+  const cookieStore = await cookies();
+  cookieStore.delete('token');
+
   const { data, error } = await getClient().mutation<
     OAuthSignInMutation,
     OAuthSignInMutationVariables
@@ -28,8 +32,9 @@ export async function signInWithOAuthToken(
 }
 
 const setCookie = async (token: string) => {
+  const cookieStore = await cookies();
   const expires = getTokenExpirationDate(token);
-  (await cookies()).set('token', token, {
+  cookieStore.set('token', token, {
     expires,
   });
 };

@@ -3,16 +3,23 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { ClientConfigService } from '@org/config';
 import { CrossAppHealthService } from '@org/health';
 import assert from 'assert';
+import { Mutex } from 'async-mutex';
 import { CrossAppRegistrationService } from './cross-app/cross-app.registration.service';
 
 @Injectable()
 export class RegistrationService implements BeforeApplicationShutdown {
+  private registrationMutex: Mutex;
+  private deregistrationMutex: Mutex;
+
   private readonly logger = new Logger(RegistrationService.name);
   constructor(
     private configService: ClientConfigService,
     private readonly crossAppRegistrationService: CrossAppRegistrationService,
     private readonly crossAppHealthService: CrossAppHealthService,
-  ) {}
+  ) {
+    this.registrationMutex = new Mutex();
+    this.deregistrationMutex = new Mutex();
+  }
 
   async afterApplicationBootstrap() {
     try {
@@ -31,36 +38,47 @@ export class RegistrationService implements BeforeApplicationShutdown {
   }
 
   async registerSelf(): Promise<void> {
+    if (this.registrationMutex.isLocked()) return;
     this.logger.log(
       `📡 Attempting to register ${this.configService.name} with the gateway...`,
     );
-    assert(this.configService.port, 'Port must be set before registering');
 
-    const response = await this.crossAppRegistrationService.register(
-      this.configService.name,
-      this.configService.port,
-    );
+    const response = await this.registrationMutex.runExclusive(async () => {
+      assert(this.configService.port, 'Port must be set before registering');
+
+      return this.crossAppRegistrationService.register(
+        this.configService.name,
+        this.configService.port,
+        this.configService.hasJwks,
+      );
+    });
 
     if (response.success) {
       this.logger.log(
         `✅ Successfully registered ${this.configService.name} with the gateway`,
       );
-    } else throw new Error('Failed to register');
+    } else {
+      throw new Error('Failed to register');
+    }
   }
 
   async unregisterSelf(): Promise<void> {
+    if (this.deregistrationMutex.isLocked()) return;
     this.logger.log(
       `📡 Attempting to de-register ${this.configService.name} with the gateway...`,
     );
-    const success = await this.crossAppRegistrationService.unregister(
-      this.configService.name,
+
+    const success = await this.deregistrationMutex.runExclusive(async () =>
+      this.crossAppRegistrationService.unregister(this.configService.name),
     );
 
     if (success) {
       this.logger.log(
         `✅ Successfully de-registered ${this.configService.name}`,
       );
-    } else throw new Error('Failed to unregister');
+    } else {
+      throw new Error('Failed to unregister');
+    }
   }
 
   /**

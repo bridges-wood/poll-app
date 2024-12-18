@@ -4,6 +4,7 @@ import { FastifyRequest as Request } from 'fastify';
 import { Strategy } from 'passport-custom';
 
 import { User } from '@org/typings';
+import { GraphQLParams } from 'graphql-yoga';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
 import { extractAuthTokenFromHeader } from '../utils';
 
@@ -17,11 +18,21 @@ export class DistributedStrategy extends PassportStrategy(
   }
 
   async validate(req: Request): Promise<Pick<User, 'id'>> {
-    // Extract the token from the request and validate it
-    const token = extractAuthTokenFromHeader(req);
-    const id = await this.crossAppAuthService.validateToken(token);
+    // At this point, we know that the request is from the gateway
+    const body = req.body as GraphQLParams;
+    if (this.isTrusted(body)) {
+      // If the request is trusted, we can trust the user data
+      return {
+        id: body.extensions?.['sub'],
+      };
+    } else {
+      // TODO - Implement alternative authentication mechanism
+      throw new Error('Unauthorized');
+    }
+  }
 
-    // TODO let the service access the user data without being logged in
-    return { id };
+  private isTrusted(params: GraphQLParams): boolean {
+    // Check that the extensions field of the request contains the trusted field
+    return params.extensions?.['trusted'] === true;
   }
 }

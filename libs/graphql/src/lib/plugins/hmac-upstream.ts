@@ -1,33 +1,25 @@
-import { ExecutionRequest } from '@graphql-tools/utils';
 import { createHmac } from 'crypto';
-import { parse } from 'graphql';
 import { GraphQLParams } from 'graphql-yoga';
 import jsonStableStringify from 'json-stable-stringify';
 
 export const HMAC_SIGNATURE_EXTENSION = 'hmac-signature';
 
+export function serializeParams(params: GraphQLParams): string {
+  return jsonStableStringify({
+    query: params.query,
+    variables: params.variables,
+    extensions: {
+      ...params.extensions,
+      [HMAC_SIGNATURE_EXTENSION]: undefined,
+    },
+  });
+}
+
 export function computeHmacSignature(
-  { query, variables }: Pick<GraphQLParams, 'query' | 'variables'>,
+  params: GraphQLParams,
   key: string,
 ): string {
   return createHmac('sha256', key)
-    .update(jsonStableStringify({ query, variables }))
+    .update(serializeParams(params))
     .digest('base64');
-}
-
-export function buildHmacSignedExecutionRequest(
-  {
-    query,
-    variables,
-  }: Pick<Required<GraphQLParams>, 'query'> & Pick<GraphQLParams, 'variables'>,
-  key: string,
-): ExecutionRequest {
-  const signature = computeHmacSignature({ query, variables }, key);
-  return {
-    document: parse(query),
-    variables,
-    extensions: {
-      [HMAC_SIGNATURE_EXTENSION]: signature,
-    },
-  };
 }

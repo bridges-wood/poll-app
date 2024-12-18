@@ -12,6 +12,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AuthGuardModule, DistributedAuthGuard } from '@org/auth';
 import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
+import { serializeParams } from '@org/graphql/plugins';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { RegistrationModule } from '@org/registration';
 import { GraphQLDirective } from 'graphql';
@@ -57,7 +58,10 @@ import { UsersModule } from './users/users.module';
             ]),
           ),
           plugins: [
-            useHmacSignatureValidation({ secret: config.HMACSecret }),
+            useHmacSignatureValidation({
+              secret: config.HMACSecret,
+              serializeParams: serializeParams,
+            }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),
