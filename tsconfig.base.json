@@ -34,7 +34,6 @@
         "libs/graphql/src/lib/transformers/index.ts"
       ],
       "@org/health": ["libs/health/src/index.ts"],
-      "@org/heartbeat": ["libs/heartbeat/src/index.ts"],
       "@org/pubsub": ["libs/pubsub/src/index.ts"],
       "@org/registration": ["libs/registration/src/index.ts"],
       "@org/typings": ["libs/typings/src/index.ts"],
