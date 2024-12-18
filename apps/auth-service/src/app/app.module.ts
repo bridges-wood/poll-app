@@ -38,10 +38,11 @@ import { CryptoModule } from './crypto/crypto.module';
           transformAutoSchemaFile: true,
           transformSchema: prepareSchemaForFederation(),
           plugins: [
-            useHmacSignatureValidation({
-              secret: config.HMACSecret,
-              serializeParams: serializeParams,
-            }),
+            !config.isDev() &&
+              useHmacSignatureValidation({
+                secret: config.HMACSecret,
+                serializeParams: serializeParams,
+              }),
           ],
           path: 'graphql',
         };

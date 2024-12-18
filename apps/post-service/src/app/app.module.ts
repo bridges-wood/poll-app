@@ -8,17 +8,17 @@ import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AuthGuardModule, DistributedAuthGuard } from '@org/auth';
 import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
+import { serializeParams } from '@org/graphql/plugins';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { RegistrationModule } from '@org/registration';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { PostsModule } from './posts/posts.module';
 import { ResponsesModule } from './responses/responses.module';
 import { UsersModule } from './users/users.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { serializeParams } from '@org/graphql/plugins';
 
 @Module({
   imports: [
@@ -60,10 +60,11 @@ import { serializeParams } from '@org/graphql/plugins';
             ]),
           ),
           plugins: [
-            useHmacSignatureValidation({ secret: config.HMACSecret, 
-              serializeParams: serializeParams,
-
-             }),
+            !config.isDev() &&
+              useHmacSignatureValidation({
+                secret: config.HMACSecret,
+                serializeParams: serializeParams,
+              }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

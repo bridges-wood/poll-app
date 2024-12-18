@@ -58,10 +58,11 @@ import { UsersModule } from './users/users.module';
             ]),
           ),
           plugins: [
-            useHmacSignatureValidation({
-              secret: config.HMACSecret,
-              serializeParams: serializeParams,
-            }),
+            !config.isDev() &&
+              useHmacSignatureValidation({
+                secret: config.HMACSecret,
+                serializeParams: serializeParams,
+              }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

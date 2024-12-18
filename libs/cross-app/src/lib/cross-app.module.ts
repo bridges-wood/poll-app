@@ -7,7 +7,7 @@ import { GraphQLCrossAppClient } from './clients/graphql.client';
   providers: [
     {
       useFactory: (configService: ClientConfigService) =>
-        new GraphQLCrossAppClient(configService.gatewayUrl), // TODO - think about accessing individual services to reduce load on the gateway
+        new GraphQLCrossAppClient(configService.gatewayUrl), 
       provide: GraphQLCrossAppClient,
       inject: [ClientConfigService],
     },
