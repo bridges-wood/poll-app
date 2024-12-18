@@ -18,7 +18,7 @@ export class DistributedStrategy extends PassportStrategy(
   }
 
   async validate(req: Request): Promise<Pick<User, 'id'>> {
-    // At this point, we know that the request is from the gateway
+    // When we're in production, the request is signed by the gateway, so we can trust it
     const body = req.body as GraphQLParams;
     if (this.isTrusted(body)) {
       // If the request is trusted, we can trust the user data
@@ -26,8 +26,13 @@ export class DistributedStrategy extends PassportStrategy(
         id: body.extensions?.['sub'],
       };
     } else {
-      // TODO - Implement alternative authentication mechanism
-      throw new Error('Unauthorized');
+      // When we're in development, we need to validate the token
+      const token = extractAuthTokenFromHeader(req);
+      const user = await this.crossAppAuthService.validateToken(token);
+
+      return {
+        id: user,
+      };
     }
   }
 

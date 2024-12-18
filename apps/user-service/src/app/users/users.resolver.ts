@@ -33,7 +33,7 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
-  // @Roles(['admin'])
+  @Roles(['admin'])
   @UseGuards(RolesGuard)
   @Query((returns) => UserConnection, { description: 'Get all users' })
   async users(@Args() args: PaginationArgs): Promise<UserConnection> {
@@ -52,8 +52,6 @@ export class UsersResolver {
     return this.usersService.streamUser(id);
   }
 
-  // @Roles(['admin'])
-  @UseGuards(RolesGuard)
   @Mutation((returns) => User, { description: 'Create a new user' })
   async createUser(
     @Args('id', { description: 'The id of the new user to create' }) id: string,
