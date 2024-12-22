@@ -28,6 +28,7 @@
       "@org/graphql": ["libs/graphql/src/index.ts"],
       "@org/graphql/pagination": ["libs/graphql/src/lib/pagination/index.ts"],
       "@org/graphql/plugins": ["libs/graphql/src/lib/plugins/index.ts"],
+      "@org/graphql/search": ["libs/graphql/src/lib/search/index.ts"],
       "@org/graphql/schema.json": ["libs/graphql/assets/introspection.json"],
       "@org/graphql/scripts": ["libs/graphql/src/scripts/index.ts"],
       "@org/graphql/transformers": [

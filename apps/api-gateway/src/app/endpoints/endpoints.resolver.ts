@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { EndpointsService } from './endpoints.service';
 import { AddEndpointArgs } from './models/add-endpoint.args';
 import { AddEndpointResult } from './models/add-endpoint.result';
+import { EndpointFilter } from './models/endpoint-filter.args';
 import { LoadedEndpoint } from './models/loaded-endpoint.model';
 import { ReloadAllEndpointsResult } from './models/reload-all-endpoints.result';
 import { RemoveEndpointResult } from './models/remove-endpoint.result';
@@ -15,8 +16,10 @@ export class EndpointsResolver {
   @Query((returns) => [LoadedEndpoint], {
     description: 'Get all endpoints currently loaded by the gateway',
   })
-  endpoints(): LoadedEndpoint[] {
-    return this.endpointsService.getAllLoadedEndpoints();
+  endpoints(
+    @Args('filter', { nullable: true }) filter: EndpointFilter,
+  ): LoadedEndpoint[] {
+    return this.endpointsService.getEndpoints(filter);
   }
 
   @Mutation((returns) => AddEndpointResult, {

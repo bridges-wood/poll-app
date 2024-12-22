@@ -1,21 +1,30 @@
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
+import { LocalSearchService } from '@org/graphql/search';
 import { EndpointLoader } from './loaders';
 import { AddEndpointArgs } from './models/add-endpoint.args';
 import { AddEndpointResult } from './models/add-endpoint.result';
+import { EndpointFilter } from './models/endpoint-filter.args';
 import { Endpoint } from './models/endpoint.model';
 import { LoadedEndpoint } from './models/loaded-endpoint.model';
 import { ReloadAllEndpointsResult } from './models/reload-all-endpoints.result';
 import { RemoveEndpointResult } from './models/remove-endpoint.result';
 
 @Injectable()
-export class EndpointsService implements OnApplicationShutdown {
+export class EndpointsService
+  extends LocalSearchService<LoadedEndpoint>
+  implements OnApplicationShutdown
+{
   private readonly logger = new Logger(EndpointsService.name);
 
-  constructor(private endpointLoader: EndpointLoader) {}
+  constructor(private endpointLoader: EndpointLoader) {
+    super();
+  }
 
-  getAllLoadedEndpoints(): LoadedEndpoint[] {
+  getEndpoints(filter?: EndpointFilter): LoadedEndpoint[] {
     const endpoints = this.endpointLoader.getEndpoints();
-    return endpoints;
+    if (!filter) return endpoints;
+
+    return this.search(endpoints, filter);
   }
 
   async addEndpoint(args: AddEndpointArgs): Promise<AddEndpointResult> {

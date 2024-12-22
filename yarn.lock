@@ -7354,6 +7354,7 @@ __metadata:
     color-name: "npm:^2.0.0"
     cypress: "npm:13.16.1"
     dayjs: "npm:^1.11.13"
+    dot-path-value: "npm:^0.0.11"
     dotenv: "npm:^16.4.7"
     esbuild: "npm:^0.24.0"
     eslint: "npm:9.17.0"
@@ -14974,6 +14975,13 @@ __metadata:
     no-case: "npm:^3.0.4"
     tslib: "npm:^2.0.3"
   checksum: 10c0/5b859ea65097a7ea870e2c91b5768b72ddf7fa947223fd29e167bcdff58fe731d941c48e47a38ec8aa8e43044c8fbd15cd8fa21689a526bc34b6548197cd5b05
+  languageName: node
+  linkType: hard
+
+"dot-path-value@npm:^0.0.11":
+  version: 0.0.11
+  resolution: "dot-path-value@npm:0.0.11"
+  checksum: 10c0/88e9bb22e3d769e24a6b6aa955bcbbc51559e2e86502a8d31b674a6c7d391821df49e7bc47e92720e718f143bc2133290637645543a2af8a35a58331d3aa9fcd
   languageName: node
   linkType: hard
 
