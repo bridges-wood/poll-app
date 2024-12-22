@@ -20,13 +20,11 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     this.client = new Client({
       exchanges: [
         authExchange(async (utils) => {
-          const token = this.token;
-
           return {
             addAuthToOperation: (operation) => {
-              if (!token) return operation;
+              if (!this.token) return operation;
               return utils.appendHeaders(operation, {
-                authorization: `Bearer ${token}`,
+                authorization: `Bearer ${this.token}`,
               });
             },
             didAuthError: (error) => {
@@ -47,10 +45,10 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     });
   }
 
-  impersonating(token: string): CrossAppClient {
+  impersonating(token: string): GraphQLCrossAppClient {
     this.logger.debug(`Impersonating as user with token: ${token}`);
     this.token = token;
-    return this as CrossAppClient;
+    return this as GraphQLCrossAppClient;
   }
 
   async query<Data = unknown, Variables extends AnyVariables = AnyVariables>(

@@ -29,6 +29,7 @@ export class CrossAppAuthService {
     if (!token || isEmpty(token)) {
       throw new Error('Token is missing');
     }
+    this.client = this.client.impersonating(token);
 
     // Query cache for token
     this.logger.debug(`Validating token: ${token}`);

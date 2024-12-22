@@ -78,6 +78,22 @@ export type Endpoint = {
   url: Scalars['String']['output'];
 };
 
+/** Filter for endpoints loaded by the gateway. */
+export type EndpointFilter = {
+  /** Matches `LoadedEndpoint` objects which have specified fields. */
+  has?: InputMaybe<Array<LoadedEndpointSearchHas>>;
+  /** Filter arguments for objects with the `hash` field. */
+  hash?: InputMaybe<StringFieldFilterArgs>;
+  /** Filter arguments for objects with the `jwksUri` field. */
+  jwksUri?: InputMaybe<StringFieldFilterArgs>;
+  /** Filter arguments for objects with the `name` field. */
+  name?: InputMaybe<StringFieldFilterArgs>;
+  /** Filter arguments for objects with the `sdl` field. */
+  sdl?: InputMaybe<StringFieldFilterArgs>;
+  /** Filter arguments for objects with the `url` field. */
+  url?: InputMaybe<StringFieldFilterArgs>;
+};
+
 export type IPostContent = {
   /** The type of content */
   type: PostContentType;
@@ -99,6 +115,11 @@ export type LoadedEndpoint = {
   /** The root URL of the service, e.g. "http://localhost:3000". Must be a valid URL. */
   url: Scalars['String']['output'];
 };
+
+export enum LoadedEndpointSearchHas {
+  /** The URL of the JWKS endpoint for the service. Must be a valid URL. */
+  JwksUri = 'jwksUri'
+}
 
 /** A multiple choice question */
 export type MultipleChoiceQuestion = IPostContent & {
@@ -350,6 +371,11 @@ export type Query_UserByIdArgs = {
 };
 
 
+export type QueryEndpointsArgs = {
+  filter?: InputMaybe<EndpointFilter>;
+};
+
+
 export type QueryPostArgs = {
   id: Scalars['String']['input'];
 };
@@ -444,6 +470,14 @@ export type ResponseEdge = {
 
 export type ResponseInput = {
   multipleChoiceResponse?: InputMaybe<MultipleChoiceResponseInput>;
+};
+
+/** Filter for string fields */
+export type StringFieldFilterArgs = {
+  /** Matches exactly this value */
+  eq?: InputMaybe<Scalars['String']['input']>;
+  /** Matches any of these values */
+  in?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type Subscription = {
@@ -602,6 +636,18 @@ export type VoteOnMultipleChoicePostMutationVariables = Exact<{
 
 
 export type VoteOnMultipleChoicePostMutation = { __typename?: 'Mutation', createResponse: { __typename?: 'MultipleChoiceResponse', id: string, selectedOption: number } };
+
+export type FetchAuthDataQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type FetchAuthDataQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, roles: Array<string> } };
+
+export type FindEndpointsWithJwksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindEndpointsWithJwksQuery = { __typename?: 'Query', endpoints: Array<{ __typename?: 'LoadedEndpoint', jwksUri?: string | null }> };
 
 export type FetchPostQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -767,6 +813,21 @@ export const VoteOnMultipleChoicePostDocument = gql`
   }
 }
     ${MultipleChoiceResponseFragmentFragmentDoc}`;
+export const FetchAuthDataDocument = gql`
+    query FetchAuthData($id: String!) {
+  user(id: $id) {
+    id
+    roles
+  }
+}
+    `;
+export const FindEndpointsWithJwksDocument = gql`
+    query FindEndpointsWithJWKS {
+  endpoints(filter: {has: jwksUri}) {
+    jwksUri
+  }
+}
+    `;
 export const FetchPostDocument = gql`
     query FetchPost($id: String!) {
   post(id: $id) {

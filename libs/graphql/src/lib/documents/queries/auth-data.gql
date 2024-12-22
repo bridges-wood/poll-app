@@ -1,0 +1,6 @@
+query FetchAuthData($id: String!) {
+  user(id: $id) {
+    id
+    roles
+  }
+}

@@ -9,6 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { User } from '@org/typings';
 import { CrossAppUserService } from '../cross-app/cross-app.user.service';
 import { Roles } from '../decorators/roles.decorator';
+import { extractAuthTokenFromHeader } from '../utils';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -19,14 +20,18 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // TODO determine if this is fired unnecessarily
     const roles = this.reflector.get(Roles, context.getHandler());
     if (!roles) {
       return true;
     }
 
     const ctx = GqlExecutionContext.create(context);
-    const { id }: User = ctx.getContext().req.user;
-    const user = await this.crossAppUserService.fetchAuthData(id);
+    const request = ctx.getContext().req;
+    const { id }: User = request.user;
+
+    const token = extractAuthTokenFromHeader(request);
+    const user = await this.crossAppUserService.fetchAuthData(id, token);
 
     return this.matchRoles(roles, user);
   }

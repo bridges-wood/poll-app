@@ -1,18 +1,19 @@
 import { GetSigningKeyFunction } from '@graphql-yoga/plugin-jwt';
 import { Injectable, Logger } from '@nestjs/common';
+import { SigningKeyProvider } from '@org/auth';
 import { JwksClient } from 'jwks-rsa';
 import { EndpointsService } from '../endpoints/endpoints.service';
 import { LoadedEndpoint } from '../endpoints/models/loaded-endpoint.model';
 
 @Injectable()
-export class SigningKeyProviderFactory {
-  private readonly logger = new Logger(SigningKeyProviderFactory.name);
+export class LocalSigningKeyProvider implements SigningKeyProvider {
+  private readonly logger = new Logger(LocalSigningKeyProvider.name);
   constructor(private readonly endpointService: EndpointsService) {}
 
   build(): GetSigningKeyFunction {
     return async (kid) => {
       const jwksClients = this.endpointService
-        .getAllLoadedEndpoints()
+        .getEndpoints()
         .filter(this.isJwksEndpoint)
         .map((e) => new JwksClient({ ...e }));
 

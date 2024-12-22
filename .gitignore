@@ -61,5 +61,5 @@ charts/*/charts
 # Secret files
 **/secrets.yaml
 
-# SSL Certs
-**/ssl/*
+# Crypto
+**/*.pem

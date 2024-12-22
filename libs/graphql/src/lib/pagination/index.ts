@@ -86,7 +86,7 @@ export function Connected<T extends Node>(
 
   @ObjectType({ isAbstract: true })
   abstract class ConnectionType implements IConnectionType<T> {
-    @Field((type) => [EdgeType!], {
+    @Field((type) => [EdgeType], {
       nullable: true,
       description: 'Edges connected to this page',
     })

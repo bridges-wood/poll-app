@@ -6,4 +6,5 @@ export * from './lib/guards/auth-guard.module';
 export * from './lib/guards/auth.guard';
 export * from './lib/guards/distributed-auth.guard';
 export * from './lib/guards/roles.guard';
-export * from './lib/utils/index';
+export * from './lib/signing';
+export * from './lib/utils';

@@ -7,12 +7,13 @@ import { extractFromHeader, useJWT } from '@graphql-yoga/plugin-jwt';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
+import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { useSchema } from 'graphql-yoga';
 import { firstValueFrom } from 'rxjs';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { CryptoModule } from './crypto/crypto.module';
-import { SigningKeyProviderFactory } from './crypto/signing-key-provider.factory';
+import { LocalSigningKeyProvider } from './crypto/local-signing-key-provider';
 import { EndpointsModule } from './endpoints/endpoints.module';
 import { SchemaStitcher } from './schema/schema-stitcher';
 import { SchemaModule } from './schema/schema.module';
@@ -25,12 +26,12 @@ import { SchemaModule } from './schema/schema.module';
     ScheduleModule.forRoot(),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       imports: [ConfigModule, SchemaModule, CryptoModule],
-      inject: [ConfigService, SchemaStitcher, SigningKeyProviderFactory],
+      inject: [ConfigService, SchemaStitcher, LocalSigningKeyProvider],
       driver: YogaDriver,
       useFactory: async (
         config: ConfigService,
         schemaStitcher: SchemaStitcher,
-        signingKeyProviderFactory: SigningKeyProviderFactory,
+        signingKeyProvider: LocalSigningKeyProvider,
       ) => {
         return {
           healthCheckEndpoint: '/health',
@@ -43,13 +44,21 @@ import { SchemaModule } from './schema/schema.module';
           },
           autoSchemaFile: true,
           transformAutoSchemaFile: true,
+          buildSchemaOptions: {
+            directives: [
+              new GraphQLDirective({
+                name: 'search',
+                locations: [DirectiveLocation.FIELD_DEFINITION],
+              }),
+            ],
+          },
           transformSchema: async (localSchema) => {
             return await schemaStitcher.stitchWithRemotes(localSchema);
           },
           plugins: [
             useSchema(() => firstValueFrom(schemaStitcher.stitchedSchema$)),
             useJWT({
-              signingKeyProviders: [signingKeyProviderFactory.build()],
+              signingKeyProviders: [signingKeyProvider.build()],
               tokenLookupLocations: [
                 extractFromHeader({ name: 'authorization', prefix: 'Bearer' }),
               ],

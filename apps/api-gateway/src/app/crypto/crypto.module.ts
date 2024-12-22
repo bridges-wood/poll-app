@@ -1,11 +1,11 @@
-import { Module } from "@nestjs/common";
-import { EndpointsModule } from "../endpoints/endpoints.module";
-import { SigningKeyProviderFactory } from "./signing-key-provider.factory";
-import { EndpointsService } from "../endpoints/endpoints.service";
+import { Module } from '@nestjs/common';
+import { EndpointsModule } from '../endpoints/endpoints.module';
+import { EndpointsService } from '../endpoints/endpoints.service';
+import { LocalSigningKeyProvider } from './local-signing-key-provider';
 
 @Module({
   imports: [EndpointsModule],
-  providers: [SigningKeyProviderFactory, EndpointsService],
-  exports: [SigningKeyProviderFactory],
+  providers: [LocalSigningKeyProvider, EndpointsService],
+  exports: [LocalSigningKeyProvider],
 })
 export class CryptoModule {}
