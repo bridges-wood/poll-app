@@ -78,6 +78,7 @@ export class ExecutorFactory {
       ...extensions,
       trusted: jwt ? true : false,
       sub: jwt?.payload.sub,
+      roles: jwt?.payload.roles,
     };
   }
 

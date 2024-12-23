@@ -362,7 +362,7 @@ export type Query = {
   /** Get all users */
   users: UserConnection;
   /** Ensure that a given token was issued by the application */
-  validateToken: Scalars['String']['output'];
+  validateToken: ValidateTokenResult;
 };
 
 
@@ -572,6 +572,14 @@ export type UserEdge = {
   node: User;
 };
 
+export type ValidateTokenResult = {
+  __typename?: 'ValidateTokenResult';
+  /** The ID of the user as it is stored in Firebase */
+  id: Scalars['ID']['output'];
+  /** The roles the user has */
+  roles: Array<Scalars['String']['output']>;
+};
+
 export type AuthDataFragment = { __typename?: 'User', id: string, roles: Array<string> };
 
 export type FeedMultipleChoiceQuestionFragment = { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> };
@@ -677,7 +685,7 @@ export type ValidateTokenQueryVariables = Exact<{
 }>;
 
 
-export type ValidateTokenQuery = { __typename?: 'Query', validateToken: string };
+export type ValidateTokenQuery = { __typename?: 'Query', validateToken: { __typename?: 'ValidateTokenResult', id: string, roles: Array<string> } };
 
 export const AuthDataFragmentDoc = gql`
     fragment AuthData on User {
@@ -870,6 +878,9 @@ export const FetchProfileDataDocument = gql`
     ${ProfileDataFragmentDoc}`;
 export const ValidateTokenDocument = gql`
     query ValidateToken($token: String!) {
-  validateToken(token: $token)
+  validateToken(token: $token) {
+    id
+    roles
+  }
 }
     `;

@@ -1,0 +1,1 @@
+export const JWKS_URI_CACHE_KEY = 'jwks_uris';

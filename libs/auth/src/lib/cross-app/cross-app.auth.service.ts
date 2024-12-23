@@ -25,7 +25,9 @@ export class CrossAppAuthService {
    * @param token The JWT token to validate
    * @returns The user ID if the token is valid, otherwise throws an error
    */
-  async validateToken(token: string | undefined): Promise<User['id']> {
+  async validateToken(
+    token: string | undefined,
+  ): Promise<Pick<User, 'id' | 'roles'>> {
     if (!token || isEmpty(token)) {
       throw new Error('Token is missing');
     }
@@ -36,7 +38,7 @@ export class CrossAppAuthService {
     const value = await this.cache.get(token);
     if (!isEmpty(value)) {
       this.logger.debug(`Found matching value in cache: ${value}`);
-      return value as User['id'];
+      return value as Pick<User, 'id' | 'roles'>;
     }
 
     const res = await this.client.query<

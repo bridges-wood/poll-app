@@ -2,6 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AuthService } from './auth.service';
 import { AuthResult } from './models/sign-in-result.model';
+import { ValidateTokenResult } from './models/validate-token-result.model';
 import { SupportedOAuthProvider } from './supported-oauth-providers';
 
 @Resolver()
@@ -45,12 +46,17 @@ export class AuthResolver {
     return { token: refreshedToken };
   }
 
-  @Query((returns) => String, {
+  @Query((returns) => ValidateTokenResult, {
     description: 'Ensure that a given token was issued by the application',
   })
-  async validateToken(@Args('token') token: string): Promise<string> {
+  async validateToken(
+    @Args('token') token: string,
+  ): Promise<ValidateTokenResult> {
     const decodedIdToken = await this.authService.validateToken(token);
 
-    return decodedIdToken.sub;
+    return {
+      id: decodedIdToken.sub,
+      roles: decodedIdToken.roles,
+    };
   }
 }

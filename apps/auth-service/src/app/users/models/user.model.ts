@@ -9,4 +9,7 @@ export class User {
 
   @Field({ description: 'The email address of the user' })
   email: string;
+
+  @Field((type) => [String], { description: 'The roles the user has' })
+  roles: string[];
 }

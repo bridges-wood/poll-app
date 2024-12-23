@@ -25,9 +25,9 @@ import { UserDbModel, UserModelMapper } from './models/user.model-mapper';
 @Injectable()
 export class UsersService extends PaginationService<User, UserDbModel> {
   constructor(
-    @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
+    @Inject(FirebaseTokens.DATABASE) database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
-    private readonly userModelMapper: UserModelMapper,
+    userModelMapper: UserModelMapper,
   ) {
     super(
       User,

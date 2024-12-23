@@ -8,6 +8,10 @@ export interface DecodedIdToken {
    */
   sub: string;
   /**
+   * Roles of the user. This is a custom claim.
+   */
+  roles: string[];
+  /**
    * Audience(s) that this ID token is intended for. It MUST contain the OAuth 2.0 client_id of the application as an audience value.
    */
   aud: string | string[];
