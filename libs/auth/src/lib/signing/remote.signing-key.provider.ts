@@ -2,6 +2,7 @@ import { GetSigningKeyFunction } from '@graphql-yoga/plugin-jwt';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CACHE_INSTANCE } from '@org/cache';
 import { GraphQLCrossAppClient } from '@org/cross-app';
+import { NotFoundError } from '@org/errors';
 import {
   FindEndpointsWithJwksDocument,
   FindEndpointsWithJwksQuery,
@@ -23,16 +24,24 @@ export class RemoteSigningKeyProvider implements SigningKeyProvider {
   public build(): GetSigningKeyFunction {
     return async (kid) => {
       const jwksUris = await this.findJwksUris();
-      const jwksClients = jwksUris.map(
-        (uri) => new JwksClient({ jwksUri: uri }),
-      );
+      const jwksClients = jwksUris.map(this.toJwksClient);
 
       this.logger.debug(`Built ${jwksClients.length} JwksClients`);
 
-      return Promise.any(
-        jwksClients.map((client) => client.getSigningKey(kid)),
-      )?.then((r) => r.getPublicKey());
+      try {
+        const signingKey = await Promise.any(
+          jwksClients.map((client) => client.getSigningKey(kid)),
+        )
+        return signingKey.getPublicKey();
+      } catch (e) {
+        this.logger.error(`Error getting signing key for kid: ${kid}`, e);
+        throw new NotFoundError(`Signing key not found for kid: ${kid}`);
+      }
     };
+  }
+
+  private toJwksClient(uri: string): JwksClient {
+    return new JwksClient({ jwksUri: uri });
   }
 
   async findJwksUris(): Promise<string[]> {

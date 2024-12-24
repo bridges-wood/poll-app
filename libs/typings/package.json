@@ -2,7 +2,8 @@
   "name": "@org/typings",
   "version": "0.0.1",
   "dependencies": {
-    "@swc/helpers": "~0.5.2"
+    "@swc/helpers": "~0.5.2",
+    "graphql-yoga": "^5.10.6"
   },
   "type": "commonjs",
   "main": "./src/index.js",

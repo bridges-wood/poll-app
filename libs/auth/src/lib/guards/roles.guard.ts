@@ -11,7 +11,7 @@ import { Roles } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  private logger = new Logger(RolesGuard.name);
+  private logger = new Logger(RolesGuard.name); // TODO - inject a logger
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

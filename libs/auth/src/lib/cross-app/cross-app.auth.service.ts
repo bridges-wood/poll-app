@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CACHE_INSTANCE } from '@org/cache';
 import { GraphQLCrossAppClient } from '@org/cross-app';
+import { NotFoundError } from '@org/errors';
 import {
   ValidateTokenDocument,
   ValidateTokenQuery,
@@ -29,7 +30,7 @@ export class CrossAppAuthService {
     token: string | undefined,
   ): Promise<Pick<User, 'id' | 'roles'>> {
     if (!token || isEmpty(token)) {
-      throw new Error('Token is missing');
+      throw new NotFoundError('Token is missing');
     }
     this.client = this.client.impersonating(token);
 

@@ -60,7 +60,7 @@ export class GraphQLCrossAppClient implements CrossAppClient {
       payload,
       variables,
       context,
-    );
+    ).toPromise();
 
     if (result.error) {
       throw result.error;

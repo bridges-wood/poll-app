@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { Cacheable } from 'cacheable';
-import { KeyvLru } from 'keyv-lru';
+import { CacheableMemory } from 'cacheable';
 import { CACHE_INSTANCE } from './constants';
 
 @Module({
@@ -8,13 +7,7 @@ import { CACHE_INSTANCE } from './constants';
     {
       provide: CACHE_INSTANCE,
       useFactory: () => {
-        const secondary = new KeyvLru({
-          max: 1000,
-          nofify: true,
-          ttl: 0,
-          expire: 0,
-        });
-        return new Cacheable({ secondary, ttl: '4h' });
+        return new CacheableMemory({ lruSize: 1000, ttl: '4h' });
       },
     },
   ],

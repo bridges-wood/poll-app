@@ -1,13 +1,13 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { FastifyRequest as Request } from 'fastify';
-import { Strategy } from 'passport-custom';
-
 import { JwtService } from '@nestjs/jwt';
+import { PassportStrategy } from '@nestjs/passport';
 import { CACHE_INSTANCE } from '@org/cache';
-import { User } from '@org/typings';
+import type { DecodedIdToken, TrustedParams, User } from '@org/typings';
+import assert from 'assert';
 import { Cacheable } from 'cacheable';
-import { GraphQLParams } from 'graphql-yoga';
+import type { FastifyRequest as Request } from 'fastify';
+import type { GraphQLParams } from 'graphql-yoga';
+import { Strategy } from 'passport-custom';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
 import { extractAuthTokenFromHeader } from '../utils';
 
@@ -31,8 +31,8 @@ export class DistributedStrategy extends PassportStrategy(
     if (this.isTrusted(body)) {
       // If the request is trusted, we can trust the user data
       return {
-        id: body.extensions?.['sub'],
-        roles: body.extensions?.['roles'],
+        id: body.extensions['sub'],
+        roles: body.extensions['roles'],
       };
     } else {
       // When we're in development, we need to validate the token
@@ -55,12 +55,14 @@ export class DistributedStrategy extends PassportStrategy(
     }
   }
 
-  private isTrusted(params: GraphQLParams): boolean {
+  private isTrusted(params: GraphQLParams): params is TrustedParams {
     // Check that the extensions field of the request contains the trusted field
     return params.extensions?.['trusted'] === true;
   }
 
   private getTtl(token: string): number {
-    return this.jwtService.decode(token)?.exp * 1000 - Date.now();
+    const decoded: DecodedIdToken = this.jwtService.decode(token);
+    assert(decoded?.exp, 'Token does not have an expiry date');
+    return decoded.exp * 1000 - Date.now();
   }
 }

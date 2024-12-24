@@ -4,7 +4,7 @@ import {
   computeHmacSignature,
   HMAC_SIGNATURE_EXTENSION,
 } from '@org/graphql/plugins';
-import { DecodedIdToken } from '@org/typings';
+import { DecodedIdToken, TrustedRequestExtensions } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { print } from 'graphql';
 import { ConfigService } from '../config/config.service';
@@ -74,12 +74,17 @@ export class ExecutorFactory {
   ) {
     const jwt = context?.jwt;
 
-    return {
-      ...extensions,
-      trusted: jwt ? true : false,
-      sub: jwt?.payload.sub,
-      roles: jwt?.payload.roles,
-    };
+    if (jwt) {
+      // Mark the request as trusted and add the user data
+      return {
+        ...extensions,
+        trusted: true,
+        sub: jwt.payload.sub,
+        roles: jwt.payload.roles,
+      } as TrustedRequestExtensions;
+    } else {
+      return extensions;
+    }
   }
 
   private addExecutorToCache(url: string, executor: AsyncExecutor): void {
