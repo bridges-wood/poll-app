@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { createHmac } from 'crypto';
 import { GraphQLParams } from 'graphql-yoga';
 import jsonStableStringify from 'json-stable-stringify';
@@ -5,7 +6,7 @@ import jsonStableStringify from 'json-stable-stringify';
 export const HMAC_SIGNATURE_EXTENSION = 'hmac-signature';
 
 export function serializeParams(params: GraphQLParams): string {
-  return jsonStableStringify({
+  const stringified = jsonStableStringify({
     query: params.query,
     variables: params.variables,
     extensions: {
@@ -13,6 +14,8 @@ export function serializeParams(params: GraphQLParams): string {
       [HMAC_SIGNATURE_EXTENSION]: undefined,
     },
   });
+  assert(typeof stringified === 'string', 'Params could not be stringified');
+  return stringified;
 }
 
 export function computeHmacSignature(
