@@ -10,6 +10,7 @@ export class JwtConfigService implements JwtOptionsFactory {
     return {
       signOptions: {
         algorithm: 'PS256',
+        expiresIn: '10m',
       },
       publicKey: await this.cryptoService.exportPublicKey(),
       privateKey: await this.cryptoService.exportPrivateKey(),
