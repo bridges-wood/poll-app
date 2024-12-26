@@ -24,4 +24,3 @@ import { RegistrationService } from './registration.service';
   exports: [RegistrationResolver],
 })
 export class RegistrationModule {}
-export * from './registration.service';

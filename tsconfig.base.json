@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@org/auth": ["libs/auth/src/index.ts"],
-      "@org/bootstrap": ["libs/bootstrap/src"],
+      "@org/bootstrap": ["libs/bootstrap/src/index.ts"],
       "@org/cache": ["libs/cache/src/index.ts"],
       "@org/common": ["libs/common/src/index.ts"],
       "@org/config": ["libs/config/src/index.ts"],
