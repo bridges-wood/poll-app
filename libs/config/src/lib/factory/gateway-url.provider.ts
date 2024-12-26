@@ -1,5 +1,5 @@
 import { FactoryProvider } from '@nestjs/common';
-import { ConfigTokens } from './tokens';
+import { ConfigTokens } from '../tokens';
 
 export const GatewayUrlProvider: FactoryProvider = {
   provide: ConfigTokens.GATEWAY_URL,

@@ -17,10 +17,11 @@ export abstract class BaseConfigService {
       `generated/${process.env['SCHEMA_FILE'] || 'schema.gql'}`,
     );
     this._name = process.env['NAME'] || 'service';
-    this._port = process.env['PORT']
+    const parsedPort = process.env['PORT']
       ? parseInt(process.env['PORT'], 10)
-      : undefined; // If PORT is not set, we'll find a random port later
-    
+      : NaN;
+    this._port = isNaN(parsedPort) ? undefined : parsedPort; // If PORT is not set, we'll find a random port later
+
     const hmacSecretValue = process.env['HMAC_SECRET'];
     if (!hmacSecretValue || isEmpty(hmacSecretValue)) {
       throw new Error('HMAC_SECRET must be set');
