@@ -24,7 +24,6 @@ export class RestCrossAppClient implements CrossAppClient {
       body: JSON.stringify(body),
     });
 
-    this.token = undefined;
     return response;
   }
 

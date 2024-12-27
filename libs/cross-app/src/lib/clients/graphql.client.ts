@@ -3,6 +3,7 @@ import {
   AnyVariables,
   Client,
   DocumentInput,
+  Exchange,
   OperationContext,
   fetchExchange,
 } from '@urql/core';
@@ -18,31 +19,35 @@ export class GraphQLCrossAppClient implements CrossAppClient {
   constructor(public url: string) {
     this.logger.debug(`Creating client for URL: ${url}`);
     this.client = new Client({
-      exchanges: [
-        authExchange(async (utils) => {
-          return {
-            addAuthToOperation: (operation) => {
-              if (!this.token) return operation;
-              return utils.appendHeaders(operation, {
-                authorization: `Bearer ${this.token}`,
-              });
-            },
-            didAuthError: (error) => {
-              return error.graphQLErrors.some(
-                (e) => e.message === 'jwt expired',
-              );
-            },
-            async refreshAuth() {
-              // This is where you could refresh your token
-              return;
-            },
-          };
-        }),
-        fetchExchange,
-      ],
+      exchanges: this.createExchanges(),
       url,
       requestPolicy: 'network-only',
     });
+  }
+
+  protected createExchanges(): Exchange[] {
+    return [
+      authExchange(async (utils) => {
+        return {
+          addAuthToOperation: (operation) => {
+            if (!this.token) return operation;
+            return utils.appendHeaders(operation, {
+              authorization: `Bearer ${this.token}`,
+            });
+          },
+          didAuthError: (error) => {
+            return error.graphQLErrors.some(
+              (e) => e.message === 'jwt expired'
+            );
+          },
+          async refreshAuth() {
+            // This is where you could refresh your token
+            return;
+          },
+        };
+      }),
+      fetchExchange,
+    ];
   }
 
   impersonating(token: string): GraphQLCrossAppClient {
@@ -56,11 +61,9 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     variables: Variables,
     context?: Partial<OperationContext>,
   ): Promise<Data> {
-    const result = await this.client.query<Data, Variables>(
-      payload,
-      variables,
-      context,
-    ).toPromise();
+    const result = await this.client
+      .query<Data, Variables>(payload, variables, context)
+      .toPromise();
 
     if (result.error) {
       throw result.error;
@@ -78,11 +81,9 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     variables: Variables,
     context?: Partial<OperationContext>,
   ): Promise<Data> {
-    const result = await this.client.mutation<Data, Variables>(
-      payload,
-      variables,
-      context,
-    );
+    const result = await this.client
+      .mutation<Data, Variables>(payload, variables, context)
+      .toPromise();
 
     if (result.error) {
       throw result.error;
