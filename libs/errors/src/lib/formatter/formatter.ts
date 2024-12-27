@@ -8,20 +8,32 @@ interface OutputError {
 
 @Injectable()
 export class ErrorFormatter {
-  x = 1;
   format(formattedError: GraphQLFormattedError): OutputError {
-    const originalError = formattedError.extensions?.['originalError'] as Error;
+    if (!this.hasExtensionFields(formattedError))
+      return {
+        message: formattedError.message,
+      };
+
+    const originalError = formattedError.extensions['originalError'] as Error;
 
     if (!originalError) {
       return {
         message: formattedError.message,
-        code: formattedError.extensions?.['code'],
+        code: formattedError.extensions['code'],
       };
     }
 
     return {
       message: originalError.message,
-      code: formattedError.extensions?.['code'],
+      code: formattedError.extensions['code'],
     };
+  }
+
+  private hasExtensionFields(
+    formattedError: GraphQLFormattedError,
+  ): formattedError is GraphQLFormattedError & {
+    extensions: Record<string, unknown>;
+  } {
+    return Boolean(formattedError.extensions);
   }
 }
