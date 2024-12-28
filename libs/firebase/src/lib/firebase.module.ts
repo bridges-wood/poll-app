@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { auth, database } from './firebase';
+import { auth, database } from './client';
 import { FirebaseTokens } from './tokens';
 
 @Module({
