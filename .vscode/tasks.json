@@ -67,6 +67,14 @@
         "id": "compass"
       },
       "detail": "Run the Web App in development mode"
+    },
+    {
+      "type": "nx",
+      "project": "",
+      "command": "run-many",
+      "flags": ["--target=build", "--all=true"],
+      "problemMatcher": [],
+      "label": "nx: nx run-many --target=build --all=true"
     }
   ]
 }

@@ -1,6 +1,7 @@
-import { IConnectionType, PaginationArgs } from '.';
+import { PaginationArgs } from './models/pagination.args';
+import { IConnectionType } from './types';
 
-export const EMPTY_PAGE: IConnectionType<any> = {
+export const EMPTY_PAGE: IConnectionType<never> = {
   edges: [],
   totalCount: 0,
   pageInfo: {

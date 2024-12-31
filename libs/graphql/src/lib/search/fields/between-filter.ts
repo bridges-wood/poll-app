@@ -7,12 +7,12 @@ export function BetweenFilter<T>(typeRef: Type<T>) {
     @Field((type) => typeRef, {
       description: 'Greater than or equal to this value',
     })
-    min: T;
+    min!: T;
 
     @Field((type) => typeRef, {
       description: 'Less than or equal to this value',
     })
-    max: T;
+    max!: T;
   }
 
   return BetweenFilterArgs;

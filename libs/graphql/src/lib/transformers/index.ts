@@ -1,3 +1,4 @@
+import { addResolversToSchema } from '@graphql-tools/schema';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   addTypes,
@@ -12,11 +13,11 @@ const { stitchingDirectivesValidator, allStitchingDirectives } =
 
 type Transformer = (schema: GraphQLSchema) => GraphQLSchema;
 
-const addStitchingDirectives: Transformer = (schema) => {
+function addStitchingDirectives(schema: GraphQLSchema) {
   return addTypes(schema, allStitchingDirectives);
-};
+}
 
-const addEnhancedIntrospection = (): Transformer[] => {
+function addEnhancedIntrospection(): Transformer[] {
   type Service = {
     _sdl: string;
   };
@@ -38,17 +39,25 @@ const addEnhancedIntrospection = (): Transformer[] => {
         _service: {
           type: serviceObjectType,
           description: 'The subgraph schema',
-          resolve: (): Service => ({
-            _sdl: printSchemaWithDirectives(schema),
-          }),
+        },
+      }),
+    (schema: GraphQLSchema) =>
+      addResolversToSchema({
+        schema,
+        resolvers: {
+          Query: {
+            _service: () => ({
+              _sdl: printSchemaWithDirectives(schema),
+            }),
+          },
         },
       }),
   ];
-};
+}
 
-export const prepareSchemaForFederation = (
+export function prepareSchemaForFederation(
   ...additionalTransformers: Transformer[]
-): Transformer => {
+): Transformer {
   return (schema) => {
     const transformers: Transformer[] = [
       ...additionalTransformers,
@@ -59,4 +68,4 @@ export const prepareSchemaForFederation = (
 
     return flow(transformers)(schema);
   };
-};
+}

@@ -7,7 +7,7 @@ import { join } from 'path';
 /**
  * Stitches together all the generated schemas into a single schema.
  */
-const stitchGeneratedSchemas = () => {
+export function stitchGeneratedSchemas() {
   const schemaFolder = join(process.cwd(), 'generated');
   const schemaFile = join(schemaFolder, 'schema.gql');
   // Check if schema file exists.
@@ -39,6 +39,9 @@ const stitchGeneratedSchemas = () => {
   // Write the stitched schema to the target file.
   writeFileSync(schemaFile, printSchema(stitchedSchema));
   console.log('Successfully written to file.');
-};
+}
 
-stitchGeneratedSchemas();
+/* istanbul ignore if  */
+if (require.main === module) {
+  stitchGeneratedSchemas();
+}

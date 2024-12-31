@@ -31,11 +31,11 @@ type BooleanKey<T> = {
 type SupportedKey<T> = StringKey<T> | NumberKey<T> | BooleanKey<T>;
 
 export type ISearchFilter<T> = {
-  [key in StringKey<T>]: StringFieldFilterArgs;
+  [key in StringKey<T>]?: StringFieldFilterArgs;
 } & {
-  [key in NumberKey<T>]: NumberFieldFilterArgs;
+  [key in NumberKey<T>]?: NumberFieldFilterArgs;
 } & {
-  [key in BooleanKey<T>]: boolean;
+  [key in BooleanKey<T>]?: boolean;
 } & {
   has?: SupportedKey<T>[]; // Enum
 };

@@ -18,21 +18,22 @@ import {
   where,
 } from 'firebase/firestore';
 import { chunk, isArray, isEmpty, isNil, isUndefined, uniq } from 'lodash';
-import {
-  DEFAULT_CHUNK_SIZE,
-  EMPTY_PAGE,
+import { DEFAULT_CHUNK_SIZE, EMPTY_PAGE } from './constants';
+import { PaginationArgs } from './models/pagination.args';
+import type {
   IBackwardPagination,
   IConnectionType,
   IEdgeType,
   IForwardPagination,
   Node,
-  PaginationArgs,
+} from './types';
+import {
   edgesToReturn,
   isBackwardPagination,
   isForwardPagination,
   nodeToEdge,
   parseCursor,
-} from '.';
+} from './utils';
 
 export abstract class PaginationService<
   AppModelType extends Node,
@@ -131,7 +132,7 @@ export abstract class PaginationService<
       chunks.map((chunk) => this.fetchChunk(chunk, collectionRef)),
     );
     const allEdges = fetchedChunks.flat();
-    const edges = edgesToReturn(allEdges, args);
+    const edges = edgesToReturn<AppModelType>(allEdges, args);
     if (edges.length === 0) return EMPTY_PAGE;
 
     return {
@@ -203,7 +204,7 @@ export abstract class PaginationService<
     };
   }
 
-  private getChunksForQuery(
+  protected getChunksForQuery(
     ids: Node['id'][],
     args: PaginationArgs,
   ): Node['id'][][] {
@@ -236,7 +237,7 @@ export abstract class PaginationService<
     return [];
   }
 
-  private async fetchChunk(
+  protected async fetchChunk(
     chunk: Node['id'][],
     collectionRef: CollectionReference<
       PartialWithFieldValue<AppModelType>,
@@ -249,14 +250,16 @@ export abstract class PaginationService<
     return nodes.map(nodeToEdge);
   }
 
-  private async prepareConstraints(
+  protected async prepareConstraints(
     args: PaginationArgs,
     collectionRef: CollectionReference<
       PartialWithFieldValue<AppModelType>,
       PartialWithFieldValue<DbModelType>
     >,
   ): Promise<QueryConstraint[]> {
-    let constraints: QueryConstraint[] = [this.prepareSortConstraint(args)];
+    const sortConstraint = this.prepareSortConstraint(args);
+    let constraints: QueryConstraint[] = sortConstraint ? [sortConstraint] : [];
+
     if (isForwardPagination(args)) {
       constraints = await this.prepareForwardPaginationConstraints(
         args,
@@ -276,21 +279,21 @@ export abstract class PaginationService<
     return constraints;
   }
 
-  private getValidSortByFields(): string[] {
+  protected getValidSortByFields(): string[] {
     let fields: string[] = [];
     if (typeof this.classRef === 'object' && isArray(this.classRef)) {
       // If multiple classes are provided, return the union of all fields
       fields = uniq(this.classRef.map((ref) => this.getFields(ref)).flat());
     } else {
       // If only one class is provided, return its fields
-      fields = uniq(this.getFields(this.classRef as Type<any>));
+      fields = uniq(this.getFields(this.classRef as Type<unknown>));
     }
 
     if (fields.length === 0) throw new Error('No fields found');
     return fields;
   }
 
-  private getFields(ref: Type<any>): string[] {
+  protected getFields(ref: Type<unknown>): string[] {
     const objectTypeMetadata =
       TypeMetadataStorage.getObjectTypeMetadataByTarget(ref);
 
@@ -298,7 +301,7 @@ export abstract class PaginationService<
     if (objectTypeMetadata?.interfaces) {
       // If the object type implements interfaces, include their fields
       if (typeof objectTypeMetadata.interfaces === 'function') {
-        const interfaces: Type<any> | Type<any>[] =
+        const interfaces: Type<unknown> | Type<unknown>[] =
           objectTypeMetadata.interfaces();
         if (typeof interfaces === 'function') {
           interfaceFields = this.getInterfaceFields(interfaces);
@@ -309,7 +312,7 @@ export abstract class PaginationService<
         }
       } else {
         interfaceFields = objectTypeMetadata.interfaces
-          .map((i) => this.getInterfaceFields(i as Type<any>))
+          .map((i) => this.getInterfaceFields(i as Type<unknown>))
           .flat();
       }
     }
@@ -318,15 +321,13 @@ export abstract class PaginationService<
       throw new Error(`No fields found for ${ref.name}`);
     }
 
-    return (
-      objectTypeMetadata.properties
-        ?.map((prop) => prop.name)
-        .concat('id')
-        .concat(interfaceFields) || []
-    );
+    const fields =
+      objectTypeMetadata.properties?.map((prop) => prop.name) || [];
+
+    return [...fields, 'id', ...interfaceFields];
   }
 
-  private getInterfaceFields(ref: Type<any>): string[] {
+  protected getInterfaceFields(ref: Type<unknown>): string[] {
     const interfaceMetadata =
       TypeMetadataStorage.getInterfaceMetadataByTarget(ref);
 
@@ -337,7 +338,11 @@ export abstract class PaginationService<
     return interfaceMetadata.properties?.map((prop) => prop.name) || [];
   }
 
-  protected prepareSortConstraint(args: PaginationArgs): QueryConstraint {
+  protected prepareSortConstraint(
+    args: PaginationArgs,
+  ): QueryConstraint | null {
+    if (isNil(args.orderBy)) return null;
+
     const validSortByFields = this.getValidSortByFields();
     let sortBy = args.orderBy;
     if (sortBy && !validSortByFields.includes(sortBy)) {
@@ -348,7 +353,7 @@ export abstract class PaginationService<
       );
     }
 
-    if (isNil(sortBy) || sortBy === 'id') sortBy = '__name__';
+    if (sortBy === 'id') sortBy = '__name__';
 
     if (isForwardPagination(args)) {
       return orderBy(sortBy, 'asc');
@@ -358,10 +363,10 @@ export abstract class PaginationService<
       return orderBy(sortBy, 'desc');
     }
 
-    throw new Error('Invalid pagination arguments');
+    return orderBy(sortBy);
   }
 
-  private async prepareForwardPaginationConstraints(
+  protected async prepareForwardPaginationConstraints(
     args: IForwardPagination,
     constraints: QueryConstraint[],
     collectionRef: CollectionReference<
@@ -383,7 +388,7 @@ export abstract class PaginationService<
     return constraints;
   }
 
-  private async prepareBackwardPaginationConstraints(
+  protected async prepareBackwardPaginationConstraints(
     args: IBackwardPagination,
     constraints: QueryConstraint[],
     collectionRef: CollectionReference<
@@ -398,14 +403,14 @@ export abstract class PaginationService<
       const docRef = doc(collectionRef, parseCursor(before));
       const docSnap = await getDoc(docRef); // TODO assess cost of this
 
-      constraints.push(startAfter(docSnap));
+      constraints.push(endBefore(docSnap));
     }
 
     constraints.push(limit(last));
     return constraints;
   }
 
-  private async getTotalCount(
+  protected async getTotalCount(
     collectionRef: CollectionReference<
       PartialWithFieldValue<AppModelType>,
       PartialWithFieldValue<DbModelType>
@@ -416,7 +421,7 @@ export abstract class PaginationService<
     return docsResult.data().count;
   }
 
-  private async hasNextPage(
+  protected async hasNextPage(
     docs: QueryDocumentSnapshot<
       PartialWithFieldValue<AppModelType>,
       PartialWithFieldValue<DbModelType>
@@ -435,7 +440,7 @@ export abstract class PaginationService<
     return !docsResult.empty;
   }
 
-  private async hasPreviousPage(
+  protected async hasPreviousPage(
     docs: QueryDocumentSnapshot<
       PartialWithFieldValue<AppModelType>,
       PartialWithFieldValue<DbModelType>

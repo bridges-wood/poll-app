@@ -1,95 +1,94 @@
-import {
-  IBackwardPagination,
-  IEdgeType,
-  IForwardPagination,
-  Node,
-  PaginationArgs,
-} from '.';
+import { IBackwardPagination, IEdgeType, IForwardPagination, Node } from '.';
+import { PaginationArgs } from './models/pagination.args';
 
 /**
  * Convert a node to an edge
  * @see https://relay.dev/docs/guides/graphql-server-specification/#schema
  */
-export const nodeToEdge = <T extends Node>(node: T): IEdgeType<T> => ({
-  cursor: btoa(node.id),
-  node,
-});
+export function nodeToEdge<T extends Node>(node: T): IEdgeType<T> {
+  return {
+    cursor: btoa(node.id),
+    node,
+  };
+}
 
 /**
  * Convert a cursor to a node id
  * @see https://relay.dev/graphql/connections.htm#sec-Cursor
  */
-export const parseCursor = (cursor: string) => atob(cursor);
+export function parseCursor(cursor: string) {
+  return atob(cursor);
+}
 
-export const isForwardPagination = (
+export function isForwardPagination(
   paginationArgs: PaginationArgs,
-): paginationArgs is IForwardPagination => {
+): paginationArgs is IForwardPagination {
   return paginationArgs.first !== undefined;
-};
+}
 
-export const isBackwardPagination = (
+export function isBackwardPagination(
   paginationArgs: PaginationArgs,
-): paginationArgs is IBackwardPagination => {
+): paginationArgs is IBackwardPagination {
   return paginationArgs.last !== undefined;
-};
+}
 
 /**
  * Return the edges to return based on the pagination arguments
  * @see https://relay.dev/graphql/connections.htm#EdgesToReturn()
  */
-export const edgesToReturn = <T extends Node>(
+export function edgesToReturn<T extends Node>(
   allEdges: IEdgeType<T>[],
   paginationArgs: PaginationArgs,
-) => {
+) {
   const edges = applyCursorsToEdges(allEdges, paginationArgs);
   if (isForwardPagination(paginationArgs))
     return edges.slice(0, paginationArgs.first);
   if (isBackwardPagination(paginationArgs))
     return edges.slice(-paginationArgs.last);
   return edges;
-};
+}
 
 /**
  * Check if there are more pages before the current page
  * @see https://relay.dev/graphql/connections.htm#HasPreviousPage()
  */
-export const hasPreviousPage = <T extends Node>(
+export function hasPreviousPage<T extends Node>(
   allEdges: IEdgeType<T>[],
   paginationArgs: PaginationArgs,
-) => {
-  if (isBackwardPagination(paginationArgs)) {
+) {
+  if (paginationArgs.last) {
     const edges = applyCursorsToEdges(allEdges, paginationArgs);
     return edges.length > paginationArgs.last;
   }
 
-  if (isForwardPagination(paginationArgs)) {
+  if (paginationArgs.after) {
     const edges = applyCursorsToEdges(allEdges, paginationArgs);
     return edges.length > 0;
   }
 
   return false;
-};
+}
 
 /**
  * Check if there are more pages after the current page
  * @see https://relay.dev/graphql/connections.htm#HasNextPage()
  */
-export const hasNextPage = <T extends Node>(
+export function hasNextPage<T extends Node>(
   allEdges: IEdgeType<T>[],
   paginationArgs: PaginationArgs,
-) => {
-  if (isForwardPagination(paginationArgs)) {
+) {
+  if (paginationArgs.first) {
     const edges = applyCursorsToEdges(allEdges, paginationArgs);
     return edges.length > paginationArgs.first;
   }
 
-  if (isBackwardPagination(paginationArgs)) {
+  if (paginationArgs.before) {
     const edges = applyCursorsToEdges(allEdges, paginationArgs);
     return edges.length > 0;
   }
 
   return false;
-};
+}
 
 /**
  *
@@ -97,10 +96,10 @@ export const hasNextPage = <T extends Node>(
  * @param paginationArgs
  * @see https://relay.dev/graphql/connections.htm#ApplyCursorsToEdges()
  */
-export const applyCursorsToEdges = <T extends Node>(
+export function applyCursorsToEdges<T extends Node>(
   allEdges: IEdgeType<T>[],
   paginationArgs: PaginationArgs,
-) => {
+) {
   const edges = allEdges;
   if (isForwardPagination(paginationArgs)) {
     const afterEdge = edges.findIndex(
@@ -117,4 +116,4 @@ export const applyCursorsToEdges = <T extends Node>(
   }
 
   return edges;
-};
+}

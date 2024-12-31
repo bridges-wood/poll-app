@@ -23,7 +23,7 @@ export async function generateSchema(
   options: BuildSchemaOptions,
   transformers: Transformer[] = [],
 ) {
-  if (!process.env.SCHEMA_FILE) {
+  if (!process.env['SCHEMA_FILE']) {
     throw new Error('SCHEMA_FILE is not defined, cannot generate schema');
   }
 
@@ -40,7 +40,7 @@ export async function generateSchema(
     mkdirSync(targetFolder);
   }
 
-  const targetFile = join(targetFolder, process.env.SCHEMA_FILE);
+  const targetFile = join(targetFolder, process.env['SCHEMA_FILE']);
   const schemaString = printSchemaWithDirectives(transformedSchema);
 
   Logger.log(`Writing schema to ${targetFile}`);

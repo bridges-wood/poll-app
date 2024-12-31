@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import { StringFieldFilterArgs } from './fields';
 import { NumberFieldFilterArgs } from './fields/number-field';
 import { ISearchFilter } from './searchable';
@@ -78,7 +77,7 @@ export class LocalSearchService<T> {
   private filterHasField(item: T, filter: ISearchFilter<T>): boolean {
     if (!filter.has) return true;
     return filter.has.reduce(
-      (acc, val) => acc && !isEmpty(item[val as keyof T]),
+      (acc, val) => acc && Boolean(item[val as keyof T]),
       true,
     );
   }
