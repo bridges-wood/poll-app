@@ -7,10 +7,14 @@ export class RegistrationResolver {
   constructor(private readonly registrationService: RegistrationService) {}
 
   @Public()
-  @Mutation((returns) => Boolean, {
-    description:
-      'Disconnects the service from the gateway and re-initiates the registration process',
-  })
+  @Mutation(
+    /* istanbul ignore next */
+    (_returns) => Boolean,
+    {
+      description:
+        'Disconnects the service from the gateway and re-initiates the registration process',
+    },
+  )
   async _reRegister(): Promise<boolean> {
     return this.registrationService.reRegister();
   }
