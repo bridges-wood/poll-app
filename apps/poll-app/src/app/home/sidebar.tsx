@@ -57,11 +57,11 @@ const HomeSidebar: FC<ComponentPropsWithoutRef<'div'>> = ({ ...props }) => {
       if (!sidebarContainerDOMRect || !triggerDOMRect || frozen) return;
       const mouseY = event.clientY;
       // Get the distance from the top of the sidebar-container
-      const targetY = mouseY - 80 - 0.5 * triggerDOMRect.height;
+      const targetY = mouseY - 112 - 0.5 * triggerDOMRect.height;
 
       const safeTargetY = Math.min(
         Math.max(targetY, 0), // Stop it from going past the top of the sidebar
-        sidebarContainerDOMRect.height - 80, // Stop it from going past the bottom of the sidebar
+        sidebarContainerDOMRect.height - 112, // Stop it from going past the bottom of the sidebar
       );
 
       y.set(safeTargetY);
