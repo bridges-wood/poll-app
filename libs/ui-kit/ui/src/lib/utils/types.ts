@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Part of this code is taken from @chakra-ui/system ❤️
  */

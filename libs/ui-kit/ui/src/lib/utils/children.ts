@@ -12,24 +12,31 @@ export function getValidChildren(children: React.ReactNode) {
   ) as React.ReactElement[];
 }
 
-export const pickChildren = <T = ReactNode>(
-  children: T | undefined,
-  targetChild: React.ElementType,
-): [T | undefined, T[] | undefined] => {
-  const target: T[] = [];
+/**
+ * Partitions the children of a component into two arrays based on the type of the children.
+ * @param children The children to partition
+ * @param typeFilter The type of child to remove from the children
+ * @returns A tuple containing the children without the target child and the target children
+ */
+export function extractChildrenOfType<T = ReactNode>(
+  children: T[] | T,
+  typeFilter: React.ElementType,
+): [T[] | undefined, T[] | undefined] {
+  const matchingChildren: T[] = [];
 
-  const withoutTargetChildren = Children.map(children, (item) => {
+  const remainingChildren = Children.map(children, (item) => {
     if (!isValidElement(item)) return item;
-    if (item.type === targetChild) {
-      target.push(item as T);
+    if (item.type === typeFilter) {
+      matchingChildren.push(item as T);
 
       return null;
     }
 
     return item;
-  })?.filter(Boolean) as T;
+  })?.filter(Boolean) as T[];
 
-  const targetChildren = target.length >= 0 ? target : undefined;
-
-  return [withoutTargetChildren, targetChildren];
-};
+  return [
+    remainingChildren,
+    matchingChildren.length > 0 ? matchingChildren : undefined,
+  ];
+}

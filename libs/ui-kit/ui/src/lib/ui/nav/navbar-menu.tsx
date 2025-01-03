@@ -49,7 +49,12 @@ const NavbarMenu = forwardRef<'ul', NavbarMenuProps>((props, ref) => {
   const MenuWrapper = useCallback(
     ({ children }: { children: ReactElement }) => {
       return (
-        <RemoveScroll forwardProps enabled={isMenuOpen} removeScrollBar={false}>
+        <RemoveScroll
+          forwardProps
+          enabled={isMenuOpen}
+          removeScrollBar={false}
+          data-testid="menu-wrapper"
+        >
           {children}
         </RemoveScroll>
       );

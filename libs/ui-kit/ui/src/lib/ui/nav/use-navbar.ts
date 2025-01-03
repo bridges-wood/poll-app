@@ -108,7 +108,7 @@ export function useNavbar(originalProps: UseNavbarProps) {
     onScrollPositionChange,
     isMenuOpen: isMenuOpenProp,
     isMenuDefaultOpen,
-    onMenuOpenChange = () => {return},
+    onMenuOpenChange,
     motionProps,
     className,
     classNames,
@@ -126,7 +126,7 @@ export function useNavbar(originalProps: UseNavbarProps) {
 
   const handleMenuOpenChange = useCallback(
     (isOpen: boolean | undefined) => {
-      onMenuOpenChange(isOpen || false);
+      onMenuOpenChange?.(isOpen || false);
     },
     [onMenuOpenChange],
   );
@@ -137,7 +137,7 @@ export function useNavbar(originalProps: UseNavbarProps) {
     handleMenuOpenChange,
   );
 
-  const updateWidth = () => {
+  const updateWidth = useCallback(() => {
     if (domRef.current) {
       const width = domRef.current.offsetWidth;
 
@@ -145,7 +145,7 @@ export function useNavbar(originalProps: UseNavbarProps) {
         prevWidth.current = width;
       }
     }
-  };
+  }, [domRef]);
 
   useResizeObserver({
     ref: domRef,
@@ -163,10 +163,11 @@ export function useNavbar(originalProps: UseNavbarProps) {
     updateWidth();
 
     navHeight.current = domRef.current?.offsetHeight || 0;
-  }, []);
+  }, [domRef, updateWidth]);
 
   const slots = useMemo(
     () => navbar({ ...variantProps, hideOnScroll: shouldHideOnScroll }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only update when variantProps changes
     [objectToDeps(variantProps), shouldHideOnScroll],
   );
 

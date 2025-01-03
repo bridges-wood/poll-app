@@ -1,10 +1,10 @@
-export const safeText = (text: string): string => {
+export function safeText(text: string): string {
   if (text?.length <= 4) return text;
 
   return text?.slice(0, 3);
-};
+}
 
-export const safeAriaLabel = (...texts: any[]): string => {
+export function safeAriaLabel(...texts: unknown[]): string {
   let ariaLabel = ' ';
 
   // loop through all texts and return the first non-empty string
@@ -16,4 +16,4 @@ export const safeAriaLabel = (...texts: any[]): string => {
   }
 
   return ariaLabel;
-};
+}

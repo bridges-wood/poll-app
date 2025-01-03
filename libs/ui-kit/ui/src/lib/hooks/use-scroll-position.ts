@@ -1,13 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 
-const isBrowser = typeof window !== 'undefined';
+const isBrowser = () => typeof window !== 'undefined';
 
-export type ScrollValue = { x: any; y: any };
+export type ScrollValue = { x: number; y: number };
 
 function getScrollPosition(
   element: HTMLElement | undefined | null,
 ): ScrollValue {
-  if (!isBrowser) return { x: 0, y: 0 };
+  if (!isBrowser()) return { x: 0, y: 0 };
   if (!element) {
     return { x: window.scrollX, y: window.scrollY };
   }
@@ -18,7 +18,6 @@ function getScrollPosition(
 export interface UseScrollPositionOptions {
   /**
    * The wait time in milliseconds before triggering the callback.
-   * @default 30
    */
   delay?: number;
   /**
@@ -42,16 +41,23 @@ export interface UseScrollPositionOptions {
   }) => void;
 }
 
+/**
+ * Returns the current scroll position of the window or a specific element. The scroll position is updated when the user scrolls and the callback is called with the previous and current scroll positions.
+ * @param props The options for the scroll position hook.
+ * @returns The initial scroll position.
+ */
 export const useScrollPosition = (
   props: UseScrollPositionOptions,
-): ScrollValue => {
-  const { elementRef, delay = 30, callback, isEnabled } = props;
+): RefObject<ScrollValue> => {
+  const { elementRef, delay, callback, isEnabled } = props;
 
   const position = useRef<ScrollValue>(
     isEnabled ? getScrollPosition(elementRef?.current) : { x: 0, y: 0 },
   );
 
-  let throttleTimeout: ReturnType<typeof setTimeout> | null = null;
+  const throttleTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   const handler = () => {
     const currPos = getScrollPosition(elementRef?.current);
@@ -61,16 +67,16 @@ export const useScrollPosition = (
     }
 
     position.current = currPos;
-    throttleTimeout = null;
+    throttleTimeout.current = undefined;
   };
 
   useEffect(() => {
-    if (!isEnabled) return;
+    if (!isEnabled || !isBrowser()) return;
 
     const handleScroll = () => {
       if (delay) {
-        if (throttleTimeout === null) {
-          throttleTimeout = setTimeout(handler, delay);
+        if (!throttleTimeout.current) {
+          throttleTimeout.current = setTimeout(handler, delay);
         }
       } else {
         handler();
@@ -82,7 +88,8 @@ export const useScrollPosition = (
     target.addEventListener('scroll', handleScroll);
 
     return () => target.removeEventListener('scroll', handleScroll);
-  }, [elementRef?.current, delay, isEnabled]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delay, isEnabled, elementRef]);
 
-  return position.current;
+  return position;
 };

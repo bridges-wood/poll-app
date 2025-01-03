@@ -48,7 +48,7 @@ const NavbarMenuToggle = forwardRef<'button', NavbarMenuToggleProps>(
 
     const child = useMemo(() => {
       if (typeof icon === 'function') {
-        return icon(isMenuOpen ?? false);
+        return icon(isMenuOpen);
       }
 
       return (

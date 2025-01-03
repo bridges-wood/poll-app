@@ -1,9 +1,11 @@
 type Booleanish = boolean | 'true' | 'false';
-export const dataAttr = (condition: boolean | undefined) =>
-  (condition ? 'true' : undefined) as Booleanish;
+export function dataAttr(condition: boolean | undefined) {
+  return (condition ? 'true' : undefined) as Booleanish;
+}
 
 type Extractable =
   | {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       [key: string]: any;
     }
   | undefined;
@@ -15,7 +17,8 @@ export function objectToDeps(obj: Extractable) {
 
   try {
     return JSON.stringify(obj);
-  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_) {
     return '';
   }
 }

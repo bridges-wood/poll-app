@@ -1,7 +1,7 @@
 import { mergeProps } from '@react-aria/utils';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
 import { forwardRef } from '../../utils';
-import { pickChildren } from '../../utils/children';
+import { extractChildrenOfType } from '../../utils/children';
 import { NavbarProvider } from './navbar-context';
 import NavbarMenu from './navbar-menu';
 import { hideOnScrollVariants } from './navbar-transitions';
@@ -18,7 +18,10 @@ const Navbar = forwardRef<'div', NavbarProps>((props, ref) => {
 
   const Component = context.Component;
 
-  const [childrenWithoutMenu, menu] = pickChildren(children, NavbarMenu);
+  const [childrenWithoutMenu, menu] = extractChildrenOfType(
+    children,
+    NavbarMenu,
+  );
 
   const content = (
     <>

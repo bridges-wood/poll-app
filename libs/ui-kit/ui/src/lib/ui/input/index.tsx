@@ -45,7 +45,7 @@ const Input = forwardRef<'input', InputProps>((props, ref) => {
     }
 
     return endContent;
-  }, [isClearable, getClearButtonProps]);
+  }, [isClearable, endContent, getClearButtonProps]);
 
   const innerWrapper = useMemo(() => {
     if (startContent || end) {
@@ -59,7 +59,7 @@ const Input = forwardRef<'input', InputProps>((props, ref) => {
     }
 
     return <div {...getInnerWrapperProps()}>{input}</div>;
-  }, [startContent, end, getInnerWrapperProps, getInputProps]);
+  }, [startContent, end, getInnerWrapperProps, input]);
 
   return <Component {...getBaseProps()}>{innerWrapper}</Component>;
 });

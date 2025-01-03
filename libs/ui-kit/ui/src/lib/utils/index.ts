@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { omit, pick } from 'lodash';
 import {
   Ref,
@@ -33,15 +34,14 @@ export function forwardRef<
   >;
 }
 
-export const mapPropsVariants = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapPropsVariants<
   T extends Record<string, any>,
   K extends keyof T,
 >(
   props: T,
   variantKeys?: K[],
   removeVariantProps = true,
-): readonly [Omit<T, K> | T, Pick<T, K> | object] => {
+): readonly [Omit<T, K> | T, Pick<T, K> | object] {
   if (!variantKeys) {
     return [props, {}];
   }
@@ -55,14 +55,14 @@ export const mapPropsVariants = <
   } else {
     return [props, picked];
   }
-};
+}
 
-export const useDOMRef = <T extends HTMLElement = HTMLElement>(
+export function useDOMRef<T extends HTMLElement = HTMLElement>(
   ref?: RefObject<T | null> | Ref<T | null>,
-) => {
+) {
   const domRef = useRef<T>(null);
 
   useImperativeHandle(ref, () => domRef.current as T);
 
   return domRef;
-};
+}

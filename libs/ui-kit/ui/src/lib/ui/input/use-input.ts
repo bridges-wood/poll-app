@@ -101,15 +101,13 @@ export function useInput<
     onClear,
     onChange,
     innerWrapperRef: innerWrapperRefProp,
-    onValueChange = () => {
-      return;
-    },
+    onValueChange,
     ...otherProps
   } = props;
 
   const handleValueChange = useCallback(
     (value: string | undefined) => {
-      onValueChange(value ?? '');
+      onValueChange?.(value ?? '');
     },
     [onValueChange],
   );
@@ -190,11 +188,7 @@ export function useInput<
   const isClearable = !!onClear || originalProps.isClearable;
   const hasPlaceholder = !!props.placeholder;
   const isPlaceholderShown = domRef.current
-    ? (!domRef.current.value ||
-        domRef.current.value === '' ||
-        !inputValue ||
-        inputValue === '') &&
-      hasPlaceholder
+    ? (isEmpty(domRef.current.value) || isEmpty(inputValue)) && hasPlaceholder
     : false;
 
   const hasStartContent = !!startContent;
@@ -252,6 +246,7 @@ export function useInput<
   const getInputProps: PropGetter = useCallback(
     (props = {}) => ({
       ref: domRef,
+      'data-testid': 'input',
       'data-slot': 'input',
       'data-filled': dataAttr(isFilled),
       'data-filled-within': dataAttr(isFilledWithin),
@@ -296,6 +291,7 @@ export function useInput<
     (props = {}) => ({
       ...props,
       ref: innerWrapperRef,
+      'data-testid': 'inner-wrapper',
       'data-slot': 'inner-wrapper',
       onClick: (e) => {
         if (domRef.current && e.currentTarget === e.target) {
@@ -309,22 +305,12 @@ export function useInput<
     [innerWrapperRef, slots, classNames?.innerWrapper, domRef],
   );
 
-  const getMainWrapperProps: PropGetter = useCallback(
-    (props = {}) => ({
-      ...props,
-      'data-slot': 'main-wrapper',
-      className: slots.mainWrapper({
-        class: clsx(classNames?.mainWrapper, props?.className),
-      }),
-    }),
-    [slots, classNames?.mainWrapper],
-  );
-
   const getClearButtonProps: PropGetter = useCallback(
     (props = {}) => ({
       ...props,
       role: 'button',
       tabIndex: 0,
+      'data-testid': 'clear-button',
       'data-slot': 'clear-button',
       'data-focus-visible': dataAttr(isClearButtonFocusVisible),
       className: slots.clearButton({
@@ -353,7 +339,6 @@ export function useInput<
     hasPlaceholder,
     getBaseProps,
     getInputProps,
-    getMainWrapperProps,
     getInnerWrapperProps,
     getClearButtonProps,
   };

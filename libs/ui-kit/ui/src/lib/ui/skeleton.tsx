@@ -4,7 +4,7 @@ import { cn } from '@org/ui-kit/util';
 import React from 'react';
 
 const Skeleton = React.forwardRef<
-  React.ElementRef<'div'>,
+  React.ComponentRef<'div'>,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   return (
@@ -12,6 +12,7 @@ const Skeleton = React.forwardRef<
       ref={ref}
       className={cn('bg-background-muted animate-pulse rounded-md', className)}
       {...props}
+      data-testid="skeleton"
     />
   );
 });
