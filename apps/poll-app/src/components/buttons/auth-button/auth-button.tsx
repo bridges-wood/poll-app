@@ -12,16 +12,16 @@ import {
 import { Skeleton } from '@org/ui-kit/ui/skeleton';
 import ProfileIcon from '@poll-app/components/profile/profile-icon/profile-icon';
 import useUser from '@poll-app/lib/hooks/queries/use-user';
-import { Dispatch, RootState } from '@poll-app/lib/store';
+import { useAuth } from '@poll-app/lib/hooks/use-auth';
+import { Dispatch } from '@poll-app/lib/store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const AuthButton = () => {
   const dispatch = useDispatch<Dispatch>();
   const router = useRouter();
-  const token = useSelector((state: RootState) => state.auth.token);
-  const isLoggedIn = !!token;
+  const { token, isLoggedIn } = useAuth();
   const [result] = useUser(token);
 
   if (result.fetching) return <Skeleton className="h-9 w-9" />;

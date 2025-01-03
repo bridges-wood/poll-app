@@ -3,6 +3,7 @@
 import { DesktopIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
+import { ComponentProps } from 'react';
 import { Button } from './button';
 import {
   DropdownMenu,
@@ -12,13 +13,30 @@ import {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 
-export function ThemeToggle() {
+type ThemeToggleProps = ComponentProps<typeof DropdownMenu> & {
+  triggerProps?: Exclude<
+    ComponentProps<typeof Button>,
+    'children' | 'className'
+  >;
+  className?: string;
+};
+
+export function ThemeToggle({
+  triggerProps,
+  className,
+  ...props
+}: ThemeToggleProps) {
   const { setTheme, theme } = useTheme();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu {...props}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button
+          variant="outline"
+          size="icon"
+          {...triggerProps}
+          className={className}
+        >
           <AnimatePresence>
             {theme === 'light' && (
               <motion.div
