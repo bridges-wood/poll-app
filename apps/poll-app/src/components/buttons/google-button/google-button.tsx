@@ -1,16 +1,18 @@
 'use client';
 import { Button } from '@org/ui-kit/ui/button';
+import { Skeleton } from '@org/ui-kit/ui/skeleton';
 import GoogleIcon from '@poll-app/components/icons/google-icon';
 import { signInWithOAuthToken } from '@poll-app/lib/actions/auth';
 import { auth } from '@poll-app/lib/firebase';
 import { Dispatch } from '@poll-app/lib/store';
-import { ClipboardCopyIcon } from '@radix-ui/react-icons';
 import { AuthError, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { isNil } from 'lodash';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC, lazy, Suspense, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
+
+const DevToast = lazy(() => import('./dev-toast'));
 
 // See https://developers.google.com/identity/branding-guidelines
 
@@ -39,22 +41,16 @@ const GoogleButton: FC = () => {
 
           const token = await signInWithOAuthToken(authCredential.idToken);
           if (process.env.NODE_ENV === 'development') {
-            toast.custom((t) => (
-              <div className="border-thin border-border-success-emphasis shadow-resting-md flex w-80 items-baseline justify-between gap-2 rounded-md p-4">
-                <span>Copy token to clipboard</span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    navigator.clipboard.writeText(token);
-                    toast.dismiss(t);
-                  }}
-                >
-                  <ClipboardCopyIcon />
-                </Button>
-              </div>
-            ));
+            toast.custom(
+              (id) => (
+                <Suspense fallback={<Skeleton className="h-[70px] w-80" />}>
+                  <DevToast token={token} id={id} />
+                </Suspense>
+              ),
+              {
+                duration: Infinity,
+              },
+            );
           }
 
           dispatch.auth.login(token);
