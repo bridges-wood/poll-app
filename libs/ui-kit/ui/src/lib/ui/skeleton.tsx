@@ -1,11 +1,11 @@
 'use client';
 
 import { cn } from '@org/ui-kit/util';
-import React from 'react';
+import { ComponentRef, forwardRef, HTMLAttributes } from 'react';
 
-const Skeleton = React.forwardRef<
-  React.ComponentRef<'div'>,
-  React.HTMLAttributes<HTMLDivElement>
+const Skeleton = forwardRef<
+  ComponentRef<'div'>,
+  HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   return (
     <div

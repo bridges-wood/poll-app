@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@org/ui-kit/util';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import {
   CheckIcon,
@@ -12,8 +13,6 @@ import {
   forwardRef,
   HTMLAttributes,
 } from 'react';
-
-import { cn } from '@org/ui-kit/util';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 

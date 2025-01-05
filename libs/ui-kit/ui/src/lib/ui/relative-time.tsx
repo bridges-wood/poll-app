@@ -1,13 +1,6 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { ComponentPropsWithoutRef, FC, PropsWithRef } from 'react';
-
-const ONE_SECOND = 1;
-const ONE_MINUTE = ONE_SECOND * 60;
-const ONE_HOUR = ONE_MINUTE * 60;
-const ONE_DAY = ONE_HOUR * 24;
-const ONE_MONTH = ONE_DAY * 30;
-const ONE_YEAR = ONE_MONTH * 12;
+import { ComponentPropsWithoutRef, FC } from 'react';
 
 export type RelativeTimeFormat = 'auto' | 'micro' | 'elapsed';
 export type RelativeTimeTense = 'auto' | 'past' | 'future';
@@ -55,7 +48,7 @@ interface RelativeTimeProps {
 }
 
 const RelativeTime: FC<
-  PropsWithRef<RelativeTimeProps> & ComponentPropsWithoutRef<'span'>
+  RelativeTimeProps & ComponentPropsWithoutRef<'span'>
 > = ({
   date,
   format = 'auto',
@@ -65,8 +58,6 @@ const RelativeTime: FC<
   timeZoneName = 'short',
   ...props
 }) => {
-  const locale = 'en-US';
-
   return <span {...props}>{getRelativeTime(date)}</span>;
 };
 

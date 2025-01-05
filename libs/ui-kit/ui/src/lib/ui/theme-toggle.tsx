@@ -44,7 +44,10 @@ export function ThemeToggle({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
               >
-                <SunIcon className="h-[1.2rem] w-[1.2rem]" />
+                <SunIcon
+                  className="h-[1.2rem] w-[1.2rem]"
+                  data-testid="sun-icon"
+                />
               </motion.div>
             )}
             {theme === 'dark' && (
@@ -53,7 +56,10 @@ export function ThemeToggle({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
               >
-                <MoonIcon className="h-[1.2rem] w-[1.2rem]" />
+                <MoonIcon
+                  className="h-[1.2rem] w-[1.2rem]"
+                  data-testid="moon-icon"
+                />
               </motion.div>
             )}
             {theme === 'system' && (
@@ -62,7 +68,10 @@ export function ThemeToggle({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
               >
-                <DesktopIcon className="h-[1.2rem] w-[1.2rem]" />
+                <DesktopIcon
+                  className="h-[1.2rem] w-[1.2rem]"
+                  data-testid="desktop-icon"
+                />
               </motion.div>
             )}
           </AnimatePresence>

@@ -1,16 +1,19 @@
-import { JSX, PropsWithChildren, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { JSX, PropsWithChildren } from 'react';
 
-export function ClientOnly({
-  children,
-  skeleton,
-}: PropsWithChildren<{ skeleton?: JSX.Element }>) {
-  const [clientReady, setClientReady] = useState<boolean>(false);
+export const ClientOnly = (
+  props: PropsWithChildren<{ skeleton?: JSX.Element }>,
+) => {
+  const DynamicComponent = dynamic(() => Promise.resolve(ClientOnlyComponent), {
+    ssr: false,
+    loading: () => props.skeleton || null,
+  });
 
-  useEffect(() => {
-    setClientReady(true);
-  }, []);
+  return <DynamicComponent>{props.children}</DynamicComponent>;
+};
 
-  return clientReady ? <>{children}</> : skeleton || null;
+export function ClientOnlyComponent({ children }: PropsWithChildren) {
+  return children;
 }
 
 export default ClientOnly;

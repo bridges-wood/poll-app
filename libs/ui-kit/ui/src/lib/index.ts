@@ -10,7 +10,6 @@ export * from './ui/form';
 export * from './ui/hover-card';
 export * from './ui/input';
 export * from './ui/label';
-export * from './ui/nav/index';
 export * from './ui/navigation-menu';
 export * from './ui/popover';
 export * from './ui/radio-group';

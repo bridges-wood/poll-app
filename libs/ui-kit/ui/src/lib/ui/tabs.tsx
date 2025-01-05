@@ -3,19 +3,25 @@
 import { cn } from '@org/ui-kit/util';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import * as React from 'react';
+import {
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  forwardRef,
+  useCallback,
+  useMemo,
+} from 'react';
 
 const Tabs = TabsPrimitive.Root;
 
-const RoutedTabs = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
+const RoutedTabs = forwardRef<
+  ComponentRef<typeof TabsPrimitive.Root>,
+  ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
 >(({ children, defaultValue, onValueChange, ...props }, ref) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const createQueryString = React.useCallback(
+  const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(name, value);
@@ -25,11 +31,11 @@ const RoutedTabs = React.forwardRef<
     [searchParams],
   );
 
-  const currentTab = React.useMemo(() => {
+  const currentTab = useMemo(() => {
     const tab = searchParams.get('tab');
 
     return tab || defaultValue;
-  }, [searchParams]);
+  }, [defaultValue, searchParams]);
 
   return (
     <TabsPrimitive.Root
@@ -46,9 +52,9 @@ const RoutedTabs = React.forwardRef<
   );
 });
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+const TabsList = forwardRef<
+  ComponentRef<typeof TabsPrimitive.List>,
+  ComponentPropsWithoutRef<typeof TabsPrimitive.List>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
@@ -61,9 +67,9 @@ const TabsList = React.forwardRef<
 ));
 TabsList.displayName = TabsPrimitive.List.displayName;
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+const TabsTrigger = forwardRef<
+  ComponentRef<typeof TabsPrimitive.Trigger>,
+  ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
     ref={ref}
@@ -76,9 +82,9 @@ const TabsTrigger = React.forwardRef<
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+const TabsContent = forwardRef<
+  ComponentRef<typeof TabsPrimitive.Content>,
+  ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
     ref={ref}
