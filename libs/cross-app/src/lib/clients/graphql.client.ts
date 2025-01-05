@@ -25,7 +25,7 @@ export class GraphQLCrossAppClient implements CrossAppClient {
     });
   }
 
-  protected createExchanges(): Exchange[] {
+  private createExchanges(): Exchange[] {
     return [
       authExchange(async (utils) => {
         return {

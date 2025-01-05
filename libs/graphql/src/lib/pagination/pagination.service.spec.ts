@@ -48,16 +48,6 @@ class TestNode implements Node {
 }
 
 class TestPaginationService extends PaginationService<TestNode> {
-  constructor(
-    classRef: Type<TestNode> | readonly [Type<TestNode>],
-    collectionRef?: CollectionReference<
-      PartialWithFieldValue<TestNode>,
-      PartialWithFieldValue<DocumentData>
-    >,
-  ) {
-    super(classRef, collectionRef);
-  }
-
   public override getChunksForQuery(
     ids: Node['id'][],
     args: PaginationArgs,

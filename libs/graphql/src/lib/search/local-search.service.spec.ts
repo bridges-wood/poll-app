@@ -6,7 +6,7 @@ interface TestItem {
   name: string;
   age: number;
   active: boolean;
-  unsupported?: any;
+  unsupported?: null;
 }
 
 class TestLocalSearchService extends LocalSearchService<TestItem> {

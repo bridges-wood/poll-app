@@ -13,12 +13,6 @@ import { toResult } from '../../test/helpers';
 import { GraphQLCrossAppClient } from './graphql.client';
 
 describe('GraphQLCrossAppClient', () => {
-  class TestGraphqlCrossAppClient extends GraphQLCrossAppClient {
-    public override createExchanges(): Exchange[] {
-      return super.createExchanges();
-    }
-  }
-
   let client: GraphQLCrossAppClient;
   const mockUrl = 'http://mock-url.com';
   const mockToken = 'mock-token';
@@ -28,7 +22,7 @@ describe('GraphQLCrossAppClient', () => {
       providers: [
         {
           provide: GraphQLCrossAppClient,
-          useFactory: () => new TestGraphqlCrossAppClient(mockUrl),
+          useFactory: () => new GraphQLCrossAppClient(mockUrl),
         },
       ],
     }).compile();
@@ -181,9 +175,7 @@ describe('GraphQLCrossAppClient', () => {
     if (impersonate) {
       client.impersonating(mockToken);
     }
-    const authExchange: Exchange = (
-      client as TestGraphqlCrossAppClient
-    ).createExchanges()[0];
+    const authExchange: Exchange = client['createExchanges']()[0];
 
     const result = await pipe(
       fromValue(mockOperation),
