@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BaseLogger, TestLogger } from '@org/log';
 import { join } from 'path';
 import { BaseConfigService } from './config.service';
 
@@ -10,7 +11,13 @@ describe('BaseConfigService', () => {
   beforeEach(async () => {
     setupEnvironment();
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TestConfigService],
+      providers: [
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
+        TestConfigService,
+      ],
     }).compile();
 
     service = module.get<TestConfigService>(TestConfigService);
@@ -27,24 +34,26 @@ describe('BaseConfigService', () => {
 
   it('should set environment to development by default', () => {
     delete process.env['NODE_ENV'];
-    const newService = new TestConfigService();
+    const newService = new TestConfigService(new TestLogger());
     expect(newService.isDev()).toBe(true);
   });
 
   it('should set environment to production if NODE_ENV is set to production', () => {
     process.env['NODE_ENV'] = 'production';
-    const newService = new TestConfigService();
+    const newService = new TestConfigService(new TestLogger());
     expect(newService.isDev()).toBe(false);
   });
 
   it('should throw an error if HMAC_SECRET is not set', () => {
     delete process.env['HMAC_SECRET'];
-    expect(() => new TestConfigService()).toThrow('HMAC_SECRET must be set');
+    expect(() => new TestConfigService(new TestLogger())).toThrow(
+      'HMAC_SECRET must be set',
+    );
   });
 
   it('should set HMAC_SECRET correctly', () => {
     process.env['HMAC_SECRET'] = 'test-secret';
-    const newService = new TestConfigService();
+    const newService = new TestConfigService(new TestLogger());
     expect(newService.HMACSecret).toBe('test-secret');
   });
 
@@ -59,13 +68,13 @@ describe('BaseConfigService', () => {
 
   it('should set port correctly if PORT is set', () => {
     process.env['PORT'] = '3000';
-    const newService = new TestConfigService();
+    const newService = new TestConfigService(new TestLogger());
     expect(newService.port).toBe(3000);
   });
 
   it('should allow the port to be set if it is not already set', () => {
     process.env['PORT'] = undefined;
-    const newService = new TestConfigService();
+    const newService = new TestConfigService(new TestLogger());
     newService.setPort(4000);
     expect(newService.port).toBe(4000);
   });

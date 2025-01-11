@@ -1,16 +1,18 @@
-import { Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { BaseLogger } from '@org/log';
 import { isEmpty } from 'lodash';
 import { join } from 'path';
 
+@Injectable()
 export abstract class BaseConfigService {
-  protected readonly logger = new Logger(BaseConfigService.name);
   private _environment: string;
   private _HMACSecret: string;
   private _schemaFile: string;
   private _name: string;
   private _port: number | undefined;
 
-  constructor() {
+  constructor(protected readonly logger: BaseLogger) {
+    this.logger.setContext(BaseConfigService.name);
     this._environment = process.env['NODE_ENV'] || 'development';
     this._schemaFile = join(
       process.cwd(),

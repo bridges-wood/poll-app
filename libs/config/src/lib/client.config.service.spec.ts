@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BaseLogger, TestLogger } from '@org/log';
 import { ClientConfigService } from './client.config.service';
 import { ConfigTokens } from './tokens';
 
@@ -10,6 +11,10 @@ describe('ClientConfigService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ClientConfigService,
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
         {
           provide: ConfigTokens.GATEWAY_URL,
           useValue: 'http://example.com',
@@ -34,13 +39,19 @@ describe('ClientConfigService', () => {
 
   it('should set hasJwks to true when HAS_JWKS is true', () => {
     process.env['HAS_JWKS'] = 'true';
-    const newService = new ClientConfigService('http://example.com');
+    const newService = new ClientConfigService(
+      'http://example.com',
+      new TestLogger(),
+    );
     expect(newService.hasJwks).toBe(true);
   });
 
   it('should set hasJwks to false when HAS_JWKS is not true', () => {
     process.env['HAS_JWKS'] = 'false';
-    const newService = new ClientConfigService('http://example.com');
+    const newService = new ClientConfigService(
+      'http://example.com',
+      new TestLogger(),
+    );
     expect(newService.hasJwks).toBe(false);
   });
 });

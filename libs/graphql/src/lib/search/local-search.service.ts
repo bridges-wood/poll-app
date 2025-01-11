@@ -3,7 +3,7 @@ import { NumberFieldFilterArgs } from './fields/number-field';
 import { ISearchFilter } from './searchable';
 
 export class LocalSearchService<T> {
-  protected search(items: T[], filter: ISearchFilter<T>): T[] {
+  public search(items: T[], filter: ISearchFilter<T>): T[] {
     return items
       .filter((item) => this.filterHasField(item, filter))
       .filter((item) => this.filterFields(item, filter));
