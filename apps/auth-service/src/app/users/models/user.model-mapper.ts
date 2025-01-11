@@ -14,9 +14,13 @@ export type UserDbModel = User;
 export class UserModelMapper
   implements FirestoreDataConverter<User, UserDbModel>
 {
+  /**
+   * @deprecated The auth service does not write to Firestore.
+   */
   toFirestore(_modelObject: WithFieldValue<User>): WithFieldValue<UserDbModel> {
     throw new Error('Should not be called');
   }
+
   fromFirestore(
     snapshot: QueryDocumentSnapshot<DocumentData, UserDbModel>,
     options?: SnapshotOptions,

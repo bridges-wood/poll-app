@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { BaseLogger } from '@org/log';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import * as jose from 'jose';
 import { KeyLike } from 'jose';
@@ -8,11 +9,11 @@ import { CryptoService } from './crypto.service';
 @Injectable()
 export class LocalCryptoService implements CryptoService {
   public readonly alg: string;
-  protected readonly logger = new Logger(LocalCryptoService.name);
   private _publicKey: jose.KeyLike;
   private _privateKey: jose.KeyLike;
 
-  constructor() {
+  constructor(private readonly logger: BaseLogger) {
+    this.logger.setContext(LocalCryptoService.name);
     this.alg = 'PS256';
   }
 

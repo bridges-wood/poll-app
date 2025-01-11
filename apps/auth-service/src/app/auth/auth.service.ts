@@ -1,7 +1,8 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { NotFoundError } from '@org/errors';
 import { FirebaseTokens, USERS_COLLECTION } from '@org/firebase';
+import { BaseLogger } from '@org/log';
 import { DecodedIdToken } from '@org/typings';
 import {
   Auth,
@@ -24,7 +25,6 @@ import { SupportedOAuthProvider } from './supported-oauth-providers';
 
 @Injectable()
 export class AuthService {
-  private logger = new Logger(AuthService.name);
   private collectionRef: CollectionReference<
     PartialWithFieldValue<User>,
     PartialWithFieldValue<User>
@@ -33,9 +33,11 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     userModelMapper: UserModelMapper,
-    @Inject(FirebaseTokens.DATABASE) database: Firestore,
     @Inject(FirebaseTokens.AUTH) private readonly firebaseAuth: Auth,
+    @Inject(FirebaseTokens.DATABASE) database: Firestore,
+    private readonly logger: BaseLogger,
   ) {
+    this.logger.setContext(AuthService.name);
     this.collectionRef = collection(database, USERS_COLLECTION).withConverter(
       userModelMapper,
     );

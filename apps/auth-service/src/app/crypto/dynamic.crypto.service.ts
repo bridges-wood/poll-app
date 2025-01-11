@@ -1,15 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { BaseLogger } from '@org/log';
 import * as jose from 'jose';
 import { CryptoService } from './crypto.service';
 
 @Injectable()
 export class DynamicCryptoService implements CryptoService {
   public readonly alg: string;
-  protected readonly logger = new Logger(DynamicCryptoService.name);
   private _publicKey: jose.KeyLike;
   private _privateKey: jose.KeyLike;
 
-  constructor() {
+  constructor(private readonly logger: BaseLogger) {
+    this.logger.setContext(DynamicCryptoService.name);
     this.alg = 'PS256';
   }
 
