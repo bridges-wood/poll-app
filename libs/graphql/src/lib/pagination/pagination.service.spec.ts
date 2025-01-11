@@ -2,6 +2,8 @@ import { Type } from '@nestjs/common';
 import { TypeMetadataStorage } from '@nestjs/graphql';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { Test, TestingModule } from '@nestjs/testing';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import {
   CollectionReference,
   doc,
@@ -168,10 +170,16 @@ describe('PaginationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
+        {
           provide: TestPaginationService,
-          useValue: new TestPaginationService(TestNode, {
-            path: 'test',
-          } as CollectionReference),
+          useFactory: (logger: BaseLogger) =>
+            new TestPaginationService(TestNode, logger, {
+              path: 'test',
+            } as CollectionReference),
+          inject: [BaseLogger],
         },
       ],
     }).compile();
@@ -185,7 +193,11 @@ describe('PaginationService', () => {
 
   describe('findAll', () => {
     it('should throw an error if collectionRef is not provided', async () => {
-      const testService = new TestPaginationService(TestNode, undefined);
+      const testService = new TestPaginationService(
+        TestNode,
+        new TestLogger(),
+        undefined,
+      );
       await expect(testService.findAll({ first: 10 })).rejects.toThrow(
         'Collection reference must be provided',
       );
@@ -257,7 +269,11 @@ describe('PaginationService', () => {
 
   describe('findByIds', () => {
     it('should throw an error if collectionRef is not provided', async () => {
-      const testService = new TestPaginationService(TestNode, undefined);
+      const testService = new TestPaginationService(
+        TestNode,
+        new TestLogger(),
+        undefined,
+      );
       await expect(testService.findByIds(['1'], { first: 10 })).rejects.toThrow(
         'Collection reference must be provided',
       );
@@ -323,7 +339,11 @@ describe('PaginationService', () => {
 
   describe('findWithConstraints', () => {
     it('should throw an error if collectionRef is not provided', async () => {
-      const testService = new TestPaginationService(TestNode, undefined);
+      const testService = new TestPaginationService(
+        TestNode,
+        new TestLogger(),
+        undefined,
+      );
       await expect(
         testService.findWithConstraints({ first: 10 }, []),
       ).rejects.toThrow('Collection reference must be provided');
@@ -515,6 +535,7 @@ describe('PaginationService', () => {
 
       const testService = new TestPaginationService(
         [TestNode, TestNode2] as unknown as readonly [Type<TestNode>],
+        new TestLogger(),
         {
           path: 'test',
         } as CollectionReference,

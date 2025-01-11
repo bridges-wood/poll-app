@@ -4,6 +4,8 @@ import {
   DeRegisterServiceDocument,
   RegisterServiceDocument,
 } from '@org/graphql';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { exec } from 'child_process';
 import { CrossAppRegistrationService } from './cross-app.registration.service';
 
@@ -22,10 +24,16 @@ describe('CrossAppRegistrationService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
         CrossAppRegistrationService,
         {
           provide: GraphQLCrossAppClient,
-          useValue: new GraphQLCrossAppClient('http://example.com'),
+          useFactory: (logger: BaseLogger) =>
+            new GraphQLCrossAppClient('http://example.com', logger),
+          inject: [BaseLogger],
         },
       ],
     }).compile();

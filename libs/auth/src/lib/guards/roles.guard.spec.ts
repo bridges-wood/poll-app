@@ -1,6 +1,9 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { Test, TestingModule } from '@nestjs/testing';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { User } from '@org/typings';
 import { RolesGuard } from './roles.guard';
 
@@ -8,9 +11,20 @@ describe('RolesGuard', () => {
   let rolesGuard: RolesGuard;
   let reflector: Reflector;
 
-  beforeEach(() => {
-    reflector = new Reflector();
-    rolesGuard = new RolesGuard(reflector);
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        RolesGuard,
+        Reflector,
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
+      ],
+    }).compile();
+
+    rolesGuard = module.get<RolesGuard>(RolesGuard);
+    reflector = module.get<Reflector>(Reflector);
   });
 
   it('should be defined', () => {

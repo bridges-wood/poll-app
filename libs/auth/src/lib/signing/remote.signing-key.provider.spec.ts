@@ -5,6 +5,8 @@ import {
   FindEndpointsWithJwksDocument,
   FindEndpointsWithJwksQuery,
 } from '@org/graphql';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { Cacheable } from 'cacheable';
 import { JwksClient } from 'jwks-rsa';
 import { JWKS_URI_CACHE_KEY } from './constants';
@@ -23,6 +25,10 @@ describe('RemoteSigningKeyProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RemoteSigningKeyProvider,
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
         {
           provide: GraphQLCrossAppClient,
           useValue: {

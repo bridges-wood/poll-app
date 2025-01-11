@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { AuthGuardModule } from '@org/auth';
 import { FirebaseModule } from '@org/firebase';
+import { LogModule } from '@org/log';
 import { PubSubModule } from '@org/pubsub';
 import { UsersModule } from '../users/users.module';
 import { PostModelMapper } from './models/post.model-mapper';
@@ -13,6 +14,7 @@ import { PostsService } from './posts.service';
     PubSubModule,
     AuthGuardModule,
     forwardRef(() => UsersModule),
+    LogModule,
   ],
   providers: [PostsResolver, PostsService, PostModelMapper],
   exports: [PostModelMapper, PostsService],

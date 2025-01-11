@@ -7,6 +7,7 @@ import {
   USERS_COLLECTION,
 } from '@org/firebase';
 import { PaginationArgs, PaginationService } from '@org/graphql/pagination';
+import { BaseLogger } from '@org/log';
 import { PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
 import {
@@ -42,8 +43,10 @@ export class ResponsesService extends PaginationService<
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     private readonly responseModelMapper: ResponseModelMapper,
+    override readonly logger: BaseLogger,
   ) {
-    super([MultipleChoiceResponse]);
+    super([MultipleChoiceResponse], logger);
+    this.logger.setContext(ResponsesService.name);
   }
 
   async findAllByPostId(

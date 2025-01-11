@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RestCrossAppClient } from '@org/cross-app';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { CrossAppHealthService } from './cross-app.health.service';
 
 describe('CrossAppHealthService', () => {
@@ -9,6 +11,10 @@ describe('CrossAppHealthService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
         CrossAppHealthService,
         {
           provide: RestCrossAppClient,

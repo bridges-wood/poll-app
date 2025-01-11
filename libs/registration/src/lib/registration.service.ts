@@ -1,7 +1,8 @@
-import { BeforeApplicationShutdown, Injectable, Logger } from '@nestjs/common';
+import { BeforeApplicationShutdown, Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ClientConfigService } from '@org/config';
 import { CrossAppHealthService } from '@org/health';
+import { BaseLogger } from '@org/log';
 import assert from 'assert';
 import { Mutex } from 'async-mutex';
 import { CrossAppRegistrationService } from './cross-app/cross-app.registration.service';
@@ -11,12 +12,13 @@ export class RegistrationService implements BeforeApplicationShutdown {
   private registrationMutex: Mutex;
   private deregistrationMutex: Mutex;
 
-  private readonly logger = new Logger(RegistrationService.name);
   constructor(
     private configService: ClientConfigService,
     private readonly crossAppRegistrationService: CrossAppRegistrationService,
     private readonly crossAppHealthService: CrossAppHealthService,
+    private readonly logger: BaseLogger,
   ) {
+    this.logger.setContext(RegistrationService.name);
     this.registrationMutex = new Mutex();
     this.deregistrationMutex = new Mutex();
   }

@@ -1,7 +1,8 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { CACHE_INSTANCE } from '@org/cache';
+import { BaseLogger } from '@org/log';
 import type { DecodedIdToken, TrustedParams, User } from '@org/typings';
 import assert from 'assert';
 import { Cacheable } from 'cacheable';
@@ -16,13 +17,14 @@ export class DistributedStrategy extends PassportStrategy(
   Strategy,
   'distributed',
 ) {
-  private readonly logger = new Logger(DistributedStrategy.name);
   constructor(
     private readonly crossAppAuthService: CrossAppAuthService,
     private readonly jwtService: JwtService,
+    private readonly logger: BaseLogger,
     @Inject(CACHE_INSTANCE) private readonly cache: Cacheable,
   ) {
     super();
+    this.logger.setContext(DistributedStrategy.name);
   }
 
   async validate(req: Request): Promise<Pick<User, 'id' | 'roles'>> {

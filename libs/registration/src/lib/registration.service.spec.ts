@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientConfigService } from '@org/config';
 import { CrossAppHealthService } from '@org/health';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { CrossAppRegistrationService } from './cross-app/cross-app.registration.service';
 import { RegistrationService } from './registration.service';
 
@@ -13,6 +15,10 @@ describe('RegistrationService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
         RegistrationService,
         {
           provide: ClientConfigService,

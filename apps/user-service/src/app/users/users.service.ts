@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
 import { FirebaseTokens, USERS_COLLECTION } from '@org/firebase';
 import { PaginationService } from '@org/graphql/pagination';
+import { BaseLogger } from '@org/log';
 import { PubSubTokens } from '@org/pubsub';
 import {
   Firestore,
@@ -28,11 +29,14 @@ export class UsersService extends PaginationService<User, UserDbModel> {
     @Inject(FirebaseTokens.DATABASE) database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     userModelMapper: UserModelMapper,
+    override readonly logger: BaseLogger,
   ) {
     super(
       User,
+      logger,
       collection(database, USERS_COLLECTION).withConverter(userModelMapper),
     );
+    this.logger.setContext(UsersService.name);
   }
 
   async findOneById(id: string): Promise<User> {

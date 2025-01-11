@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from '@nestjs/testing';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import {
   AnyVariables,
   Client,
@@ -21,8 +23,14 @@ describe('GraphQLCrossAppClient', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
+        {
           provide: GraphQLCrossAppClient,
-          useFactory: () => new GraphQLCrossAppClient(mockUrl),
+          useFactory: (logger: BaseLogger) =>
+            new GraphQLCrossAppClient(mockUrl, logger),
+          inject: [BaseLogger],
         },
       ],
     }).compile();

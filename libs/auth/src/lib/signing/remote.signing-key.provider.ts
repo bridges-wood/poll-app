@@ -1,5 +1,5 @@
 import { GetSigningKeyFunction } from '@graphql-yoga/plugin-jwt';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_INSTANCE } from '@org/cache';
 import { GraphQLCrossAppClient } from '@org/cross-app';
 import { NotFoundError } from '@org/errors';
@@ -8,6 +8,7 @@ import {
   FindEndpointsWithJwksQuery,
   FindEndpointsWithJwksQueryVariables,
 } from '@org/graphql';
+import { BaseLogger } from '@org/log';
 import { Cacheable } from 'cacheable';
 import { JwksClient } from 'jwks-rsa';
 import { JWKS_URI_CACHE_KEY } from './constants';
@@ -15,11 +16,13 @@ import { SigningKeyProvider } from './signing-key.provider';
 
 @Injectable()
 export class RemoteSigningKeyProvider implements SigningKeyProvider {
-  private readonly logger = new Logger(RemoteSigningKeyProvider.name);
   constructor(
     private readonly client: GraphQLCrossAppClient,
+    private readonly logger: BaseLogger,
     @Inject(CACHE_INSTANCE) private cache: Cacheable,
-  ) {}
+  ) {
+    this.logger.setContext(RemoteSigningKeyProvider.name);
+  }
 
   public build(): GetSigningKeyFunction {
     return async (kid) => {
@@ -31,7 +34,7 @@ export class RemoteSigningKeyProvider implements SigningKeyProvider {
       try {
         const signingKey = await Promise.any(
           jwksClients.map((client) => client.getSigningKey(kid)),
-        )
+        );
         return signingKey.getPublicKey();
       } catch (e) {
         this.logger.error(`Error getting signing key for kid: ${kid}`, e);

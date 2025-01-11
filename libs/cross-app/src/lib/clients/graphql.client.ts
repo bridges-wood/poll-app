@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { BaseLogger } from '@org/log';
 import {
   AnyVariables,
   Client,
@@ -12,11 +13,14 @@ import { CrossAppClient } from './base.client';
 
 @Injectable()
 export class GraphQLCrossAppClient implements CrossAppClient {
-  private logger = new Logger(GraphQLCrossAppClient.name);
   private client: Client;
   private token: string | undefined;
 
-  constructor(public url: string) {
+  constructor(
+    public url: string,
+    private readonly logger: BaseLogger,
+  ) {
+    this.logger.setContext(GraphQLCrossAppClient.name);
     this.logger.debug(`Creating client for URL: ${url}`);
     this.client = new Client({
       exchanges: this.createExchanges(),
@@ -36,9 +40,7 @@ export class GraphQLCrossAppClient implements CrossAppClient {
             });
           },
           didAuthError: (error) => {
-            return error.graphQLErrors.some(
-              (e) => e.message === 'jwt expired'
-            );
+            return error.graphQLErrors.some((e) => e.message === 'jwt expired');
           },
           async refreshAuth() {
             // This is where you could refresh your token

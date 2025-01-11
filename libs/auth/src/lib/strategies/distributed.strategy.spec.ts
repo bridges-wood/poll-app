@@ -1,6 +1,8 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_INSTANCE } from '@org/cache';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { Cacheable } from 'cacheable';
 import { FastifyRequest as Request } from 'fastify';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
@@ -21,6 +23,10 @@ describe('DistributedStrategy', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DistributedStrategy,
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
         {
           provide: CrossAppAuthService,
           useValue: { validateToken: jest.fn() },

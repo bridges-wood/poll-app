@@ -1,11 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RestCrossAppClient } from '@org/cross-app';
+import { BaseLogger } from '@org/log';
 
 @Injectable()
 export class CrossAppHealthService {
-  private readonly logger = new Logger(CrossAppHealthService.name);
-
-  constructor(private readonly restClient: RestCrossAppClient) {}
+  constructor(
+    private readonly restClient: RestCrossAppClient,
+    private readonly logger: BaseLogger,
+  ) {
+    this.logger.setContext(CrossAppHealthService.name);
+  }
 
   async checkIn(): Promise<boolean> {
     this.logger.debug(`Checking in with ${this.restClient.url}`);

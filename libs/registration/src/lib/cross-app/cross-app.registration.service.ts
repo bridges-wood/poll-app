@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { GraphQLCrossAppClient } from '@org/cross-app';
 import {
   DeRegisterServiceDocument,
@@ -8,14 +8,19 @@ import {
   RegisterServiceMutation,
   RegisterServiceMutationVariables,
 } from '@org/graphql';
+import { BaseLogger } from '@org/log';
 import { exec } from 'child_process';
 import { backOff } from 'exponential-backoff';
 import { promisify } from 'util';
 
 @Injectable()
 export class CrossAppRegistrationService {
-  private logger = new Logger(CrossAppRegistrationService.name);
-  constructor(private client: GraphQLCrossAppClient) {}
+  constructor(
+    private client: GraphQLCrossAppClient,
+    private readonly logger: BaseLogger,
+  ) {
+    this.logger.setContext(CrossAppRegistrationService.name);
+  }
 
   /**
    * Register a service with the GraphQL gateway

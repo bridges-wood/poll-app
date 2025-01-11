@@ -1,12 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { BaseLogger } from '@org/log';
 import { CrossAppClient } from './base.client';
 
 @Injectable()
 export class RestCrossAppClient implements CrossAppClient {
-  private logger = new Logger(RestCrossAppClient.name);
   private token: string | undefined;
 
-  constructor(public readonly url: string) {
+  constructor(
+    public readonly url: string,
+    private readonly logger: BaseLogger,
+  ) {
+    this.logger.setContext(RestCrossAppClient.name);
     this.logger.debug(`Creating client for URL: ${url}`);
   }
 

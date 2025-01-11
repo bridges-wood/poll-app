@@ -5,6 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard, PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_INSTANCE } from '@org/cache';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
 import { DistributedStrategy } from '../strategies/distributed.strategy';
 import { DistributedAuthGuard } from './distributed-auth.guard';
@@ -42,6 +44,10 @@ describe('DistributedAuthGuard', () => {
       providers: [
         DistributedAuthGuard,
         {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
+        {
           provide: CrossAppAuthService,
           useValue: {
             validateToken: jest.fn(),
@@ -68,7 +74,6 @@ describe('DistributedAuthGuard', () => {
         },
         DistributedStrategy,
       ],
-      
     }).compile();
 
     guard = module.get<DistributedAuthGuard>(DistributedAuthGuard);

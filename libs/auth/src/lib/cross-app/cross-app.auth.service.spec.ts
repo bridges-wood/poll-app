@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_INSTANCE } from '@org/cache';
 import { GraphQLCrossAppClient } from '@org/cross-app';
 import { ValidateTokenDocument } from '@org/graphql';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { Cacheable } from 'cacheable';
 import { CrossAppAuthService } from './cross-app.auth.service';
 
@@ -16,6 +18,10 @@ describe('CrossAppAuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CrossAppAuthService,
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
         {
           provide: GraphQLCrossAppClient,
           useValue: {

@@ -1,5 +1,5 @@
 import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
 import {
   FirebaseTokens,
@@ -7,6 +7,7 @@ import {
   USERS_COLLECTION,
 } from '@org/firebase';
 import { PaginationService } from '@org/graphql/pagination';
+import { BaseLogger } from '@org/log';
 import { PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
 import {
@@ -30,16 +31,18 @@ import { UpdatePostArgs } from './models/update-post.args';
 
 @Injectable()
 export class PostsService extends PaginationService<Post, PostDbModel> {
-  override logger = new Logger(PostsService.name);
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
-    private readonly postModelMapper: PostModelMapper,
+    postModelMapper: PostModelMapper,
+    override readonly logger: BaseLogger,
   ) {
     super(
       Post,
+      logger,
       collection(database, POSTS_COLLECTION).withConverter(postModelMapper),
     );
+    this.logger.setContext(PostsService.name);
   }
 
   async findOneById(id: string): Promise<Post> {

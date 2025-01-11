@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { RestCrossAppClient } from './rest.client';
 
 describe('RestCrossAppClient', () => {
@@ -9,8 +11,14 @@ describe('RestCrossAppClient', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
+          provide: BaseLogger,
+          useClass: TestLogger,
+        },
+        {
           provide: RestCrossAppClient,
-          useFactory: () => new RestCrossAppClient(url),
+          useFactory: (logger: BaseLogger) =>
+            new RestCrossAppClient(url, logger),
+          inject: [BaseLogger],
         },
       ],
     }).compile();

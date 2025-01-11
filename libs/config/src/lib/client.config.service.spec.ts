@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BaseLogger, TestLogger } from '@org/log';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { ClientConfigService } from './client.config.service';
 import { ConfigTokens } from './tokens';
 

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CACHE_INSTANCE } from '@org/cache';
 import { GraphQLCrossAppClient } from '@org/cross-app';
@@ -8,18 +8,21 @@ import {
   ValidateTokenQuery,
   ValidateTokenQueryVariables,
 } from '@org/graphql';
+import { BaseLogger } from '@org/log';
 import { DecodedIdToken, User } from '@org/typings';
 import { Cacheable } from 'cacheable';
 import { isEmpty } from 'lodash';
 
 @Injectable()
 export class CrossAppAuthService {
-  private logger = new Logger(CrossAppAuthService.name);
   constructor(
     private client: GraphQLCrossAppClient,
     private jwtService: JwtService,
+    private readonly logger: BaseLogger,
     @Inject(CACHE_INSTANCE) private cache: Cacheable,
-  ) {}
+  ) {
+    this.logger.setContext(CrossAppAuthService.name);
+  }
 
   /**
    * Validates a JWT token and returns the decoded token, if the token is valid

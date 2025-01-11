@@ -1,5 +1,6 @@
-import { Logger, Type } from '@nestjs/common';
+import { Type } from '@nestjs/common';
 import { TypeMetadataStorage } from '@nestjs/graphql';
+import { BaseLogger } from '@org/log';
 import {
   CollectionReference,
   DocumentData,
@@ -39,15 +40,17 @@ export abstract class PaginationService<
   AppModelType extends Node,
   DbModelType extends DocumentData = DocumentData,
 > {
-  protected readonly logger = new Logger(this.constructor.name);
   constructor(
     readonly classRef: Type<AppModelType> | readonly [Type<AppModelType>],
+    protected readonly logger: BaseLogger,
     readonly collectionRef?: CollectionReference<
       PartialWithFieldValue<AppModelType>,
       PartialWithFieldValue<DbModelType>
     >,
     readonly chunkSize = DEFAULT_CHUNK_SIZE,
-  ) {}
+  ) {
+    this.logger.setContext(this.constructor.name);
+  }
 
   async findAll(
     args: PaginationArgs,
