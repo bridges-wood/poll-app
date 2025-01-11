@@ -1,25 +1,37 @@
-import { Logger } from '@nestjs/common';
+import { AsyncExecutor } from '@graphql-tools/utils';
+import { Injectable, OnModuleDestroy, Optional } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { BaseLogger } from '@org/log';
+import { backOff } from 'exponential-backoff';
 import { parse } from 'graphql';
 import { isAsyncIterable } from 'graphql-yoga';
 import { defaultTo } from 'lodash';
-import { BehaviorSubject, debounceTime } from 'rxjs';
+import { BehaviorSubject, debounceTime, Subscription } from 'rxjs';
 import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 import { LoadedEndpoint } from '../models/loaded-endpoint.model';
 
-export abstract class EndpointLoader {
+@Injectable()
+export abstract class EndpointLoader implements OnModuleDestroy {
+  private readonly DEBOUNCE_INTERVAL = 600;
+
   public loadedEndpoints$ = new BehaviorSubject<LoadedEndpoint[]>([]);
   protected endpoints$ = new BehaviorSubject<Endpoint[]>([]);
+  private readonly endpointSubscription: Subscription;
 
   constructor(
-    protected readonly logger: Logger,
     protected readonly executorFactory: ExecutorFactory,
-    initialEndpoints: Endpoint[] = [],
+    protected readonly logger: BaseLogger,
+    @Optional() initialEndpoints: Endpoint[] = [],
   ) {
+    this.logger.setContext(EndpointLoader.name);
     this.endpoints$.next(initialEndpoints);
-    this.endpoints$
-      .pipe(debounceTime(600))
+    this.endpointSubscription = this.endpoints$
+      .pipe(debounceTime(this.DEBOUNCE_INTERVAL))
       .subscribe((endpoints) => this.reload(endpoints));
+  }
+  onModuleDestroy() {
+    this.endpointSubscription.unsubscribe();
   }
 
   public getEndpoints(): LoadedEndpoint[] {
@@ -27,11 +39,8 @@ export abstract class EndpointLoader {
   }
 
   public async addEndpoint(endpoint: Endpoint): Promise<Endpoint> {
-    // Attempt to load the endpoint
-    const sdl = await this.loadEndpoint.bind(this)(endpoint);
-    if (sdl) {
-      this.endpoints$.next([...this.endpoints$.value, endpoint]);
-    }
+    await this.loadEndpoint.bind(this)(endpoint);
+    this.endpoints$.next([...this.endpoints$.value, endpoint]);
 
     return endpoint;
   }
@@ -57,11 +66,13 @@ export abstract class EndpointLoader {
     await Promise.all(
       endpoints.map((endpoint) => this.unRegisterEndpoint.bind(this)(endpoint)),
     );
+
+    this.endpoints$.next([]);
     this.logger.log('⛓️‍💥 Unregistered all endpoints');
   }
 
   private async unRegisterEndpoint(endpoint: Endpoint): Promise<boolean> {
-    const fetcher = this.executorFactory.createExecutor(endpoint.url);
+    const fetcher = this.executorFactory.getExecutor(endpoint.url);
 
     this.logger.debug(`Unregistering endpoint ${endpoint.name}`);
     try {
@@ -101,11 +112,13 @@ export abstract class EndpointLoader {
     const loadedEndpoints: LoadedEndpoint[] = [];
     this.logger.log(`Attempting to load ${endpoints.length} endpoint(s)`);
     await Promise.all(
-      endpoints.map(async (endpoint) => {
-        const sdl = await this.loadEndpoint(endpoint);
-        if (sdl)
-          loadedEndpoints.push({ ...endpoint, sdl, lastReload: new Date() });
-      }),
+      endpoints.map(async (endpoint) =>
+        loadedEndpoints.push({
+          ...endpoint,
+          sdl: await this.loadEndpoint(endpoint),
+          lastReload: new Date(),
+        }),
+      ),
     );
 
     this.logger.log(
@@ -114,5 +127,43 @@ export abstract class EndpointLoader {
     this.loadedEndpoints$.next(loadedEndpoints);
   }
 
-  protected abstract loadEndpoint(endpoint: Endpoint): Promise<string | null>;
+  protected abstract loadEndpoint(endpoint: Endpoint): Promise<string>;
+
+  protected async fetchSDL(
+    fetcher: AsyncExecutor,
+    endpoint: Endpoint,
+  ): Promise<string> {
+    try {
+      const result = await backOff(
+        () =>
+          fetcher({
+            document: parse('{ _service { _sdl } }'),
+          }),
+        { numOfAttempts: 10 },
+      );
+
+      if (isAsyncIterable(result)) {
+        throw new Error('Expected executor to return a single result');
+      }
+
+      const sdl = result?.data?._service?._sdl;
+      if (!sdl) {
+        this.logger.debug(`Received: ${JSON.stringify(result)}`);
+        throw new Error('No SDL found in response');
+      }
+
+      return sdl;
+    } catch (error) {
+      this.logger.error(
+        `Failed to load endpoint ${endpoint.name}: ${error.message}`,
+      );
+      throw error;
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  private async autoReload() {
+    this.logger.log('🤖 Auto-reloading schema');
+    await this.reload(this.endpoints$.value);
+  }
 }

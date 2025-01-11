@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BaseLogger, LogModule } from '@org/log';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
 import { ExecutorFactory } from '../executors/executor-factory';
@@ -9,9 +10,8 @@ import { EndpointLoader } from './loaders';
 import { LocalEndpointLoader } from './loaders/local-endpoint-loader';
 
 @Module({
-  imports: [ConfigModule, ExecutorsModule],
+  imports: [ConfigModule, LogModule, ExecutorsModule],
   providers: [
-    ConfigService,
     EndpointsResolver,
     EndpointsService,
     ExecutorFactory,
@@ -20,8 +20,9 @@ import { LocalEndpointLoader } from './loaders/local-endpoint-loader';
       useFactory: (
         configService: ConfigService,
         executorFactory: ExecutorFactory,
-      ) => new LocalEndpointLoader(configService, executorFactory),
-      inject: [ConfigService, ExecutorFactory],
+        logger: BaseLogger,
+      ) => new LocalEndpointLoader(configService, executorFactory, logger),
+      inject: [ConfigService, ExecutorFactory, BaseLogger],
     },
   ],
   exports: [EndpointLoader],

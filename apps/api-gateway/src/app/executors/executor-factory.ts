@@ -1,9 +1,10 @@
 import { AsyncExecutor } from '@graphql-tools/utils';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   computeHmacSignature,
   HMAC_SIGNATURE_EXTENSION,
 } from '@org/graphql/plugins';
+import { BaseLogger } from '@org/log';
 import { DecodedIdToken, TrustedRequestExtensions } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { print } from 'graphql';
@@ -11,12 +12,16 @@ import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class ExecutorFactory {
-  protected readonly logger = new Logger(ExecutorFactory.name);
   private executorCache = new Map<string, AsyncExecutor>();
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: BaseLogger,
+  ) {
+    this.logger.setContext(ExecutorFactory.name);
+  }
 
-  public createExecutor(url: string): AsyncExecutor {
+  public getExecutor(url: string): AsyncExecutor {
     if (this.executorExistsInCache(url)) {
       this.logger.debug(`Returning cached executor for endpoint: ${url}`);
       return this.executorCache.get(url) as AsyncExecutor;

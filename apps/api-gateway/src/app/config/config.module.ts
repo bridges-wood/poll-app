@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule as BaseConfigModule, GatewayUrlProvider } from '@org/config';
+import { LogModule } from '@org/log';
 import { ConfigService } from './config.service';
 
 @Module({
-  imports: [BaseConfigModule],
-  providers: [ConfigService, GatewayUrlProvider],
-  exports: [ConfigService, GatewayUrlProvider],
+  imports: [LogModule],
+  providers: [ConfigService],
+  exports: [ConfigService],
 })
 export class ConfigModule {}

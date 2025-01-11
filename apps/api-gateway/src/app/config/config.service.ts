@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BaseConfigService } from '@org/config';
+import { BaseLogger } from '@org/log';
 import { createHash } from 'crypto';
 import { readdirSync, readFileSync } from 'fs';
 import { parse } from 'graphql';
@@ -10,9 +11,10 @@ import { z } from 'zod';
 import { fromError } from 'zod-validation-error';
 import { Endpoint } from '../endpoints/models/endpoint.model';
 
+// TODO investigate Nest configuration module
+
 @Injectable()
 export class ConfigService extends BaseConfigService {
-  override logger = new Logger(ConfigService.name);
   private endpoints: Endpoint[] = [];
   private queries: string[] = [];
   private ConfigSchema = z
@@ -31,14 +33,16 @@ export class ConfigService extends BaseConfigService {
     })
     .optional();
 
-  constructor() {
-    super();
+  constructor(logger: BaseLogger) {
+    super(logger);
+    this.logger.setContext(ConfigService.name);
     this.loadConfigFromFile();
     this.loadConfigFromEnv();
     this.loadDefaultQueries();
+    this.logger.log(`🏁 Configuration complete`);
   }
 
-  loadDefaultQueries() {
+  private loadDefaultQueries() {
     const path = join(__dirname, 'assets/gql');
     const files = readdirSync(path).filter(
       (file) => file.endsWith('.gql') || file.endsWith('.graphql'),

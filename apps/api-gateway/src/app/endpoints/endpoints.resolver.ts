@@ -1,5 +1,5 @@
-import { Logger } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { BaseLogger } from '@org/log';
 import { EndpointsService } from './endpoints.service';
 import { AddEndpointArgs } from './models/add-endpoint.args';
 import { AddEndpointResult } from './models/add-endpoint.result';
@@ -10,8 +10,12 @@ import { RemoveEndpointResult } from './models/remove-endpoint.result';
 
 @Resolver()
 export class EndpointsResolver {
-  private readonly logger = new Logger(EndpointsResolver.name);
-  constructor(private endpointsService: EndpointsService) {}
+  constructor(
+    private endpointsService: EndpointsService,
+    private readonly logger: BaseLogger,
+  ) {
+    this.logger.setContext(EndpointsResolver.name);
+  }
 
   @Query((returns) => [LoadedEndpoint], {
     description: 'Get all endpoints currently loaded by the gateway',

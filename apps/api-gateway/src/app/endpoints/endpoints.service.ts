@@ -1,5 +1,6 @@
-import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
+import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { LocalSearchService } from '@org/graphql/search';
+import { BaseLogger } from '@org/log';
 import { EndpointLoader } from './loaders';
 import { AddEndpointArgs } from './models/add-endpoint.args';
 import { AddEndpointResult } from './models/add-endpoint.result';
@@ -14,10 +15,12 @@ export class EndpointsService
   extends LocalSearchService<LoadedEndpoint>
   implements OnApplicationShutdown
 {
-  private readonly logger = new Logger(EndpointsService.name);
-
-  constructor(private endpointLoader: EndpointLoader) {
+  constructor(
+    private endpointLoader: EndpointLoader,
+    private readonly logger: BaseLogger,
+  ) {
     super();
+    this.logger.setContext(EndpointsService.name);
   }
 
   getEndpoints(filter?: EndpointFilter): LoadedEndpoint[] {
