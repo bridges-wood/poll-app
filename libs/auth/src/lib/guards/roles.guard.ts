@@ -28,8 +28,9 @@ export class RolesGuard implements CanActivate {
   }
 
   protected matchRoles(roles: string[], user: Pick<User, 'roles'>): boolean {
-    this.logger.debug(`Permitted roles: ${roles}`);
-    this.logger.debug(`User roles: ${user.roles}`);
+    this.logger.debug(
+      `Permitted roles: [${roles}], User roles: [${user.roles}]`,
+    );
     return user.roles.some((role) => roles.includes(role));
   }
 }

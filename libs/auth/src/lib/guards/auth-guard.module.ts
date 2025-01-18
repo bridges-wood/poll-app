@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { CacheModule } from '@org/cache';
+import { ConfigModule } from '@org/config';
 import { LogModule } from '@org/log';
 import { CrossAppAuthModule } from '../cross-app/cross-app.auth.module';
 import { DistributedStrategy } from '../strategies/distributed.strategy';
@@ -11,6 +12,7 @@ import { RolesGuard } from './roles.guard';
 @Module({
   imports: [
     CrossAppAuthModule,
+    ConfigModule,
     PassportModule,
     JwtModule.register({}),
     CacheModule,

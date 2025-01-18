@@ -5,6 +5,8 @@ import { ConfigTokens } from './tokens';
 
 export class ClientConfigService extends BaseConfigService {
   public readonly hasJwks: boolean;
+  public readonly standaloneMode: boolean;
+  public readonly bypassAuth: boolean;
 
   constructor(
     @Inject(ConfigTokens.GATEWAY_URL) readonly gatewayUrl: string,
@@ -13,5 +15,7 @@ export class ClientConfigService extends BaseConfigService {
     super(logger);
     this.logger.setContext(ClientConfigService.name);
     this.hasJwks = process.env['HAS_JWKS'] === 'true';
+    this.standaloneMode = process.env['STANDALONE'] === 'true';
+    this.bypassAuth = process.env['NO_AUTH'] === 'true';
   }
 }

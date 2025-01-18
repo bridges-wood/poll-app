@@ -65,27 +65,33 @@ import { UsersModule } from './users/users.module';
             ]),
           ),
           plugins: [
-            !config.isDev() &&
-              useHmacSignatureValidation({
-                secret: config.HMACSecret,
-                serializeParams: serializeParams,
-              }),
-            useJWT({
-              signingKeyProviders: [signingKeyProvider.build()],
-              tokenLookupLocations: [
-                extractFromHeader({ name: 'authorization', prefix: 'Bearer' }),
-              ],
-              tokenVerification: {
-                issuer: 'poll-app:auth',
-                algorithms: ['PS256'],
-                audience: 'poll-app:api',
-              },
-              extendContext: true,
-              reject: {
-                missingToken: false,
-                invalidToken: true,
-              },
-            }),
+            config.isDev()
+              ? null
+              : useHmacSignatureValidation({
+                  secret: config.HMACSecret,
+                  serializeParams: serializeParams,
+                }),
+            config.isDev() && config.bypassAuth
+              ? null
+              : useJWT({
+                  signingKeyProviders: [signingKeyProvider.build()],
+                  tokenLookupLocations: [
+                    extractFromHeader({
+                      name: 'authorization',
+                      prefix: 'Bearer',
+                    }),
+                  ],
+                  tokenVerification: {
+                    issuer: 'poll-app:auth',
+                    algorithms: ['PS256'],
+                    audience: 'poll-app:api',
+                  },
+                  extendContext: true,
+                  reject: {
+                    missingToken: false,
+                    invalidToken: true,
+                  },
+                }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

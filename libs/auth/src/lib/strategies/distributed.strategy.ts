@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { CACHE_INSTANCE } from '@org/cache';
+import { ClientConfigService } from '@org/config';
 import { BaseLogger } from '@org/log';
 import type { DecodedIdToken, TrustedParams, User } from '@org/typings';
 import assert from 'assert';
@@ -18,6 +19,7 @@ export class DistributedStrategy extends PassportStrategy(
   'distributed',
 ) {
   constructor(
+    private readonly clientConfigService: ClientConfigService,
     private readonly crossAppAuthService: CrossAppAuthService,
     private readonly jwtService: JwtService,
     private readonly logger: BaseLogger,
@@ -28,6 +30,17 @@ export class DistributedStrategy extends PassportStrategy(
   }
 
   async validate(req: Request): Promise<Pick<User, 'id' | 'roles'>> {
+    if (
+      this.clientConfigService.isDev() &&
+      this.clientConfigService.bypassAuth
+    ) {
+      this.logger.warn('⚠️ Bypassing authentication');
+      return {
+        id: '00000000-0000-0000-0000-000000000000',
+        roles: ['admin'],
+      };
+    }
+
     // When we're in production, the request is signed by the gateway, so we can trust it
     const body = req.body as GraphQLParams;
     if (this.isTrusted(body)) {

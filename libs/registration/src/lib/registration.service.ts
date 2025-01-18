@@ -24,6 +24,10 @@ export class RegistrationService implements BeforeApplicationShutdown {
   }
 
   async afterApplicationBootstrap() {
+    if (this.configService.standaloneMode) {
+      this.logger.log('🚀 Running in standalone mode, skipping registration');
+      return;
+    }
     try {
       await this.registerSelf();
     } catch (error) {
@@ -96,6 +100,11 @@ export class RegistrationService implements BeforeApplicationShutdown {
 
   @Cron(CronExpression.EVERY_MINUTE)
   private async checkIn() {
+    if (this.configService.standaloneMode) {
+      this.logger.log('🚀 Running in standalone mode, skipping check-in');
+      return
+    }
+
     this.logger.log(`🤖 Checking in with the gateway...`);
     try {
       await this.crossAppHealthService.checkIn();
