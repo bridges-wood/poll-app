@@ -19,7 +19,6 @@
       "@org/auth": ["libs/auth/src/index.ts"],
       "@org/bootstrap": ["libs/bootstrap/src/index.ts"],
       "@org/cache": ["libs/cache/src/index.ts"],
-      "@org/common": ["libs/common/src/index.ts"],
       "@org/config": ["libs/config/src/index.ts"],
       "@org/cross-app": ["libs/cross-app/src/index.ts"],
       "@org/errors": ["libs/errors/src/index.ts"],
