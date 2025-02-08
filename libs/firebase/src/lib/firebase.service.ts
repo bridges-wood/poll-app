@@ -1,6 +1,7 @@
-import { Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
+import { Injectable, OnModuleInit, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { Node } from '@org/graphql/pagination';
+import { BaseLogger } from '@org/log';
 import { InjectionBypass } from '@org/typings';
 import {
   CollectionReference,
@@ -40,8 +41,9 @@ export const FirebaseService = <
       >(getRepositoryToken(appModelRef), { strict: false });
 
       if (!this.repository) {
-        // TODO inject logger
-        Logger.fatal(
+        const logger = this.moduleRef.get(BaseLogger);
+
+        logger.fatal(
           `Repository for ${appModelRef.name} not found. Did you forget to import the ${FirebaseModule.name}?`,
         );
         throw new Error(`Repository for ${appModelRef.name} not found.`);

@@ -1,11 +1,13 @@
 import { ModuleRef } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Node } from '@org/graphql/pagination';
-import { getRepositoryToken } from './common/firebase.utils';
-import { FirebaseService } from './firebase.service';
+import { BaseLogger } from '@org/log';
+import { TestLogger } from '@org/log/test';
 import { DocumentData, QueryConstraint } from 'firebase/firestore';
-import { IRepository } from './firebase.repository';
 import { mock } from 'jest-mock-extended';
+import { getRepositoryToken } from './common/firebase.utils';
+import { IRepository } from './firebase.repository';
+import { FirebaseService } from './firebase.service';
 
 jest.mock('firebase/auth', () => ({
   getAuth: jest.fn(),
@@ -32,6 +34,10 @@ describe('FirebaseService', () => {
         {
           provide: getRepositoryToken(TestNode),
           useValue: mock<IRepository<TestNode, DocumentData>>(),
+        },
+        {
+          provide: BaseLogger,
+          useClass: TestLogger,
         },
         {
           provide: TestFirebaseService,
@@ -97,6 +103,10 @@ describe('FirebaseService', () => {
           {
             provide: getRepositoryToken(TestNode),
             useValue: undefined,
+          },
+          {
+            provide: BaseLogger,
+            useClass: TestLogger,
           },
           {
             provide: TestFirebaseService,

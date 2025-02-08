@@ -1,2 +1,3 @@
 yarn nx affected --target=build
 yarn nx affected --target=lint --parallel=true
+yarn nx affected --target=test --parallel=true --configuration=ci
