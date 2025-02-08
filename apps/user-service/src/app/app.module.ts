@@ -18,6 +18,7 @@ import {
 } from '@org/auth';
 import { ClientConfigService, ConfigModule } from '@org/config';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
+import { FirebaseModule } from '@org/firebase';
 import { serializeParams } from '@org/graphql/plugins';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { RegistrationModule } from '@org/registration';
@@ -27,6 +28,7 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
+    FirebaseModule.forRoot(),
     ScheduleModule.forRoot(), // For Cron
     AuthGuardModule,
     UsersModule,

@@ -1,10 +1,18 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import { IStoredEntity, USERS_COLLECTION } from '@org/firebase';
 import { Connected } from '@org/graphql/pagination';
+import { StaticImplements } from '@org/typings';
+import { UserDbModel, UserModelMapper } from './user.model-mapper';
 
 @ObjectType({ description: 'A user' })
 @Directive('@key(selectionSet: "{ id }")')
 @Directive('@canonical')
-export class User {
+export class User
+  implements StaticImplements<IStoredEntity<User, UserDbModel>, typeof User>
+{
+  static collectionName = USERS_COLLECTION;
+  static modelMapper = UserModelMapper;
+
   @Field((type) => ID, {
     description: 'The ID of the user as it is stored in Firebase',
   })

@@ -1,19 +1,30 @@
-import { Module } from '@nestjs/common';
-import { auth, database } from './client';
-import { FirebaseTokens } from './tokens';
+import { DynamicModule, Module } from '@nestjs/common';
+import { Node } from '@org/graphql/pagination';
+import { LogModule } from '@org/log';
+import { FirebaseCoreModule } from './firebase-core.module';
+import { createFirebaseProviders } from './firebase.providers';
+import { FirebaseModuleOptions } from './interfaces';
 
-@Module({
-  controllers: [],
-  providers: [
-    {
-      provide: FirebaseTokens.DATABASE,
-      useValue: database,
-    },
-    {
-      provide: FirebaseTokens.AUTH,
-      useValue: auth,
-    },
-  ],
-  exports: [FirebaseTokens.DATABASE, FirebaseTokens.AUTH],
-})
-export class FirebaseModule {}
+@Module({})
+export class FirebaseModule {
+  static forRoot(): DynamicModule {
+    return {
+      module: FirebaseModule,
+      imports: [FirebaseCoreModule.forRoot()],
+    };
+  }
+
+  static forFeature<T extends Node>({
+    entities,
+    imports,
+    providers,
+  }: FirebaseModuleOptions<T>): DynamicModule {
+    const firebaseProviders = createFirebaseProviders(entities);
+    return {
+      imports: [LogModule, ...(imports || [])],
+      module: FirebaseModule,
+      providers: [...firebaseProviders, ...(providers || [])],
+      exports: firebaseProviders,
+    };
+  }
+}

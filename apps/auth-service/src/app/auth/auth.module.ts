@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { FirebaseModule } from '@org/firebase';
 import { LogModule } from '@org/log';
 import { CryptoModule } from '../crypto/crypto.module';
 import { JwtConfigService } from '../crypto/jwt.config.service';
@@ -10,7 +9,6 @@ import { AuthService } from './auth.service';
 
 @Module({
   imports: [
-    FirebaseModule,
     UserModule,
     JwtModule.registerAsync({
       imports: [CryptoModule],

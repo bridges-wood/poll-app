@@ -10,9 +10,11 @@ import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { RegistrationModule } from '@org/registration';
 import { AuthModule } from './auth/auth.module';
 import { CryptoModule } from './crypto/crypto.module';
+import { FirebaseModule } from '@org/firebase';
 
 @Module({
   imports: [
+    FirebaseModule.forRoot(),
     ScheduleModule.forRoot(), // For Cron
     CryptoModule,
     AuthModule,

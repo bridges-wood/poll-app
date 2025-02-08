@@ -20,10 +20,12 @@ import { PostsModule } from './posts/posts.module';
 import { ResponsesModule } from './responses/responses.module';
 import { UsersModule } from './users/users.module';
 import { extractFromHeader, useJWT } from '@graphql-yoga/plugin-jwt';
+import { FirebaseModule } from '@org/firebase';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(), // For Cron
+    FirebaseModule.forRoot(),
     AuthGuardModule,
     PostsModule,
     UsersModule,

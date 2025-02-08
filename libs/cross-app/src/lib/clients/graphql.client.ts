@@ -53,7 +53,7 @@ export class GraphQLCrossAppClient implements CrossAppClient {
   }
 
   impersonating(token: string): GraphQLCrossAppClient {
-    this.logger.debug(`Impersonating as user with token: ${token}`);
+    this.logger.debug(`Impersonating user with token: ${token.substring(0, 10)}...`);
     this.token = token;
     return this as GraphQLCrossAppClient;
   }

@@ -1,13 +1,23 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import { IStoredEntity, POSTS_COLLECTION } from '@org/firebase';
 import { Connected, Node } from '@org/graphql/pagination';
+import { StaticImplements } from '@org/typings';
 import { ResponseConnection } from '../../responses/models/response.model';
 import { User } from '../../users/models/user.stub';
 import { PostContent } from './contents';
+import { PostDbModel, PostModelMapper } from './post.model-mapper';
 
 @ObjectType({ description: 'A post' })
 @Directive('@key(selectionSet: "{ id }")')
 @Directive('@canonical')
-export class Post implements Node {
+export class Post
+  implements
+    Node,
+    StaticImplements<IStoredEntity<Post, PostDbModel>, typeof Post>
+{
+  static collectionName = POSTS_COLLECTION;
+  static modelMapper = PostModelMapper;
+
   @Field((type) => ID, {
     description: 'The ID of the post as it is stored in Firebase',
   })

@@ -1,24 +1,22 @@
 import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable } from '@nestjs/common';
-import { NotFoundError } from '@org/errors';
+import { ModuleRef } from '@nestjs/core';
 import {
+  FirebaseService,
   FirebaseTokens,
-  POSTS_COLLECTION,
   USERS_COLLECTION,
 } from '@org/firebase';
-import { PaginationService } from '@org/graphql/pagination';
 import { BaseLogger } from '@org/log';
 import { PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
 import {
   arrayRemove,
   arrayUnion,
-  collection,
   doc,
   Firestore,
-  getDoc,
   onSnapshot,
   runTransaction,
+  serverTimestamp,
   updateDoc,
 } from 'firebase/firestore';
 import { User } from '../users/models/user.stub';
@@ -26,32 +24,19 @@ import { PostContent, PostContentInput } from './models/contents/index';
 import { MultipleChoiceQuestion } from './models/contents/multiple-choice.model';
 import { CreatePostArgs } from './models/create-post.args';
 import { Post } from './models/post.model';
-import { PostDbModel, PostModelMapper } from './models/post.model-mapper';
+import { InitialPost, PostDbModel } from './models/post.model-mapper';
 import { UpdatePostArgs } from './models/update-post.args';
 
 @Injectable()
-export class PostsService extends PaginationService<Post, PostDbModel> {
+export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
-    postModelMapper: PostModelMapper,
-    override readonly logger: BaseLogger,
+    moduleRef: ModuleRef,
+    readonly logger: BaseLogger,
   ) {
-    super(
-      Post,
-      logger,
-      collection(database, POSTS_COLLECTION).withConverter(postModelMapper),
-    );
+    super(moduleRef);
     this.logger.setContext(PostsService.name);
-  }
-
-  async findOneById(id: string): Promise<Post> {
-    const docRef = doc(this.collectionRef, id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists())
-      throw new NotFoundError(`Post with id "${id}" not found`);
-
-    return docSnap.data() as Post;
   }
 
   streamPost(id: string): AsyncIterator<Post> {
@@ -71,13 +56,13 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
     args: CreatePostArgs,
     author: Pick<User, 'id'>,
   ): Promise<Post> {
-    const post: Omit<Post, 'id'> = {
+    const post: InitialPost = {
       content: this.buildContent(args.content),
       caption: args.caption,
       author,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as Omit<Post, 'id'>;
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
 
     const id = await runTransaction(this.database, async (transaction) => {
       const postRef = doc(this.collectionRef);
@@ -119,6 +104,7 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
 
     const post = await this.findOneById(id);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: { [x: string]: any } = args; // Convert UpdatePostArgs to the expected type
 
     await updateDoc(postRef, updateData);
@@ -128,9 +114,9 @@ export class PostsService extends PaginationService<Post, PostDbModel> {
     };
   }
 
-  async deleteOne(id: string): Promise<boolean> {
+  async deleteOne(id: string): Promise<boolean> { 
     return await runTransaction(this.database, async (transaction) => {
-      const postRef = doc(this.database, POSTS_COLLECTION, id);
+      const postRef = doc(this.collectionRef.withConverter(null), id); // Get raw document reference
       const postDoc = await transaction.get(postRef);
 
       if (!postDoc.exists()) {

@@ -1,13 +1,11 @@
 import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { NotFoundError } from '@org/errors';
-import { FirebaseTokens, USERS_COLLECTION } from '@org/firebase';
-import { PaginationService } from '@org/graphql/pagination';
+import { FirebaseService } from '@org/firebase';
 import { BaseLogger } from '@org/log';
 import { PubSubTokens } from '@org/pubsub';
 import {
-  Firestore,
-  collection,
   doc,
   documentId,
   getDoc,
@@ -21,25 +19,21 @@ import {
 import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
 import { User } from './models/user.model';
-import { UserDbModel, UserModelMapper } from './models/user.model-mapper';
+import { UserDbModel } from './models/user.model-mapper';
 
 @Injectable()
-export class UsersService extends PaginationService<User, UserDbModel> {
+export class UsersService extends FirebaseService<User, UserDbModel>(User) {
   constructor(
-    @Inject(FirebaseTokens.DATABASE) database: Firestore,
     @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
-    userModelMapper: UserModelMapper,
-    override readonly logger: BaseLogger,
+    moduleRef: ModuleRef,
+    readonly logger: BaseLogger,
   ) {
-    super(
-      User,
-      logger,
-      collection(database, USERS_COLLECTION).withConverter(userModelMapper),
-    );
+    super(moduleRef);
     this.logger.setContext(UsersService.name);
   }
 
   async findOneById(id: string): Promise<User> {
+    this.logger.debug(`Finding user with id ${id}`);
     const docRef = doc(this.collectionRef, id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists())

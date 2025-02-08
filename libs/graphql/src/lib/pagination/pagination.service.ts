@@ -36,7 +36,42 @@ import {
   parseCursor,
 } from './utils';
 
-export abstract class PaginationService<
+export interface IPaginationService<
+  AppModelType extends Node,
+  DbModelType extends DocumentData = DocumentData,
+> {
+  findAll(
+    args: PaginationArgs,
+    options?: {
+      collectionRefOverride?: CollectionReference<
+        PartialWithFieldValue<AppModelType>,
+        PartialWithFieldValue<DbModelType>
+      >;
+    },
+  ): Promise<IConnectionType<AppModelType>>;
+  findByIds(
+    ids: Node['id'][],
+    args: PaginationArgs,
+    options?: {
+      collectionRefOverride?: CollectionReference<
+        PartialWithFieldValue<AppModelType>,
+        PartialWithFieldValue<DbModelType>
+      >;
+    },
+  ): Promise<IConnectionType<AppModelType>>;
+  findWithConstraints(
+    args: PaginationArgs,
+    constraints: QueryConstraint[],
+    options?: {
+      collectionRefOverride?: CollectionReference<
+        PartialWithFieldValue<AppModelType>,
+        PartialWithFieldValue<DbModelType>
+      >;
+    },
+  ): Promise<IConnectionType<AppModelType>>;
+}
+
+export class PaginationService<
   AppModelType extends Node,
   DbModelType extends DocumentData = DocumentData,
 > {

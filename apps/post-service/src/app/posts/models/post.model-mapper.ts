@@ -9,8 +9,10 @@ import {
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   SnapshotOptions,
+  Timestamp,
   WithFieldValue,
   doc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { User } from '../../users/models/user.stub';
 import {
@@ -21,7 +23,10 @@ import { Post } from './post.model';
 
 export interface PostDbModel
   extends DocumentData,
-    Omit<Post, 'author' | 'responses' | 'id' | 'content'> {
+    Omit<
+      Post,
+      'author' | 'responses' | 'id' | 'content' | 'createdAt' | 'updatedAt'
+    > {
   /**
    * Reference to the author of the post
    */
@@ -30,7 +35,15 @@ export interface PostDbModel
    * The content of the post
    */
   content: MultipleChoiceQuestionDBModel;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
+
+export type InitialPost = WithFieldValue<
+  Omit<Post, 'id' | 'author' | 'responses'> & {
+    author: WithFieldValue<Pick<User, 'id'>>;
+  }
+>;
 
 @Injectable()
 export class PostModelMapper
@@ -40,9 +53,7 @@ export class PostModelMapper
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
   ) {}
 
-  toFirestore(
-    modelObject: WithFieldValue<Post | Omit<Post, 'id'>>,
-  ): WithFieldValue<PostDbModel> {
+  toFirestore(modelObject: WithFieldValue<Post>): WithFieldValue<PostDbModel> {
     if ('id' in modelObject) {
       delete modelObject.id;
     }
@@ -52,7 +63,11 @@ export class PostModelMapper
       content: this.serializeContent(modelObject.content),
       author: this.authorToReference(modelObject.author),
       // If we're not creating a new post, updatedAt should be set
-      updatedAt: modelObject.updatedAt ?? new Date(),
+      createdAt:
+        modelObject.createdAt instanceof FieldValue
+          ? modelObject.createdAt
+          : Timestamp.fromDate(modelObject.createdAt as Date),
+      updatedAt: serverTimestamp(),
     };
   }
 
@@ -80,14 +95,14 @@ export class PostModelMapper
   }
 
   fromFirestore(
-    snapshot: QueryDocumentSnapshot<DocumentData, PostDbModel>,
+    snapshot: QueryDocumentSnapshot<PostDbModel>,
     options?: SnapshotOptions,
   ): Post {
     const data = snapshot.data(options);
     return {
       id: snapshot.id,
       ...data,
-      content: this.deseralizeContent(data.content),
+      content: this.deserializeContent(data.content),
       author: this.referenceToAuthor(data.author),
       // Firestore returns Timestamp objects, but we want to work with Date objects
       createdAt: data.createdAt.toDate(),
@@ -95,21 +110,17 @@ export class PostModelMapper
     } as Post;
   }
 
-  private deseralizeContent(
-    content: FieldValue | MultipleChoiceQuestionDBModel,
-  ): FieldValue | MultipleChoiceQuestion {
-    if ('type' in content) {
-      switch (content.type) {
-        case PostContentType.MULTIPLE_CHOICE:
-          return {
-            type: PostContentType.MULTIPLE_CHOICE,
-            question: content.question,
-            options: content.options,
-            voteTotals: Object.values(content.voteTotals),
-          };
-      }
-    } else {
-      return content;
+  private deserializeContent(
+    content: MultipleChoiceQuestionDBModel,
+  ): MultipleChoiceQuestion {
+    switch (content.type) {
+      case PostContentType.MULTIPLE_CHOICE:
+        return {
+          type: PostContentType.MULTIPLE_CHOICE,
+          question: content.question,
+          options: content.options,
+          voteTotals: Object.values(content.voteTotals),
+        };
     }
   }
 
@@ -123,13 +134,9 @@ export class PostModelMapper
     return author;
   }
 
-  private referenceToAuthor(
-    authorReference: FieldValue | string,
-  ): User | FieldValue {
-    if (typeof authorReference === 'string') {
-      return { id: authorReference } as User;
-    }
-
-    return authorReference;
+  private referenceToAuthor(authorReference: DocumentReference<User>): User {
+    return {
+      id: authorReference.id,
+    } as User;
   }
 }
