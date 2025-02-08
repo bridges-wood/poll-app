@@ -82,12 +82,13 @@ export class AuthService {
 
   async refreshToken(token: string): Promise<string> {
     const decoded = await this.validateToken(token);
-    // TODO - pass a flag here to query user from DB
+    // Get the user from the database to ensure it still exists, and to get the latest roles
+    const user = await this.getUserById(decoded.sub);
 
     return this.generateUserToken(
       {
-        id: decoded.sub,
-        roles: decoded.roles,
+        id: user.id,
+        roles: user.roles,
       },
       decoded.amr,
     );

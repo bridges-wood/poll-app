@@ -128,13 +128,17 @@ describe('AuthService', () => {
 
       jest.spyOn(service, 'validateToken').mockResolvedValue(decodedToken);
       jest.spyOn(service, 'generateUserToken').mockResolvedValue(newToken);
+      (getDoc as jest.Mock).mockResolvedValue({
+        exists: jest.fn().mockReturnValue(true),
+        data: jest.fn().mockReturnValue({ id: 'user-id', roles: ['new-role'] }),
+      });
 
       const result = await service.refreshToken(token);
 
       expect(result).toBe(newToken);
       expect(service.validateToken).toHaveBeenCalledWith(token);
       expect(service.generateUserToken).toHaveBeenCalledWith(
-        { id: decodedToken.sub, roles: decodedToken.roles },
+        { id: 'user-id', roles: ['new-role'] },
         decodedToken.amr,
       );
     });
