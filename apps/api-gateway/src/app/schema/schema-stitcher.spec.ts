@@ -108,6 +108,4 @@ describe('SchemaStitcher', () => {
       'remoteHello',
     );
   });
-
-  // TODO complete coverage of stitch
 });
