@@ -57,10 +57,14 @@ export class DistributedStrategy extends PassportStrategy(
       // Check the cache for the token
       const value = await this.cache.get(token);
       if (value) {
-        this.logger.debug(`Found user object in cache for token ${token}`);
+        this.logger.debug(
+          `Found user object in cache for token ${token.substring(0, 10)}...`,
+        );
         return value as Pick<User, 'id' | 'roles'>;
       } else {
-        this.logger.debug(`No user object found in cache for token ${token}`);
+        this.logger.debug(
+          `No user object found in cache for token ${token.substring(0, 10)}...`,
+        );
         // Validate the token
         const user = await this.crossAppAuthService.validateToken(token);
         // Cache the response

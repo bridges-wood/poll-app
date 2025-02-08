@@ -38,7 +38,7 @@ export class CrossAppAuthService {
     this.client = this.client.impersonating(token);
 
     // Query cache for token
-    this.logger.debug(`Validating token: ${token}`);
+    this.logger.debug(`Validating token: ${token.substring(0, 10)}...`);
     const value = await this.cache.get(token);
     if (!isEmpty(value)) {
       this.logger.debug(`Found matching value in cache: ${value}`);
@@ -49,7 +49,10 @@ export class CrossAppAuthService {
       ValidateTokenQuery,
       ValidateTokenQueryVariables
     >(ValidateTokenDocument, { token });
-    this.logger.debug(`Response for validateToken(${token})`, res);
+    this.logger.debug(
+      `Response for validateToken(${token.substring(0, 10)}...)`,
+      res,
+    );
 
     // Cache the token
     await this.cache.set(token, res.validateToken, this.getTtl(token));
@@ -65,7 +68,7 @@ export class CrossAppAuthService {
   private getTtl(token: string): number {
     const decoded = this.jwtService.decode<DecodedIdToken>(token);
     if (!decoded) {
-      throw new Error(`Could not decode token ${token}`);
+      throw new Error(`Could not decode token ${token.substring(0, 10)}...`);
     }
 
     return decoded.exp * 1000 - Date.now();

@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard, PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_INSTANCE } from '@org/cache';
+import { ClientConfigService } from '@org/config';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
@@ -43,6 +44,10 @@ describe('DistributedAuthGuard', () => {
       imports: [PassportModule],
       providers: [
         DistributedAuthGuard,
+        {
+          provide: ClientConfigService,
+          useValue: { isDev: jest.fn(), bypassAuth: false },
+        },
         {
           provide: BaseLogger,
           useClass: TestLogger,

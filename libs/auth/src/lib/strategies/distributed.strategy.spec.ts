@@ -1,6 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_INSTANCE } from '@org/cache';
+import { ClientConfigService } from '@org/config';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { Cacheable } from 'cacheable';
@@ -23,6 +24,10 @@ describe('DistributedStrategy', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DistributedStrategy,
+        {
+          provide: ClientConfigService,
+          useValue: { isDev: jest.fn(), bypassAuth: false },
+        },
         {
           provide: BaseLogger,
           useClass: TestLogger,

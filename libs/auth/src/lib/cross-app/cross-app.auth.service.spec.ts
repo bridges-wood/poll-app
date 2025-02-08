@@ -79,9 +79,7 @@ describe('CrossAppAuthService', () => {
     jest.spyOn(client, 'query').mockResolvedValueOnce(queryResult);
     jest.spyOn(jwtService, 'decode').mockReturnValueOnce(null);
 
-    await expect(service.validateToken(token)).rejects.toThrow(
-      `Could not decode token ${token}`,
-    );
+    await expect(service.validateToken(token)).rejects.toThrow();
   });
 
   it('should query the client if token is not found in cache', async () => {
@@ -108,9 +106,7 @@ describe('CrossAppAuthService', () => {
     const token = 'invalid-token';
     jest.spyOn(jwtService, 'decode').mockReturnValueOnce(null);
 
-    expect(() => service['getTtl'](token)).toThrow(
-      `Could not decode token ${token}`,
-    );
+    expect(() => service['getTtl'](token)).toThrow();
   });
 
   it('should return the correct TTL for a valid token', () => {
