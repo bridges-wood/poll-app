@@ -1,4 +1,3 @@
-import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
@@ -7,14 +6,12 @@ import {
   USERS_COLLECTION,
 } from '@org/firebase';
 import { BaseLogger } from '@org/log';
-import { PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
 import {
   arrayRemove,
   arrayUnion,
   doc,
   Firestore,
-  onSnapshot,
   runTransaction,
   serverTimestamp,
   updateDoc,
@@ -31,25 +28,11 @@ import { UpdatePostArgs } from './models/update-post.args';
 export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
-    @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     moduleRef: ModuleRef,
     readonly logger: BaseLogger,
   ) {
     super(moduleRef);
     this.logger.setContext(PostsService.name);
-  }
-
-  streamPost(id: string): AsyncIterator<Post> {
-    this.pubSub.registerHandler(`postUpdated:${id}`, (broadcast) => {
-      const docRef = doc(this.collectionRef, id);
-      const unsubscribe = onSnapshot(docRef, (doc) => {
-        broadcast(doc.data() as Post);
-      });
-
-      return unsubscribe;
-    });
-
-    return this.pubSub.asyncIterator<Post>(`postUpdated:${id}`);
   }
 
   async createOne(
@@ -114,7 +97,7 @@ export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
     };
   }
 
-  async deleteOne(id: string): Promise<boolean> { 
+  async deleteOne(id: string): Promise<boolean> {
     return await runTransaction(this.database, async (transaction) => {
       const postRef = doc(this.collectionRef.withConverter(null), id); // Get raw document reference
       const postDoc = await transaction.get(postRef);

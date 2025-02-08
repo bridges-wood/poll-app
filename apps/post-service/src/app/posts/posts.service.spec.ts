@@ -30,10 +30,10 @@ describe('PostsService', () => {
       imports: [
         FirebaseModule.forRoot(),
         FirebaseModule.forFeature({
+          imports: [PubSubModule],
           providers: [PostModelMapper],
           entities: [Post],
         }),
-        PubSubModule,
       ],
       providers: [
         PostsService,

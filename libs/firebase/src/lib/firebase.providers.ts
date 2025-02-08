@@ -1,6 +1,8 @@
+import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Provider } from '@nestjs/common';
 import { Node, PaginationService } from '@org/graphql/pagination';
 import { BaseLogger } from '@org/log';
+import { PubSubTokens, SubscriptionService } from '@org/pubsub';
 import {
   collection,
   Firestore,
@@ -24,6 +26,7 @@ export function createFirebaseProviders<T extends Node>(
     provide: getRepositoryToken(entity),
     useFactory: (
       database: Firestore,
+      pubSub: PubSub,
       logger: BaseLogger,
       modelMapper: FirestoreDataConverter<T>,
     ) => {
@@ -35,12 +38,18 @@ export function createFirebaseProviders<T extends Node>(
       const repository = new Repository(
         collectionRef,
         new PaginationService(entity, logger, collectionRef),
+        new SubscriptionService(entity, logger, collectionRef, pubSub),
         entity,
       );
       logger.setContext(`${entity.name}Repository`);
 
       return repository;
     },
-    inject: [FirebaseTokens.DATABASE, BaseLogger, entity.modelMapper],
+    inject: [
+      FirebaseTokens.DATABASE,
+      PubSubTokens.PUBSUB,
+      BaseLogger,
+      entity.modelMapper,
+    ],
   }));
 }

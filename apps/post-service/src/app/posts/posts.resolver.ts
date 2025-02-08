@@ -61,7 +61,7 @@ export class PostsResolver {
     })
     id: string,
   ) {
-    return this.postsService.streamPost(id);
+    return this.postsService.subscribeById(id);
   }
 
   @Mutation((returns) => Post, { description: 'Create a new post' })

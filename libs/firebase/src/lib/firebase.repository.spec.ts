@@ -1,6 +1,8 @@
 import { NotFoundError } from '@org/errors';
 import { PaginationService } from '@org/graphql/pagination';
+import { SubscriptionService } from '@org/pubsub';
 import { CollectionReference, DocumentData, getDoc } from 'firebase/firestore';
+import { mock } from 'jest-mock-extended';
 import { Repository } from './firebase.repository';
 
 jest.mock('firebase/firestore');
@@ -12,17 +14,20 @@ class TestNode implements DocumentData {
 describe('Repository', () => {
   let collectionRef: CollectionReference<TestNode>;
   let paginationService: PaginationService<TestNode, DocumentData>;
+  let subscriptionService: SubscriptionService<TestNode, DocumentData>;
   let repository: Repository<TestNode, DocumentData>;
 
   beforeEach(() => {
     collectionRef = {} as CollectionReference<TestNode>;
-    paginationService = {
-      findOneById: jest.fn(),
-      findAll: jest.fn(),
-      findByIds: jest.fn(),
-      findWithConstraints: jest.fn(),
-    } as unknown as PaginationService<TestNode, DocumentData>;
-    repository = new Repository(collectionRef, paginationService, TestNode);
+    paginationService = mock<PaginationService<TestNode, DocumentData>>();
+    subscriptionService = mock<SubscriptionService<TestNode, DocumentData>>();
+
+    repository = new Repository(
+      collectionRef,
+      paginationService,
+      subscriptionService,
+      TestNode,
+    );
   });
 
   it('should create', () => {
@@ -47,6 +52,11 @@ describe('Repository', () => {
         new NotFoundError('TestNode with id "test" not found'),
       );
     });
+  });
+
+  it('should call subscribeById on subscriptionService', () => {
+    repository.subscribeById('test');
+    expect(subscriptionService.subscribeById).toHaveBeenCalledWith('test');
   });
 
   it('should call findAll on paginationService', async () => {

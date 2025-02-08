@@ -5,6 +5,7 @@ import { getRepositoryToken } from './common/firebase.utils';
 import { FirebaseService } from './firebase.service';
 import { DocumentData, QueryConstraint } from 'firebase/firestore';
 import { IRepository } from './firebase.repository';
+import { mock } from 'jest-mock-extended';
 
 jest.mock('firebase/auth', () => ({
   getAuth: jest.fn(),
@@ -30,12 +31,7 @@ describe('FirebaseService', () => {
       providers: [
         {
           provide: getRepositoryToken(TestNode),
-          useValue: {
-            findAll: jest.fn(),
-            findByIds: jest.fn(),
-            findWithConstraints: jest.fn(),
-            collectionRef: {},
-          },
+          useValue: mock<IRepository<TestNode, DocumentData>>(),
         },
         {
           provide: TestFirebaseService,
@@ -53,6 +49,18 @@ describe('FirebaseService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should call repository subscribeById method', () => {
+    const subscribeByIdSpy = jest.spyOn(repository, 'subscribeById');
+    service.subscribeById('test');
+    expect(subscribeByIdSpy).toHaveBeenCalledWith('test');
+  });
+
+  it('should call repository findOneById method', async () => {
+    const findOneByIdSpy = jest.spyOn(repository, 'findOneById');
+    await service.findOneById('test');
+    expect(findOneByIdSpy).toHaveBeenCalledWith('test');
   });
 
   it('should call repository findAll method', async () => {

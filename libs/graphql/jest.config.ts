@@ -1,5 +1,5 @@
-/* eslint-disable */
 import { readFileSync } from 'fs';
+import type { Config } from 'jest';
 
 // Reading the SWC compilation config and remove the "exclude"
 // for the test files to be compiled by SWC
@@ -18,7 +18,7 @@ if (swcJestConfig.swcrc === undefined) {
 // jest needs EsModule Interop to find the default exported setup/teardown functions
 // swcJestConfig.module.noInterop = false;
 
-export default {
+const config: Config = {
   displayName: 'graphql',
   preset: '../../jest.preset.js',
   transform: {
@@ -27,4 +27,14 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   testEnvironment: 'node',
   coverageDirectory: '../../coverage/libs/graphql',
+  coverageThreshold: {
+    global: {
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100,
+    },
+  },
 };
+
+export default config;

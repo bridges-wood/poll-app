@@ -5,6 +5,7 @@ import {
   Node,
   PaginationService,
 } from '@org/graphql/pagination';
+import { ISubscriptionService } from '@org/pubsub';
 import {
   CollectionReference,
   doc,
@@ -16,7 +17,8 @@ import {
 export interface IRepository<
   AppModelType extends Node,
   DbModelType extends DocumentData = DocumentData,
-> extends IPaginationService<AppModelType, DbModelType> {
+> extends IPaginationService<AppModelType, DbModelType>,
+    ISubscriptionService<AppModelType> {
   readonly collectionRef: CollectionReference<
     PartialWithFieldValue<AppModelType>,
     PartialWithFieldValue<DbModelType>
@@ -39,6 +41,7 @@ export class Repository<
       AppModelType,
       DbModelType
     >,
+    private readonly subscriptionService: ISubscriptionService<AppModelType>,
     private readonly classRef: Type<AppModelType>,
   ) {}
 
@@ -59,5 +62,9 @@ export class Repository<
 
   findWithConstraints = this.paginationService.findWithConstraints.bind(
     this.paginationService,
+  );
+
+  subscribeById = this.subscriptionService.subscribeById.bind(
+    this.subscriptionService,
   );
 }

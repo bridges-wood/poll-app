@@ -50,6 +50,16 @@ export const FirebaseService = <
       this.collectionRef = this.repository.collectionRef;
     }
 
+    subscribeById(
+      ...args: Parameters<
+        IFirebaseService<AppModelType, DbModelType>['subscribeById']
+      >
+    ): ReturnType<
+      IFirebaseService<AppModelType, DbModelType>['subscribeById']
+    > {
+      return this.repository.subscribeById(...args);
+    }
+
     findOneById(
       ...args: Parameters<
         IFirebaseService<AppModelType, DbModelType>['findOneById']

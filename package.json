@@ -190,6 +190,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-node": "^29.7.0",
+    "jest-mock-extended": "^4.0.0-beta1",
     "jest-next-dynamic": "^1.0.2",
     "jest-when": "^3.7.0",
     "nx": "20.4.2",

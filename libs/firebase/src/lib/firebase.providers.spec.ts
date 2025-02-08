@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { FactoryProvider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
+import { PubSubTokens } from '@org/pubsub';
 import { Firestore } from 'firebase/firestore';
 import { getRepositoryToken } from './common/firebase.utils';
 import { createFirebaseProviders } from './firebase.providers';
@@ -19,6 +21,7 @@ jest.mock('firebase/firestore', () => ({
 describe('createFirebaseProviders', () => {
   let module: TestingModule;
   let firestore: Firestore;
+  let pubSub: PubSub;
   let logger: BaseLogger;
 
   beforeEach(async () => {
@@ -29,6 +32,10 @@ describe('createFirebaseProviders', () => {
           useValue: {},
         },
         {
+          provide: PubSubTokens.PUBSUB,
+          useValue: {},
+        },
+        {
           provide: BaseLogger,
           useClass: TestLogger,
         },
@@ -36,6 +43,7 @@ describe('createFirebaseProviders', () => {
     }).compile();
 
     firestore = module.get<Firestore>(FirebaseTokens.DATABASE);
+    pubSub = module.get<PubSub>(PubSubTokens.PUBSUB);
     logger = module.get<BaseLogger>(BaseLogger);
   });
 
@@ -53,11 +61,12 @@ describe('createFirebaseProviders', () => {
     expect(providers[0].provide).toBe(getRepositoryToken(entities[0]));
     expect(providers[0].inject).toEqual([
       FirebaseTokens.DATABASE,
+      PubSubTokens.PUBSUB,
       BaseLogger,
       entities[0].modelMapper,
     ]);
 
-    const repository = providers[0].useFactory(firestore, logger);
+    const repository = providers[0].useFactory(firestore, pubSub, logger);
     expect(repository).toBeInstanceOf(Repository);
   });
 
@@ -75,7 +84,7 @@ describe('createFirebaseProviders', () => {
     ];
 
     const providers = createFirebaseProviders(entities) as FactoryProvider[];
-    providers[0].useFactory(firestore, logger);
+    providers[0].useFactory(firestore, pubSub, logger);
 
     expect(logger.setContext).toHaveBeenCalledWith('TestEntityRepository');
   });
