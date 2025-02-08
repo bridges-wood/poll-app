@@ -1,6 +1,7 @@
 const { FlatCompat } = require('@eslint/eslintrc');
 const js = require('@eslint/js');
 const nxEslintPlugin = require('@nx/eslint-plugin');
+const tseslint = require('typescript-eslint');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -10,6 +11,9 @@ const compat = new FlatCompat({
 module.exports = [
   { plugins: { '@nx': nxEslintPlugin } },
   {
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
     rules: {
       'no-unused-vars': [
         'error',
@@ -33,7 +37,7 @@ module.exports = [
         'error',
         {
           enforceBuildableLibDependency: true,
-          allow: [],
+          allow: ['(../)*jest.config.base'],
           depConstraints: [
             {
               sourceTag: '*',

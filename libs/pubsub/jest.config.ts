@@ -1,5 +1,8 @@
-/* eslint-disable */
-export default {
+import { Config } from 'jest';
+import { baseConfig } from '../../jest.config.base';
+
+const config: Config = {
+  ...baseConfig,
   displayName: 'pubsub',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
@@ -9,3 +12,5 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/pubsub',
 };
+
+export default config;

@@ -1,6 +1,8 @@
 import type { Config } from 'jest';
+import { baseConfig } from '../../jest.config.base';
 
 const config: Config = {
+  ...baseConfig,
   displayName: 'firebase',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
@@ -9,14 +11,6 @@ const config: Config = {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/firebase',
-  coverageThreshold: {
-    global: {
-      branches: 100,
-      functions: 100,
-      lines: 100,
-      statements: 100,
-    },
-  },
 };
 
 export default config;

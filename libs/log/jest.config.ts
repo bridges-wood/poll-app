@@ -1,4 +1,8 @@
-export default {
+import { Config } from 'jest';
+import { baseConfig } from '../../jest.config.base';
+
+const config: Config = {
+  ...baseConfig,
   displayName: 'log',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
@@ -8,3 +12,5 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/log',
 };
+
+export default config;
