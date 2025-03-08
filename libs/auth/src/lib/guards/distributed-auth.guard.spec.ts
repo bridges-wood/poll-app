@@ -5,12 +5,12 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard, PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_INSTANCE } from '@org/cache';
-import { ClientConfigService } from '@org/config';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
 import { DistributedStrategy } from '../strategies/distributed.strategy';
 import { DistributedAuthGuard } from './distributed-auth.guard';
+import { AuthConfigModule } from '../config/auth.config.module';
 
 describe('DistributedAuthGuard', () => {
   let graphqlExecutionContext: GqlExecutionContext;
@@ -41,13 +41,9 @@ describe('DistributedAuthGuard', () => {
     } as unknown as ExecutionContext;
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PassportModule],
+      imports: [PassportModule, AuthConfigModule],
       providers: [
         DistributedAuthGuard,
-        {
-          provide: ClientConfigService,
-          useValue: { isDev: jest.fn(), bypassAuth: false },
-        },
         {
           provide: BaseLogger,
           useClass: TestLogger,

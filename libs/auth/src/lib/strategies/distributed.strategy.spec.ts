@@ -1,7 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_INSTANCE } from '@org/cache';
-import { ClientConfigService } from '@org/config';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { Cacheable } from 'cacheable';
@@ -9,6 +8,7 @@ import { FastifyRequest as Request } from 'fastify';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
 import { extractAuthTokenFromHeader } from '../utils';
 import { DistributedStrategy } from './distributed.strategy';
+import { AuthConfigModule } from '../config/auth.config.module';
 
 jest.mock('../utils', () => ({
   extractAuthTokenFromHeader: jest.fn(),
@@ -22,12 +22,9 @@ describe('DistributedStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [AuthConfigModule],
       providers: [
         DistributedStrategy,
-        {
-          provide: ClientConfigService,
-          useValue: { isDev: jest.fn(), bypassAuth: false },
-        },
         {
           provide: BaseLogger,
           useClass: TestLogger,

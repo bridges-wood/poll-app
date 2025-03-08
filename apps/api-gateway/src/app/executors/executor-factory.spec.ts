@@ -1,10 +1,11 @@
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import HmacConfigFactory from '@org/config/hmac.config.factory';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { DecodedIdToken } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { parse, print } from 'graphql';
-import { ConfigService } from '../config/config.service';
 import { ExecutorFactory } from './executor-factory';
 
 jest.mock('@whatwg-node/fetch', () => ({
@@ -26,14 +27,9 @@ describe('ExecutorFactory', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule.forFeature(HmacConfigFactory)],
       providers: [
         ExecutorFactory,
-        {
-          provide: ConfigService,
-          useValue: {
-            HMACSecret: 'test-secret',
-          },
-        },
         {
           provide: BaseLogger,
           useClass: TestLogger,

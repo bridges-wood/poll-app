@@ -1,5 +1,6 @@
 import { AsyncExecutor } from '@graphql-tools/utils';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import HmacConfigFactory, { HmacConfig } from '@org/config/hmac.config.factory';
 import {
   computeHmacSignature,
   HMAC_SIGNATURE_EXTENSION,
@@ -8,14 +9,14 @@ import { BaseLogger } from '@org/log';
 import { DecodedIdToken, TrustedRequestExtensions } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { print } from 'graphql';
-import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class ExecutorFactory {
   private executorCache = new Map<string, AsyncExecutor>();
 
   constructor(
-    private readonly configService: ConfigService,
+    @Inject(HmacConfigFactory.KEY)
+    private readonly hmacConfig: HmacConfig,
     private readonly logger: BaseLogger,
   ) {
     this.logger.setContext(ExecutorFactory.name);
@@ -61,7 +62,7 @@ export class ExecutorFactory {
             ...completeExtensions,
             [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
               { query, variables, extensions: completeExtensions },
-              this.configService.HMACSecret,
+              this.hmacConfig.secret,
             ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
           },
         }),

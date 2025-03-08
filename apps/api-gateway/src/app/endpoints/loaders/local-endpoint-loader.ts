@@ -1,18 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { BaseLogger } from '@org/log';
 import { EndpointLoader } from '.';
-import { ConfigService } from '../../config/config.service';
+import EndpointsConfigFactory, {
+  EndpointsConfig,
+} from '../../config/factories/endpoints.config.factory';
 import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 
 @Injectable()
 export class LocalEndpointLoader extends EndpointLoader {
   constructor(
-    configService: ConfigService,
+    @Inject(EndpointsConfigFactory.KEY)
+    endpointsConfig: EndpointsConfig,
     executorFactory: ExecutorFactory,
     protected override readonly logger: BaseLogger,
   ) {
-    super(executorFactory, logger, configService.getEndpoints());
+    super(executorFactory, logger, endpointsConfig.endpoints);
     this.logger.setContext(LocalEndpointLoader.name);
   }
 

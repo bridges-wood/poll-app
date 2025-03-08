@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { CryptoModule, JwtConfigService } from '@org/crypto';
 import { LogModule } from '@org/log';
-import { CryptoModule } from '../crypto/crypto.module';
-import { JwtConfigService } from '../crypto/jwt.config.service';
 import { UserModule } from '../users/user.module';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';

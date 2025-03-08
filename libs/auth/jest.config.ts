@@ -11,6 +11,7 @@ const config: Config = {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/auth',
+  setupFiles: ['<rootDir>/src/test/env-setup.ts'],
 };
 
 export default config;

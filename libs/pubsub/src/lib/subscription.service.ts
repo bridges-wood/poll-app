@@ -35,7 +35,7 @@ export class SubscriptionService<
   }
 
   subscribeById(id: string): AsyncIterator<AppModelType> {
-    const topic = `${this.getCollectionCode}Updated:${id}`;
+    const topic = `${this.getCollectionCode()}Updated:${id}`;
     this.pubSub.registerHandler(topic, (broadcast) => {
       const docRef = doc(this.collectionRef, id);
       const unsubscribe = onSnapshot(docRef, (doc) => {

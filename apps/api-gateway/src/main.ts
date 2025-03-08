@@ -7,6 +7,9 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
 
+import EnvironmentConfigFactory, {
+  EnvironmentConfig,
+} from '@org/config/environment.config.factory';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { AppModule } from './app/app.module';
@@ -21,8 +24,9 @@ async function bootstrap() {
   });
   app.enableShutdownHooks();
 
-  const port =
-    process.env.NODE_ENV === 'development' ? 3000 : Number(process.env.PORT);
+  const { port }: EnvironmentConfig = app.get(EnvironmentConfigFactory.KEY);
+  if (!port) throw new Error('Port is not defined');
+
   await app.listen(port);
   Logger.log(`🚀 API Gateway is running on: https://localhost:${port}/graphql`);
 }

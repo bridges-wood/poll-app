@@ -7,6 +7,7 @@ import { addTypes, DirectiveLocation } from '@graphql-tools/utils';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { extractFromHeader, useJWT } from '@graphql-yoga/plugin-jwt';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -16,7 +17,13 @@ import {
   RemoteSigningKeyProvider,
   SigningModule,
 } from '@org/auth';
-import { ClientConfigService, ConfigModule } from '@org/config';
+import EnvironmentConfigFactory, {
+  EnvironmentConfig,
+} from '@org/config/environment.config.factory';
+import HmacConfigFactory, { HmacConfig } from '@org/config/hmac.config.factory';
+import SchemaConfigFactory, {
+  SchemaConfig,
+} from '@org/config/schema.config.factory';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
 import { FirebaseModule } from '@org/firebase';
 import { serializeParams } from '@org/graphql/plugins';
@@ -35,19 +42,33 @@ import { UsersModule } from './users/users.module';
     PostsModule,
     RegistrationModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
-      imports: [ConfigModule, ErrorsModule, SigningModule],
-      inject: [ClientConfigService, ErrorFormatter, RemoteSigningKeyProvider],
+      imports: [
+        ConfigModule.forFeature(EnvironmentConfigFactory),
+        ConfigModule.forFeature(SchemaConfigFactory),
+        ConfigModule.forFeature(HmacConfigFactory),
+        ErrorsModule,
+        SigningModule,
+      ],
+      inject: [
+        EnvironmentConfigFactory.KEY,
+        SchemaConfigFactory.KEY,
+        HmacConfigFactory.KEY,
+        ErrorFormatter,
+        RemoteSigningKeyProvider,
+      ],
       driver: YogaDriver,
       useFactory: (
-        config: ClientConfigService,
+        environmentConfig: EnvironmentConfig,
+        schemaConfig: SchemaConfig,
+        hmacConfig: HmacConfig,
         errorFormatter: ErrorFormatter,
         signingKeyProvider: RemoteSigningKeyProvider,
       ) => {
         return {
           healthCheckEndpoint: '/health',
           introspection: true,
-          graphiql: config.isDev(),
-          autoSchemaFile: { path: config.schemaFile, federation: 2 },
+          graphiql: environmentConfig.isDev(),
+          autoSchemaFile: { path: schemaConfig.schemaFile, federation: 2 },
           sortSchema: true,
           formatError: errorFormatter.format,
           subscriptions: {
@@ -67,33 +88,27 @@ import { UsersModule } from './users/users.module';
             ]),
           ),
           plugins: [
-            config.isDev()
-              ? null
-              : useHmacSignatureValidation({
-                  secret: config.HMACSecret,
-                  serializeParams: serializeParams,
-                }),
-            config.isDev() && config.bypassAuth
-              ? null
-              : useJWT({
-                  signingKeyProviders: [signingKeyProvider.build()],
-                  tokenLookupLocations: [
-                    extractFromHeader({
-                      name: 'authorization',
-                      prefix: 'Bearer',
-                    }),
-                  ],
-                  tokenVerification: {
-                    issuer: 'poll-app:auth',
-                    algorithms: ['PS256'],
-                    audience: 'poll-app:api',
-                  },
-                  extendContext: true,
-                  reject: {
-                    missingToken: false,
-                    invalidToken: true,
-                  },
-                }),
+            !environmentConfig.isDev() &&
+              useHmacSignatureValidation({
+                secret: hmacConfig.secret,
+                serializeParams: serializeParams,
+              }),
+            useJWT({
+              signingKeyProviders: [signingKeyProvider.build()],
+              tokenLookupLocations: [
+                extractFromHeader({ name: 'authorization', prefix: 'Bearer' }),
+              ],
+              tokenVerification: {
+                issuer: 'poll-app:auth',
+                algorithms: ['PS256'],
+                audience: 'poll-app:api',
+              },
+              extendContext: true,
+              reject: {
+                missingToken: false,
+                invalidToken: true,
+              },
+            }),
             useExtendedValidation({
               rules: [OneOfInputObjectsRule],
             }),

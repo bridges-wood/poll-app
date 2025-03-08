@@ -1,3 +1,6 @@
 export enum ConfigTokens {
-  GATEWAY_URL = 'GATEWAY_URL',
+  GATEWAY = 'GATEWAY',
+  HMAC = 'HMAC',
+  ENVIRONMENT = 'ENVIRONMENT',
+  SCHEMA = 'SCHEMA',
 }

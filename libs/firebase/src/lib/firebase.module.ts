@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { Node } from '@org/graphql/pagination';
 import { LogModule } from '@org/log';
+import { PubSubModule } from '@org/pubsub';
 import { FirebaseCoreModule } from './firebase-core.module';
 import { createFirebaseProviders } from './firebase.providers';
 import { FirebaseModuleOptions } from './interfaces';
@@ -21,7 +22,7 @@ export class FirebaseModule {
   }: FirebaseModuleOptions<T>): DynamicModule {
     const firebaseProviders = createFirebaseProviders(entities);
     return {
-      imports: [LogModule, ...(imports || [])],
+      imports: [LogModule, PubSubModule, ...(imports || [])],
       module: FirebaseModule,
       providers: [...firebaseProviders, ...(providers || [])],
       exports: firebaseProviders,

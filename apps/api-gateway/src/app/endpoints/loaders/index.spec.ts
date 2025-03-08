@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import HmacConfigFactory from '@org/config/hmac.config.factory';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { isAsyncIterable } from 'graphql-yoga';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { ConfigService } from '../../config/config.service';
 import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 import { EndpointLoader } from './index';
@@ -30,14 +31,8 @@ describe('EndpointLoader', () => {
     (isAsyncIterable as unknown as jest.Mock).mockReturnValue(false);
 
     module = await Test.createTestingModule({
+      imports: [ConfigModule.forFeature(HmacConfigFactory)],
       providers: [
-        {
-          provide: ConfigService,
-          useValue: {
-            getEndpoints: jest.fn().mockReturnValue([]),
-            getHMACSecret: jest.fn().mockReturnValue('secret'),
-          },
-        },
         {
           provide: BaseLogger,
           useClass: TestLogger,

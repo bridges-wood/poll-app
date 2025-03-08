@@ -1,30 +1,41 @@
 import { Module } from '@nestjs/common';
-import { ClientConfigService, ConfigModule } from '@org/config';
+import { ConfigModule } from '@nestjs/config';
+import GatewayConfigFactory, {
+  GatewayConfig,
+} from '@org/config/gateway.config.factory';
 import { RestCrossAppClient } from '@org/cross-app';
 import { CrossAppHealthService } from '@org/health';
 import { BaseLogger, LogModule } from '@org/log';
 import { CrossAppRegistrationModule } from './cross-app/cross-app.registration.module';
 import { RegistrationResolver } from './registration.resolver';
 import { RegistrationService } from './registration.service';
+import StandaloneConfigFactory from './config/factories/standalone.config.factory';
+import EnvironmentConfigFactory from '@org/config/environment.config.factory';
 
 @Module({
-  imports: [CrossAppRegistrationModule, ConfigModule, LogModule],
+  imports: [
+    ConfigModule.forFeature(EnvironmentConfigFactory),
+    ConfigModule.forFeature(GatewayConfigFactory),
+    ConfigModule.forFeature(StandaloneConfigFactory),
+    CrossAppRegistrationModule,
+    LogModule,
+  ],
   providers: [
     RegistrationResolver,
     RegistrationService,
     {
       provide: CrossAppHealthService,
       useFactory(
-        clientConfigService: ClientConfigService,
+        gatewayConfig: GatewayConfig,
         innerLogger: BaseLogger,
         outerLogger: BaseLogger,
       ) {
         return new CrossAppHealthService(
-          new RestCrossAppClient(clientConfigService.gatewayUrl, innerLogger),
+          new RestCrossAppClient(gatewayConfig.url, innerLogger),
           outerLogger,
         );
       },
-      inject: [ClientConfigService, BaseLogger, BaseLogger],
+      inject: [GatewayConfigFactory.KEY, BaseLogger, BaseLogger],
     },
   ],
   exports: [RegistrationResolver],

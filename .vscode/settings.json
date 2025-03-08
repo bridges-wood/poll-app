@@ -10,5 +10,8 @@
     "Subschema",
     "subschemas",
     "unsub"
-  ]
+  ],
+  "jest.runMode": {
+    "type": "on-save"
+  }
 }

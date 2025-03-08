@@ -2,7 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { CACHE_INSTANCE } from '@org/cache';
-import { ClientConfigService } from '@org/config';
+import EnvironmentConfigFactory, {
+  EnvironmentConfig,
+} from '@org/config/environment.config.factory';
 import { BaseLogger } from '@org/log';
 import type { DecodedIdToken, TrustedParams, User } from '@org/typings';
 import assert from 'assert';
@@ -10,6 +12,7 @@ import { Cacheable } from 'cacheable';
 import type { FastifyRequest as Request } from 'fastify';
 import type { GraphQLParams } from 'graphql-yoga';
 import { Strategy } from 'passport-custom';
+import { AuthConfig, AuthConfigFactory } from '../config';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
 import { extractAuthTokenFromHeader } from '../utils';
 
@@ -19,7 +22,10 @@ export class DistributedStrategy extends PassportStrategy(
   'distributed',
 ) {
   constructor(
-    private readonly clientConfigService: ClientConfigService,
+    @Inject(AuthConfigFactory.KEY)
+    private readonly authConfig: AuthConfig,
+    @Inject(EnvironmentConfigFactory.KEY)
+    private readonly environmentConfig: EnvironmentConfig,
     private readonly crossAppAuthService: CrossAppAuthService,
     private readonly jwtService: JwtService,
     private readonly logger: BaseLogger,
@@ -30,10 +36,7 @@ export class DistributedStrategy extends PassportStrategy(
   }
 
   async validate(req: Request): Promise<Pick<User, 'id' | 'roles'>> {
-    if (
-      this.clientConfigService.isDev() &&
-      this.clientConfigService.bypassAuth
-    ) {
+    if (this.environmentConfig.isDev() && this.authConfig.bypassAuth) {
       this.logger.warn('⚠️ Bypassing authentication');
       return {
         id: '00000000-0000-0000-0000-000000000000',

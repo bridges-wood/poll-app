@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ClientConfigService, ConfigModule } from '@org/config';
+import GatewayConfigFactory, {
+  GatewayConfig,
+} from '@org/config/gateway.config.factory';
 import { BaseLogger, LogModule } from '@org/log';
 import { GraphQLCrossAppClient } from './clients/graphql.client';
+import { CrossAppConfigModule } from './config/cross-app.config.module';
 
 @Module({
-  imports: [ConfigModule, LogModule],
+  imports: [CrossAppConfigModule, LogModule],
   providers: [
     {
-      useFactory: (configService: ClientConfigService, logger: BaseLogger) =>
-        new GraphQLCrossAppClient(configService.gatewayUrl, logger),
+      useFactory: (gatewayConfig: GatewayConfig, logger: BaseLogger) =>
+        new GraphQLCrossAppClient(gatewayConfig.url, logger),
       provide: GraphQLCrossAppClient,
-      inject: [ClientConfigService, BaseLogger],
+      inject: [GatewayConfigFactory.KEY, BaseLogger],
     },
   ],
   exports: [GraphQLCrossAppClient],

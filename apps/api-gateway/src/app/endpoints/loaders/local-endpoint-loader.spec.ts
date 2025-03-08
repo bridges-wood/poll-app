@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
-import { ConfigService } from '../../config/config.service';
+import EndpointsConfigFactory from '../../config/factories/endpoints.config.factory';
 import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 import { LocalEndpointLoader } from './local-endpoint-loader';
@@ -20,14 +20,14 @@ describe('LocalEndpointLoader', () => {
       providers: [
         LocalEndpointLoader,
         {
-          provide: ConfigService,
+          provide: EndpointsConfigFactory.KEY,
           useValue: {
-            getEndpoints: jest.fn().mockReturnValue([
+            endpoints: [
               {
                 name: 'test',
                 url: 'http://test.com',
               },
-            ]),
+            ],
           },
         },
         {
@@ -46,7 +46,6 @@ describe('LocalEndpointLoader', () => {
     module.enableShutdownHooks();
 
     service = module.get<LocalEndpointLoader>(LocalEndpointLoader);
-
     executorFactory = module.get<ExecutorFactory>(ExecutorFactory);
   });
 

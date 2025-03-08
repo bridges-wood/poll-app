@@ -1,30 +1,54 @@
-import { BeforeApplicationShutdown, Injectable } from '@nestjs/common';
+import { BeforeApplicationShutdown, Inject, Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ClientConfigService } from '@org/config';
+import EnvironmentConfigFactory, {
+  EnvironmentConfig,
+} from '@org/config/environment.config.factory';
+import { CryptoService } from '@org/crypto';
 import { CrossAppHealthService } from '@org/health';
 import { BaseLogger } from '@org/log';
 import assert from 'assert';
 import { Mutex } from 'async-mutex';
+import StandaloneConfigFactory, {
+  StandaloneConfig,
+} from './config/factories/standalone.config.factory';
 import { CrossAppRegistrationService } from './cross-app/cross-app.registration.service';
 
 @Injectable()
 export class RegistrationService implements BeforeApplicationShutdown {
   private registrationMutex: Mutex;
   private deregistrationMutex: Mutex;
+  private hasJwks: boolean;
 
   constructor(
-    private configService: ClientConfigService,
+    @Inject(EnvironmentConfigFactory.KEY)
+    private readonly environmentConfig: EnvironmentConfig,
+    @Inject(StandaloneConfigFactory.KEY)
+    private readonly standaloneConfig: StandaloneConfig,
     private readonly crossAppRegistrationService: CrossAppRegistrationService,
     private readonly crossAppHealthService: CrossAppHealthService,
     private readonly logger: BaseLogger,
+    moduleRef: ModuleRef,
   ) {
     this.logger.setContext(RegistrationService.name);
     this.registrationMutex = new Mutex();
     this.deregistrationMutex = new Mutex();
+
+    try {
+      moduleRef.get(CryptoService, { strict: false }); // Throws if not found
+      this.hasJwks = true;
+      this.logger.debug('CryptoService found, enabling JWKS registration');
+    } catch (error) {
+      this.logger.debug(
+        'CryptoService not found, skipping JWKS registration',
+        error,
+      );
+      this.hasJwks = false;
+    }
   }
 
   async afterApplicationBootstrap() {
-    if (this.configService.standaloneMode) {
+    if (this.standaloneConfig.standalone) {
       this.logger.log('🚀 Running in standalone mode, skipping registration');
       return;
     }
@@ -46,22 +70,25 @@ export class RegistrationService implements BeforeApplicationShutdown {
   async registerSelf(): Promise<void> {
     if (this.registrationMutex.isLocked()) return;
     this.logger.log(
-      `📡 Attempting to register ${this.configService.name} with the gateway...`,
+      `📡 Attempting to register ${this.environmentConfig.name} with the gateway...`,
     );
 
     const response = await this.registrationMutex.runExclusive(async () => {
-      assert(this.configService.port, 'Port must be set before registering');
+      assert(
+        this.environmentConfig.port,
+        'Port must be set before registering',
+      );
 
       return this.crossAppRegistrationService.register(
-        this.configService.name,
-        this.configService.port,
-        this.configService.hasJwks,
+        this.environmentConfig.name,
+        this.environmentConfig.port,
+        this.hasJwks,
       );
     });
 
     if (response.success) {
       this.logger.log(
-        `✅ Successfully registered ${this.configService.name} with the gateway`,
+        `✅ Successfully registered ${this.environmentConfig.name} with the gateway`,
       );
     } else {
       throw new Error('Failed to register');
@@ -71,16 +98,16 @@ export class RegistrationService implements BeforeApplicationShutdown {
   async unregisterSelf(): Promise<void> {
     if (this.deregistrationMutex.isLocked()) return;
     this.logger.log(
-      `📡 Attempting to de-register ${this.configService.name} with the gateway...`,
+      `📡 Attempting to de-register ${this.environmentConfig.name} with the gateway...`,
     );
 
     const success = await this.deregistrationMutex.runExclusive(async () =>
-      this.crossAppRegistrationService.unregister(this.configService.name),
+      this.crossAppRegistrationService.unregister(this.environmentConfig.name),
     );
 
     if (success) {
       this.logger.log(
-        `✅ Successfully de-registered ${this.configService.name}`,
+        `✅ Successfully de-registered ${this.environmentConfig.name}`,
       );
     } else {
       throw new Error('Failed to unregister');
@@ -92,7 +119,7 @@ export class RegistrationService implements BeforeApplicationShutdown {
    */
   async reRegister(): Promise<boolean> {
     this.logger.log(
-      `📡 Gateway requested ${this.configService.name} to re-register`,
+      `📡 Gateway requested ${this.environmentConfig.name} to re-register`,
     );
     this.registerSelf();
     return true;
@@ -100,9 +127,9 @@ export class RegistrationService implements BeforeApplicationShutdown {
 
   @Cron(CronExpression.EVERY_MINUTE)
   private async checkIn() {
-    if (this.configService.standaloneMode) {
+    if (this.standaloneConfig.standalone) {
       this.logger.log('🚀 Running in standalone mode, skipping check-in');
-      return
+      return;
     }
 
     this.logger.log(`🤖 Checking in with the gateway...`);

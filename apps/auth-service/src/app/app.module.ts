@@ -1,37 +1,59 @@
 import { useHmacSignatureValidation } from '@graphql-hive/gateway';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ClientConfigService, ConfigModule } from '@org/config';
+import EnvironmentConfigFactory, {
+  EnvironmentConfig,
+} from '@org/config/environment.config.factory';
+import HmacConfigFactory, { HmacConfig } from '@org/config/hmac.config.factory';
+import SchemaConfigFactory, {
+  SchemaConfig,
+} from '@org/config/schema.config.factory';
+import { CryptoModule } from '@org/crypto';
 import { ErrorFormatter, ErrorsModule } from '@org/errors';
+import { FirebaseModule } from '@org/firebase';
 import { serializeParams } from '@org/graphql/plugins';
 import { prepareSchemaForFederation } from '@org/graphql/transformers';
 import { RegistrationModule } from '@org/registration';
 import { AuthModule } from './auth/auth.module';
-import { CryptoModule } from './crypto/crypto.module';
-import { FirebaseModule } from '@org/firebase';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: [EnvironmentConfigFactory],
+    }),
     FirebaseModule.forRoot(),
     ScheduleModule.forRoot(), // For Cron
     CryptoModule,
     AuthModule,
     RegistrationModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
-      imports: [ConfigModule, ErrorsModule],
-      inject: [ClientConfigService, ErrorFormatter],
+      imports: [
+        ConfigModule.forFeature(EnvironmentConfigFactory),
+        ConfigModule.forFeature(SchemaConfigFactory),
+        ConfigModule.forFeature(HmacConfigFactory),
+        ErrorsModule,
+      ],
+      inject: [
+        EnvironmentConfigFactory.KEY,
+        SchemaConfigFactory.KEY,
+        HmacConfigFactory.KEY,
+        ErrorFormatter,
+      ],
       driver: YogaDriver,
       useFactory: (
-        config: ClientConfigService,
+        environmentConfig: EnvironmentConfig,
+        schemaConfig: SchemaConfig,
+        hmacConfig: HmacConfig,
         errorFormatter: ErrorFormatter,
       ) => {
         return {
           healthCheckEndpoint: '/health',
           introspection: true,
-          graphiql: config.isDev(),
-          autoSchemaFile: { path: config.schemaFile, federation: 2 },
+          graphiql: environmentConfig.isDev(),
+          autoSchemaFile: { path: schemaConfig.schemaFile, federation: 2 },
           sortSchema: true,
           formatError: errorFormatter.format,
           subscriptions: {
@@ -40,9 +62,9 @@ import { FirebaseModule } from '@org/firebase';
           transformAutoSchemaFile: true,
           transformSchema: prepareSchemaForFederation(),
           plugins: [
-            !config.isDev() &&
+            !environmentConfig.isDev() &&
               useHmacSignatureValidation({
-                secret: config.HMACSecret,
+                secret: hmacConfig.secret,
                 serializeParams: serializeParams,
               }),
           ],
