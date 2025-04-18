@@ -64,7 +64,7 @@
     "dot-path-value": "^0.0.11",
     "dotenv": "^16.4.7",
     "exponential-backoff": "^3.1.1",
-    "fastify": "5.2.1",
+    "fastify": "5.3.1",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "framer-motion": "^11.15.0",
