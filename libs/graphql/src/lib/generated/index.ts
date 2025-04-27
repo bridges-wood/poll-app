@@ -657,6 +657,11 @@ export type FindEndpointsWithJwksQueryVariables = Exact<{ [key: string]: never; 
 
 export type FindEndpointsWithJwksQuery = { __typename?: 'Query', endpoints: Array<{ __typename?: 'LoadedEndpoint', jwksUri?: string | null }> };
 
+export type CurrentUserProfileDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CurrentUserProfileDataQuery = { __typename?: 'Query', me: { __typename: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } };
+
 export type FetchPostQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -675,10 +680,17 @@ export type FetchPostsQueryVariables = Exact<{
 
 export type FetchPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', edges?: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null }, myResponses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } }> | null, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
-export type FetchProfileDataQueryVariables = Exact<{ [key: string]: never; }>;
+export type FetchProfileDataQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
 
 
-export type FetchProfileDataQuery = { __typename?: 'Query', me: { __typename: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } };
+export type FetchProfileDataQuery = { __typename?: 'Query', user: { __typename: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string, posts: { __typename?: 'PostConnection', edges?: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null }, myResponses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } }> | null } } };
+
+export type FetchMyProfileDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchMyProfileDataQuery = { __typename?: 'Query', me: { __typename: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string, posts: { __typename?: 'PostConnection', edges?: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: string, caption: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string }, content: { __typename?: 'MultipleChoiceQuestion', type: PostContentType, question: string, options: Array<string>, voteTotals: Array<number> }, responses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null }, myResponses: { __typename?: 'ResponseConnection', edges?: Array<{ __typename?: 'ResponseEdge', node: { __typename?: 'MultipleChoiceResponse', id: string, type: PostContentType, content?: string | null, createdAt: string, selectedOption: number, post: { __typename?: 'Post', id: string }, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, profilePicture?: string | null, createdAt: string } } }> | null } } }> | null } } };
 
 export type ValidateTokenQueryVariables = Exact<{
   token: Scalars['String']['input'];
@@ -836,6 +848,16 @@ export const FindEndpointsWithJwksDocument = gql`
   }
 }
     `;
+export const CurrentUserProfileDataDocument = gql`
+    query CurrentUserProfileData {
+  me {
+    __typename
+    id
+    email
+    ...ProfileData
+  }
+}
+    ${ProfileDataFragmentDoc}`;
 export const FetchPostDocument = gql`
     query FetchPost($id: String!) {
   post(id: $id) {
@@ -867,15 +889,40 @@ export const FetchPostsDocument = gql`
 }
     ${FeedPostFragmentDoc}`;
 export const FetchProfileDataDocument = gql`
-    query FetchProfileData {
+    query FetchProfileData($id: String!) {
+  user(id: $id) {
+    __typename
+    id
+    ...ProfileData
+    posts(last: 18, orderBy: "createdAt") {
+      edges {
+        node {
+          ...FeedPost
+        }
+      }
+    }
+  }
+}
+    ${ProfileDataFragmentDoc}
+${FeedPostFragmentDoc}`;
+export const FetchMyProfileDataDocument = gql`
+    query FetchMyProfileData {
   me {
     __typename
     id
     email
     ...ProfileData
+    posts(last: 18, orderBy: "createdAt") {
+      edges {
+        node {
+          ...FeedPost
+        }
+      }
+    }
   }
 }
-    ${ProfileDataFragmentDoc}`;
+    ${ProfileDataFragmentDoc}
+${FeedPostFragmentDoc}`;
 export const ValidateTokenDocument = gql`
     query ValidateToken($token: String!) {
   validateToken(token: $token) {

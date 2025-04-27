@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FetchProfileDataQuery, User } from '@org/graphql';
+import { FetchMyProfileDataQuery, User } from '@org/graphql';
 import { Button } from '@org/ui-kit/ui/button';
 import {
   Form,
@@ -19,7 +19,7 @@ import { z } from 'zod';
 
 export type AccountUpdateFormProps = {
   userId: User['id'];
-  data: FetchProfileDataQuery;
+  data: FetchMyProfileDataQuery;
 };
 
 const formSchema = z.object({

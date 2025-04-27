@@ -1,0 +1,8 @@
+query CurrentUserProfileData {
+  me {
+    __typename
+    id
+    email
+    ...ProfileData
+  }
+}

@@ -1,8 +1,30 @@
-query FetchProfileData {
+query FetchProfileData($id: String!) {
+  user(id: $id) {
+    __typename
+    id
+    ...ProfileData
+    posts(last: 18, orderBy: "createdAt") {
+      edges {
+        node {
+          ...FeedPost
+        }
+      }
+    }
+  }
+}
+
+query FetchMyProfileData {
   me {
     __typename
     id
     email
     ...ProfileData
+    posts(last: 18, orderBy: "createdAt") {
+      edges {
+        node {
+          ...FeedPost
+        }
+      }
+    }
   }
 }

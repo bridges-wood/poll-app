@@ -1,13 +1,13 @@
 import {
-  FetchProfileDataDocument,
-  FetchProfileDataQuery,
-  FetchProfileDataQueryVariables,
+  FetchMyProfileDataDocument,
+  FetchMyProfileDataQuery,
+  FetchMyProfileDataQueryVariables,
 } from '@org/graphql';
 import getClient from '@poll-app/lib/api/registered-client';
+import { QueryWrapperProps } from '@poll-app/lib/types';
 import { getLoggedInUserId } from '@poll-app/utils/get-logged-in-user-id';
 import { FC } from 'react';
 import ProfileUpdateForm from './profile-update-form';
-import { QueryWrapperProps } from '@poll-app/lib/types';
 
 export type ProfileUpdateFormContainerProps = QueryWrapperProps;
 
@@ -18,9 +18,9 @@ const ProfileUpdateFormContainer: FC<ProfileUpdateFormContainerProps> = async ({
 
   const userId = await getLoggedInUserId();
   const { data } = await getClient().query<
-    FetchProfileDataQuery,
-    FetchProfileDataQueryVariables
-  >(FetchProfileDataDocument, {});
+    FetchMyProfileDataQuery,
+    FetchMyProfileDataQueryVariables
+  >(FetchMyProfileDataDocument, {});
 
   if (data) return <ProfileUpdateForm data={data} userId={userId} />;
 };

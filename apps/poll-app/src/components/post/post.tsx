@@ -32,7 +32,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
     <div
       {...props}
       className={twMerge(
-        'border-border-neutral-muted border-thick rounded-lg p-4',
+        'border-border-neutral-muted border-thick flex flex-col rounded-lg p-4',
         className,
       )}
       onClick={(e) => {
@@ -44,7 +44,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
         <h2 id="title" className="col-span-5 row-start-1 self-center text-xl">
           {post.content.question}
         </h2>
-        <span className="col-span-4 row-start-2 text-sm">
+        <span className="col-span-7 row-start-2 text-sm">
           Asked by{' '}
           <Link
             href={`/users/${btoa(post.author.displayName)}`}
@@ -73,10 +73,10 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
           </HoverCard>
         </div>
       </div>
-      <div id="body" className="w-full">
+      <div id="body" className="mb-3 w-full">
         <PostBody post={post} />
       </div>
-      <div id="footer" className="mt-3 flex w-full flex-row items-baseline">
+      <div id="footer" className="mt-auto flex w-full flex-row items-baseline">
         <div className="text-foreground-muted ml-auto w-min whitespace-nowrap text-sm">
           <RelativeTime date={new Date(post.createdAt)} timeZoneName="short" />
         </div>
