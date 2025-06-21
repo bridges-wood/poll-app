@@ -5,14 +5,12 @@ import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { Cacheable } from 'cacheable';
 import { FastifyRequest as Request } from 'fastify';
+import { AuthConfigModule } from '../config/auth.config.module';
 import { CrossAppAuthService } from '../cross-app/cross-app.auth.service';
 import { extractAuthTokenFromHeader } from '../utils';
 import { DistributedStrategy } from './distributed.strategy';
-import { AuthConfigModule } from '../config/auth.config.module';
 
-jest.mock('../utils', () => ({
-  extractAuthTokenFromHeader: jest.fn(),
-}));
+jest.mock('../utils', () => ({ extractAuthTokenFromHeader: jest.fn() }));
 
 describe('DistributedStrategy', () => {
   let strategy: DistributedStrategy;
@@ -25,18 +23,12 @@ describe('DistributedStrategy', () => {
       imports: [AuthConfigModule],
       providers: [
         DistributedStrategy,
-        {
-          provide: BaseLogger,
-          useClass: TestLogger,
-        },
+        { provide: BaseLogger, useClass: TestLogger },
         {
           provide: CrossAppAuthService,
           useValue: { validateToken: jest.fn() },
         },
-        {
-          provide: JwtService,
-          useValue: { decode: jest.fn() },
-        },
+        { provide: JwtService, useValue: { decode: jest.fn() } },
         {
           provide: CACHE_INSTANCE,
           useValue: { get: jest.fn(), set: jest.fn() },
@@ -111,5 +103,20 @@ describe('DistributedStrategy', () => {
     await expect(strategy.validate(req)).rejects.toThrow(
       'Token does not have an expiry date',
     );
+  });
+
+  it('should bypass authentication in development mode', async () => {
+    jest.spyOn(strategy['environmentConfig'], 'isDev').mockReturnValue(true);
+    // Mock the bypassAuth property as a getter
+    Object.defineProperty(strategy['authConfig'], 'bypassAuth', {
+      get: () => true,
+    });
+
+    const req = { body: {} } as Request;
+    const result = await strategy.validate(req);
+    expect(result).toEqual({
+      id: '00000000-0000-0000-0000-000000000000',
+      roles: ['admin'],
+    });
   });
 });

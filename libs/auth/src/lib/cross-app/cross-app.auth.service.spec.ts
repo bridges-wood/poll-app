@@ -5,7 +5,9 @@ import { GraphQLCrossAppClient } from '@org/cross-app';
 import { ValidateTokenDocument } from '@org/graphql';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
+import { User } from '@org/typings';
 import { Cacheable } from 'cacheable';
+import { StoredDataRaw } from 'keyv';
 import { CrossAppAuthService } from './cross-app.auth.service';
 
 describe('CrossAppAuthService', () => {
@@ -18,10 +20,7 @@ describe('CrossAppAuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CrossAppAuthService,
-        {
-          provide: BaseLogger,
-          useClass: TestLogger,
-        },
+        { provide: BaseLogger, useClass: TestLogger },
         {
           provide: GraphQLCrossAppClient,
           useValue: {
@@ -29,18 +28,10 @@ describe('CrossAppAuthService', () => {
             query: jest.fn(),
           },
         },
-        {
-          provide: JwtService,
-          useValue: {
-            decode: jest.fn(),
-          },
-        },
+        { provide: JwtService, useValue: { decode: jest.fn() } },
         {
           provide: CACHE_INSTANCE,
-          useValue: {
-            get: jest.fn(),
-            set: jest.fn(),
-          },
+          useValue: { get: jest.fn(), set: jest.fn() },
         },
       ],
     }).compile();
@@ -64,7 +55,11 @@ describe('CrossAppAuthService', () => {
   it('should return cached value if token is found in cache', async () => {
     const token = 'test-token';
     const cachedValue = { id: 'user-id', roles: ['user'] };
-    jest.spyOn(cache, 'get').mockResolvedValueOnce(cachedValue);
+    jest
+      .spyOn(cache, 'get')
+      .mockResolvedValueOnce(
+        cachedValue as StoredDataRaw<Pick<User, 'id' | 'roles'>>,
+      );
 
     const result = await service.validateToken(token);
 
@@ -75,7 +70,7 @@ describe('CrossAppAuthService', () => {
   it('should throw an error if token is invalid', async () => {
     const token = 'invalid-token';
     const queryResult = { validateToken: null };
-    jest.spyOn(cache, 'get').mockResolvedValueOnce(null);
+    jest.spyOn(cache, 'get').mockResolvedValueOnce(undefined);
     jest.spyOn(client, 'query').mockResolvedValueOnce(queryResult);
     jest.spyOn(jwtService, 'decode').mockReturnValueOnce(null);
 
@@ -85,7 +80,7 @@ describe('CrossAppAuthService', () => {
   it('should query the client if token is not found in cache', async () => {
     const token = 'test-token';
     const queryResult = { validateToken: { id: 'user-id', roles: ['user'] } };
-    jest.spyOn(cache, 'get').mockResolvedValueOnce(null);
+    jest.spyOn(cache, 'get').mockResolvedValueOnce(undefined);
     jest.spyOn(client, 'query').mockResolvedValueOnce(queryResult);
     jest
       .spyOn(jwtService, 'decode')

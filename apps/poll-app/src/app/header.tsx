@@ -15,7 +15,6 @@ import { ThemeToggle } from '@org/ui-kit/ui/theme-toggle';
 import AuthButton from '@poll-app/components/buttons/auth-button/auth-button';
 import useIsLoggedIn from '@poll-app/lib/hooks/use-is-logged-in';
 import { HamburgerMenuIcon } from '@radix-ui/react-icons';
-import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 
 const AppHeader = () => {
@@ -25,20 +24,20 @@ const AppHeader = () => {
     <NavigationMenu className="w-full max-w-none p-4 [&>div:nth-child(2)]:left-auto [&>div:nth-child(2)]:right-8 [&>div:nth-child(2)]:top-16">
       <NavigationMenuList className="w-[calc(100vw-2rem)] max-w-7xl justify-between">
         <NavigationMenuItem className="flex-grow basis-0">
-          <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink
-              className={twMerge(navigationMenuTriggerStyle(), 'h-auto')}
-            >
-              <h1 className="text-5xl font-extralight">Pollstr</h1>
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink
+            href="/"
+            className={twMerge(navigationMenuTriggerStyle(), 'h-auto')}
+          >
+            <h1 className="text-5xl font-extralight">Pollstr</h1>
+          </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem id="center-group" className="hidden sm:flex">
-          <Link href="/home" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Home
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle()}
+            href="/home"
+          >
+            Home
+          </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem
           id="end-group"
@@ -58,30 +57,30 @@ const AppHeader = () => {
           <NavigationMenuContent>
             <ul className="flex max-w-80 flex-col text-right">
               {isLoggedIn && (
-                <Link href="/home" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Home
-                  </NavigationMenuLink>
-                </Link>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  href="/home"
+                >
+                  Home
+                </NavigationMenuLink>
               )}
-              <Link href="/login" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Login
-                </NavigationMenuLink>
-              </Link>
-              <Link href="/sign-up" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Sign Up
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                href="/login"
+              >
+                Login
+              </NavigationMenuLink>
+
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                href="/sign-up"
+              >
+                Sign Up
+              </NavigationMenuLink>
               <li className="bg-border -mx-1 my-1 h-px" />
               <li className="grid place-items-center px-4 pb-2">
                 <ClientOnly skeleton={<Skeleton className="h-9 w-9" />}>
-                  <ThemeToggle
-                    triggerProps={{
-                      variant: 'ghost',
-                    }}
-                  />
+                  <ThemeToggle triggerProps={{ variant: 'ghost' }} />
                 </ClientOnly>
               </li>
             </ul>

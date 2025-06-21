@@ -54,13 +54,13 @@ const ProfileIcon: FC<ProfileIconProps & ComponentPropsWithoutRef<'div'>> = ({
       </Avatar>
       {editable && (
         // TODO make clickable
-        <Button
+        (<Button
           variant="outline"
           size="icon"
           className="absolute bottom-0 right-0 grid h-5 w-5 place-items-center rounded-full"
         >
           <Pencil1Icon />
-        </Button>
+        </Button>)
       )}
     </div>
   );
@@ -69,7 +69,7 @@ const ProfileIcon: FC<ProfileIconProps & ComponentPropsWithoutRef<'div'>> = ({
 export const LinkedProfileIcon: FC<
   ProfileIconProps & { containerProps?: Omit<LinkProps, 'href'>; href: string }
 > = ({ href, containerProps, ...props }) => (
-  <Link {...containerProps} href={href}>
+  <Link {...containerProps} href={href} legacyBehavior>
     <ProfileIcon {...props} />
   </Link>
 );

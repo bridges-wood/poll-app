@@ -9,12 +9,11 @@ import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { Cacheable } from 'cacheable';
 import { JwksClient } from 'jwks-rsa';
+import { StoredDataRaw } from 'keyv';
 import { JWKS_URI_CACHE_KEY } from './constants';
 import { RemoteSigningKeyProvider } from './remote.signing-key.provider';
 
-jest.mock('jwks-rsa', () => ({
-  JwksClient: jest.fn(),
-}));
+jest.mock('jwks-rsa', () => ({ JwksClient: jest.fn() }));
 
 describe('RemoteSigningKeyProvider', () => {
   let provider: RemoteSigningKeyProvider;
@@ -25,22 +24,11 @@ describe('RemoteSigningKeyProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RemoteSigningKeyProvider,
-        {
-          provide: BaseLogger,
-          useClass: TestLogger,
-        },
-        {
-          provide: GraphQLCrossAppClient,
-          useValue: {
-            query: jest.fn(),
-          },
-        },
+        { provide: BaseLogger, useClass: TestLogger },
+        { provide: GraphQLCrossAppClient, useValue: { query: jest.fn() } },
         {
           provide: CACHE_INSTANCE,
-          useValue: {
-            get: jest.fn(),
-            set: jest.fn(),
-          },
+          useValue: { get: jest.fn(), set: jest.fn() },
         },
       ],
     }).compile();
@@ -74,9 +62,9 @@ describe('RemoteSigningKeyProvider', () => {
     });
 
     it('should reject if no jwks URIs found', async () => {
-      jest.spyOn(client, 'query').mockResolvedValue({
-        endpoints: [],
-      } as FindEndpointsWithJwksQuery);
+      jest
+        .spyOn(client, 'query')
+        .mockResolvedValue({ endpoints: [] } as FindEndpointsWithJwksQuery);
 
       const getSigningKey = provider.build();
 
@@ -106,7 +94,9 @@ describe('RemoteSigningKeyProvider', () => {
   describe('findJwksUris', () => {
     it('should return cached jwks URIs if available', async () => {
       const cachedUris = ['https://example.com/.well-known/jwks.json'];
-      jest.spyOn(cache, 'get').mockResolvedValue(cachedUris);
+      jest
+        .spyOn(cache, 'get')
+        .mockResolvedValue(cachedUris as StoredDataRaw<string[]>);
 
       const result = await provider.findJwksUris();
 
@@ -121,7 +111,7 @@ describe('RemoteSigningKeyProvider', () => {
       const queryResult = {
         endpoints: endpointsWithJwks,
       } as FindEndpointsWithJwksQuery;
-      jest.spyOn(cache, 'get').mockResolvedValue(null);
+      jest.spyOn(cache, 'get').mockResolvedValue(undefined);
       jest.spyOn(client, 'query').mockResolvedValue(queryResult);
       jest.spyOn(cache, 'set').mockResolvedValue(true);
 
@@ -140,10 +130,8 @@ describe('RemoteSigningKeyProvider', () => {
     });
 
     it('should throw an error if no endpoints with jwks URIs found', async () => {
-      const queryResult = {
-        endpoints: [],
-      } as FindEndpointsWithJwksQuery;
-      jest.spyOn(cache, 'get').mockResolvedValue(null);
+      const queryResult = { endpoints: [] } as FindEndpointsWithJwksQuery;
+      jest.spyOn(cache, 'get').mockResolvedValue(undefined);
       jest.spyOn(client, 'query').mockResolvedValue(queryResult);
 
       await expect(provider.findJwksUris()).rejects.toThrow(

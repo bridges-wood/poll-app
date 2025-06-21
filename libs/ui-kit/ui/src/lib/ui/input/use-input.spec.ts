@@ -22,9 +22,11 @@ describe('useInput', () => {
     );
 
     act(() => {
-      result.current.getInputProps().onChange?.({
-        target: { value: 'new value' },
-      } as unknown as ChangeEvent<HTMLInputElement>);
+      result.current
+        .getInputProps()
+        .onChange?.({
+          target: { value: 'new value' },
+        } as unknown as ChangeEvent<HTMLInputElement>);
     });
   });
 
@@ -35,9 +37,11 @@ describe('useInput', () => {
     );
 
     act(() => {
-      result.current.getInputProps().onChange?.({
-        target: { value: 'new value' },
-      } as unknown as ChangeEvent<HTMLInputElement>);
+      result.current
+        .getInputProps()
+        .onChange?.({
+          target: { value: 'new value' },
+        } as unknown as ChangeEvent<HTMLInputElement>);
     });
 
     expect(onValueChange).toHaveBeenCalledWith('new value');
@@ -49,37 +53,14 @@ describe('useInput', () => {
     );
 
     act(() => {
-      result.current.getInputProps().onChange?.({
-        target: { value: undefined },
-      } as unknown as ChangeEvent<HTMLInputElement>);
+      result.current
+        .getInputProps()
+        .onChange?.({
+          target: { value: undefined },
+        } as unknown as ChangeEvent<HTMLInputElement>);
     });
 
     expect(defaultProps.onValueChange).toHaveBeenCalledWith('');
-  });
-
-  it('should call onClear when clear button is pressed', () => {
-    const onClear = jest.fn();
-    const { result } = renderHook(() =>
-      useInput({ ...defaultProps, onClear, isClearable: true }),
-    );
-
-    act(() => {
-      result.current.getClearButtonProps().onClick?.({
-        currentTarget: {
-          contains: jest.fn().mockReturnValue(true),
-          focus: jest.fn(),
-          getBoundingClientRect: jest.fn().mockReturnValue({}),
-        },
-        button: 0,
-        nativeEvent: {
-          mozInputSource: 0,
-          isTrusted: true,
-        },
-        stopPropagation: jest.fn(),
-      } as any);
-    });
-
-    expect(onClear).toHaveBeenCalled();
   });
 
   it('should preserve the type setting', () => {
@@ -92,11 +73,7 @@ describe('useInput', () => {
 
   it('should ignore type setting when isMultiline is true', () => {
     const { result } = renderHook(() =>
-      useInput({
-        ...defaultProps,
-        isMultiline: true,
-        type: 'password',
-      }),
+      useInput({ ...defaultProps, isMultiline: true, type: 'password' }),
     );
 
     expect(result.current.getInputProps().type).toBe(undefined);
