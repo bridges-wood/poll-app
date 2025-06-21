@@ -10,42 +10,100 @@
     "importHelpers": true,
     "target": "es2021",
     "module": "esnext",
-    "lib": ["es2021", "dom"],
+    "lib": [
+      "es2021",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@org/auth": ["libs/auth/src/index.ts"],
-      "@org/bootstrap": ["libs/bootstrap/src/index.ts"],
-      "@org/cache": ["libs/cache/src/index.ts"],
-      "@org/config/*": ["libs/config/src/lib/factories/*"],
-      "@org/cross-app": ["libs/cross-app/src/index.ts"],
-      "@org/crypto": ["libs/crypto/src/index.ts"],
-      "@org/errors": ["libs/errors/src/index.ts"],
-      "@org/firebase": ["libs/firebase/src/index.ts"],
-      "@org/firebase/admin": ["libs/firebase/src/admin.ts"],
-      "@org/graphql": ["libs/graphql/src/index.ts"],
-      "@org/graphql/pagination": ["libs/graphql/src/lib/pagination/index.ts"],
-      "@org/graphql/plugins": ["libs/graphql/src/lib/plugins/index.ts"],
-      "@org/graphql/schema.json": ["libs/graphql/assets/introspection.json"],
-      "@org/graphql/scripts": ["libs/graphql/src/scripts/index.ts"],
-      "@org/graphql/search": ["libs/graphql/src/lib/search/index.ts"],
+      "@org/auth": [
+        "libs/auth/src/index.ts"
+      ],
+      "@org/bootstrap": [
+        "libs/bootstrap/src/index.ts"
+      ],
+      "@org/cache": [
+        "libs/cache/src/index.ts"
+      ],
+      "@org/config/*": [
+        "libs/config/src/lib/factories/*"
+      ],
+      "@org/cross-app": [
+        "libs/cross-app/src/index.ts"
+      ],
+      "@org/crypto": [
+        "libs/crypto/src/index.ts"
+      ],
+      "@org/errors": [
+        "libs/errors/src/index.ts"
+      ],
+      "@org/firebase": [
+        "libs/firebase/src/index.ts"
+      ],
+      "@org/firebase/admin": [
+        "libs/firebase/src/admin.ts"
+      ],
+      "@org/graphql": [
+        "libs/graphql/src/index.ts"
+      ],
+      "@org/graphql/pagination": [
+        "libs/graphql/src/lib/pagination/index.ts"
+      ],
+      "@org/graphql/plugins": [
+        "libs/graphql/src/lib/plugins/index.ts"
+      ],
+      "@org/graphql/schema.json": [
+        "libs/graphql/assets/introspection.json"
+      ],
+      "@org/graphql/scripts": [
+        "libs/graphql/src/scripts/index.ts"
+      ],
+      "@org/graphql/search": [
+        "libs/graphql/src/lib/search/index.ts"
+      ],
       "@org/graphql/transformers": [
         "libs/graphql/src/lib/transformers/index.ts"
       ],
-      "@org/health": ["libs/health/src/index.ts"],
-      "@org/log": ["libs/log/src/index.ts"],
-      "@org/log/test": ["libs/log/src/test/index.ts"],
-      "@org/pubsub": ["libs/pubsub/src/index.ts"],
-      "@org/registration": ["libs/registration/src/index.ts"],
-      "@org/typings": ["libs/typings/src/index.ts"],
-      "@org/ui-kit/ui": ["libs/ui-kit/ui/src/index.ts"],
-      "@org/ui-kit/ui/*": ["libs/ui-kit/ui/src/*"],
-      "@org/ui-kit/util": ["libs/ui-kit/util/src/index.ts"],
-      "@org/ui-kit/util/*": ["libs/ui-kit/util/src/*"],
-      "@org/ui/server": ["libs/ui/src/server.ts"]
+      "@org/health": [
+        "libs/health/src/index.ts"
+      ],
+      "@org/log": [
+        "libs/log/src/index.ts"
+      ],
+      "@org/log/test": [
+        "libs/log/src/test/index.ts"
+      ],
+      "@org/pubsub": [
+        "libs/pubsub/src/index.ts"
+      ],
+      "@org/registration": [
+        "libs/registration/src/index.ts"
+      ],
+      "@org/typings": [
+        "libs/typings/src/index.ts"
+      ],
+      "@org/ui-kit/ui": [
+        "libs/ui-kit/ui/src/index.ts"
+      ],
+      "@org/ui-kit/ui/*": [
+        "libs/ui-kit/ui/src/*"
+      ],
+      "@org/ui-kit/util": [
+        "libs/ui-kit/util/src/index.ts"
+      ],
+      "@org/ui-kit/util/*": [
+        "libs/ui-kit/util/src/*"
+      ],
+      "@org/ui/server": [
+        "libs/ui/src/server.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }
