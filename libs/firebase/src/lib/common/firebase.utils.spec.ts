@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { CircularDependencyException } from '../exceptions/circular-dependency.exception';
+import { CircularDependencyError } from '../errors/circular-dependency.error';
 import { getRepositoryToken } from './firebase.utils';
 
 class TestEntity {}
@@ -12,10 +12,10 @@ describe('getRepositoryToken', () => {
 
   it('should throw CircularDependencyException if entity is nil', () => {
     expect(() => getRepositoryToken(null as unknown as Type)).toThrow(
-      CircularDependencyException,
+      CircularDependencyError,
     );
     expect(() => getRepositoryToken(undefined as unknown as Type)).toThrow(
-      CircularDependencyException,
+      CircularDependencyError,
     );
   });
 });
