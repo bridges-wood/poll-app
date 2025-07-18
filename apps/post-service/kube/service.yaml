@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: post-service
+  namespace: default
+spec:
+  selector:
+    app: post-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 5201
+    targetPort: 5201

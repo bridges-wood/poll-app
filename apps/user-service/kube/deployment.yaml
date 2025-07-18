@@ -1,33 +1,3 @@
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: user-service
-  namespace: default
-spec:
-  selector:
-    app: user-service
-  ports:
-  - name: http
-    protocol: TCP
-    port: 5200
-    targetPort: 5200
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: user-service
-  namespace: default
-automountServiceAccountToken: true
----
-apiVersion: consul.hashicorp.com/v1alpha1
-kind: ServiceDefaults
-metadata:
-  name: user-service
-  namespace: default
-spec:
-  protocol: "http"
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -98,6 +68,13 @@ spec:
             secretKeyRef:
               name: firebase-credentials
               key: private-key              
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
         livenessProbe:
           httpGet:
             path: /health
@@ -106,4 +83,3 @@ spec:
           timeoutSeconds: 1
           periodSeconds: 10
           failureThreshold: 30
-

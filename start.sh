@@ -30,3 +30,11 @@ printf "\n\nYour Consul HTTP token is: $CONSUL_HTTP_TOKEN\n"
 
 echo "📝 Applying the application configuration..."
 kubectl apply -f config/kube
+
+# Traverse all the applications and apply their configurations
+for app in apps/*; do
+  if [ -d "$app" ]; then
+    echo "Applying configuration for $app..."
+    kubectl apply -f "$app/kube"
+  fi
+done

@@ -1,0 +1,12 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: user-service
+  namespace: default
+# Allow traffic to user-service from api-gateway
+spec:
+  destination:
+    name: user-service
+  sources:
+    - name: api-gateway
+      action: allow

@@ -1,0 +1,12 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: post-service
+  namespace: default
+# Allow traffic to post-service from api-gateway
+spec:
+  destination:
+    name: post-service
+  sources:
+    - name: api-gateway
+      action: allow

@@ -1,0 +1,12 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: frontend 
+  namespace: default
+# Allow traffic from nginx to frontend
+spec:
+  destination:
+    name: frontend
+  sources:
+    - name: nginx
+      action: allow

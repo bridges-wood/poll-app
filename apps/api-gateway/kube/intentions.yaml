@@ -1,0 +1,20 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: api-gateway
+  namespace: default
+# Allow traffic to api-gateway
+spec:
+  destination:
+    name: api-gateway
+  sources:
+    - name: nginx
+      action: allow
+    - name: frontend
+      action: allow
+    - name: user-service
+      action: allow
+    - name: auth-service
+      action: allow
+    - name: post-service
+      action: allow
