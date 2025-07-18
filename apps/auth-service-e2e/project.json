@@ -2,11 +2,15 @@
   "name": "auth-service-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "implicitDependencies": ["apps/auth-service"],
+  "implicitDependencies": [
+    "apps/auth-service"
+  ],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{e2eProjectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/auth-service-e2e/jest.config.ts",
         "passWithNoTests": true
@@ -15,7 +19,9 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": ["{projectRoot}/**/*.{js,ts}"]
+        "lintFilePatterns": [
+          "{projectRoot}/**/*.{js,ts}"
+        ]
       }
     }
   }

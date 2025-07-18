@@ -7,7 +7,9 @@
   "targets": {
     "build-stitcher": {
       "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "target": "node",
         "compiler": "swc",
@@ -26,13 +28,19 @@
         "post-service:generate",
         "api-gateway:generate"
       ],
-      "outputs": ["{projectRoot}/src/generated/schema.gql"],
+      "outputs": [
+        "{projectRoot}/src/generated/schema.gql"
+      ],
       "command": "node dist/libs/graphql/scripts/stitch.js",
       "cache": true
     },
     "generate": {
-      "dependsOn": ["stitch"],
-      "outputs": ["{projectRoot}/src/generated/*.[ts,tsx]"],
+      "dependsOn": [
+        "stitch"
+      ],
+      "outputs": [
+        "{projectRoot}/src/generated/*.[ts,tsx]"
+      ],
       "command": "yarn graphql-codegen --config libs/graphql/codegen.ts"
     },
     "lint": {
@@ -40,7 +48,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/graphql/jest.config.ts"
       }
