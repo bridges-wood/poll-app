@@ -79,7 +79,7 @@ export class DistributedStrategy extends PassportStrategy(
 
   private isTrusted(params: GraphQLParams): params is TrustedParams {
     // Check that the extensions field of the request contains the trusted field
-    return params.extensions?.['trusted'] === true;
+    return params?.extensions?.['trusted'] === true;
   }
 
   private getTtl(token: string): number {

@@ -1,6 +1,4 @@
-import type { Config } from 'jest';
-
-export const baseConfig: Config = {
+const config = {
   coverageThreshold: {
     global: {
       branches: 100,
@@ -10,3 +8,5 @@ export const baseConfig: Config = {
     },
   },
 };
+
+module.exports = config;

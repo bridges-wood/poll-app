@@ -7,31 +7,23 @@
   "targets": {
     "build": {
       "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/typings",
         "main": "libs/typings/src/index.ts",
         "tsConfig": "libs/typings/tsconfig.lib.json",
-        "assets": [
-          "libs/typings/*.md"
-        ]
+        "assets": ["libs/typings/*.md"]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/typings/jest.config.ts",
+        "jestConfig": "libs/typings/jest.config.js",
         "passWithNoTests": true
       }
     }

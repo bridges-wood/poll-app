@@ -1,7 +1,6 @@
-import { Config } from 'jest';
-import { baseConfig } from '../../jest.config.base';
+const { baseConfig } = require('../../jest.config.base');
 
-const config: Config = {
+const config = {
   ...baseConfig,
   displayName: 'registration',
   preset: '../../jest.preset.js',
@@ -14,4 +13,4 @@ const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/src/test/env-setup.ts'],
 };
 
-export default config;
+module.exports = config;

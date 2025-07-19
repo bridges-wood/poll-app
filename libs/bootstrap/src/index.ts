@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Type } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import EnvironmentConfigFactory, {
   EnvironmentConfig,
@@ -7,7 +7,7 @@ import { RegistrationService } from '@org/registration';
 import { isUndefined } from 'lodash';
 import { findAndListenOnPort, getHttpsOptions } from './helpers';
 
-export async function bootstrap(appModule: unknown, appName: string) {
+export async function bootstrap(appModule: Type, appName: string) {
   const app = await NestFactory.create(appModule, {
     logger: ['error', 'warn', 'log', 'debug'],
     httpsOptions: getHttpsOptions(),

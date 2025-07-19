@@ -1,6 +1,5 @@
-import { readFileSync } from 'fs';
-import { Config } from 'jest';
-import { baseConfig } from '../../jest.config.base';
+const { readFileSync } = require('fs');
+const { baseConfig } = require('../../jest.config.base');
 
 // Reading the SWC compilation config and remove the "exclude"
 // for the test files to be compiled by SWC
@@ -19,7 +18,7 @@ if (swcJestConfig.swcrc === undefined) {
 // jest needs EsModule Interop to find the default exported setup/teardown functions
 // swcJestConfig.module.noInterop = false;
 
-const config: Config = {
+const config = {
   ...baseConfig,
   displayName: 'typings',
   preset: '../../jest.preset.js',
@@ -31,4 +30,4 @@ const config: Config = {
   coverageDirectory: '../../coverage/libs/typings',
 };
 
-export default config;
+module.exports = config;

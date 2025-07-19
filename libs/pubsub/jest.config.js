@@ -1,7 +1,7 @@
-import { Config } from 'jest';
-import { baseConfig } from '../../jest.config.base';
+const baseConfig = require('../../jest.config.base');
 
-const config: Config = {
+/** @type {import('jest').Config} */
+module.exports = {
   ...baseConfig,
   displayName: 'pubsub',
   preset: '../../jest.preset.js',
@@ -12,5 +12,3 @@ const config: Config = {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/pubsub',
 };
-
-export default config;

@@ -6,13 +6,18 @@
         "runtime": "automatic",
         "useBuiltIns": "usage"
       }
+    ],
+    "@babel/preset-env",
+    [
+      "@babel/preset-typescript",
+      {
+        "runtime": "automatic"
+      }
     ]
   ],
   "env": {
     "test": {
-      "plugins": [
-        "dynamic-import-node"
-      ]
+      "plugins": ["dynamic-import-node"]
     }
   }
 }

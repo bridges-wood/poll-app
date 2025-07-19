@@ -28,7 +28,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "libs/ui-kit/util/jest.config.ts",
+        "jestConfig": "libs/ui-kit/util/jest.config.js",
         "passWithNoTests": true
       }
     }

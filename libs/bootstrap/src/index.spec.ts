@@ -27,6 +27,12 @@ jest.mock('./helpers/get-https-options', () => ({
   getHttpsOptions: jest.fn().mockReturnValue({}),
 }));
 
+class MockModule {
+  constructor() {
+    // Mock implementation if needed
+  }
+}
+
 describe('Bootstrap', () => {
   let appModule: INestApplication;
   let environmentConfig: EnvironmentConfig;
@@ -70,7 +76,7 @@ describe('Bootstrap', () => {
   });
 
   it('should bootstrap the application with a specified port', async () => {
-    await bootstrap({}, 'TestApp');
+    await bootstrap(MockModule, 'TestApp');
     expect(appModule.listen).toHaveBeenCalledWith(3000);
 
     expect(registrationService.afterApplicationBootstrap).toHaveBeenCalled();
@@ -83,7 +89,7 @@ describe('Bootstrap', () => {
       .mockResolvedValueOnce(true)
       .defaultRejectedValue(new Error('Port in use'));
 
-    await bootstrap({}, 'TestApp');
+    await bootstrap(MockModule, 'TestApp');
     expect(appModule.listen).toHaveBeenCalledWith(4500);
     expect(environmentConfig.setPort).toHaveBeenCalledWith(4500);
     expect(registrationService.afterApplicationBootstrap).toHaveBeenCalled();
@@ -95,7 +101,7 @@ describe('Bootstrap', () => {
       throw new Error('Port in use');
     });
 
-    await expect(bootstrap({}, 'TestApp')).rejects.toThrow(
+    await expect(bootstrap(MockModule, 'TestApp')).rejects.toThrow(
       'No available ports in range 4000-5000',
     );
   });

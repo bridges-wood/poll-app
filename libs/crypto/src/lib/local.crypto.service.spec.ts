@@ -62,7 +62,7 @@ describe('LocalCryptoService', () => {
   });
 
   describe('setupKeysIfUndefined', () => {
-    it('should generate and export keys if not public key is not defined', async () => {
+    it('should generate and export keys if public key is not defined', async () => {
       service['_privateKey'] = {
         type: 'private',
       };
@@ -77,7 +77,7 @@ describe('LocalCryptoService', () => {
       expect(service['exportKeyPairToFile']).toHaveBeenCalled();
     });
 
-    it('should generate and export keys if not private key is not defined', async () => {
+    it('should generate and export keys if private key is not defined', async () => {
       service['_publicKey'] = {
         type: 'public',
       };
@@ -90,6 +90,43 @@ describe('LocalCryptoService', () => {
       expect(service['loadKeyPairFromFile']).toHaveBeenCalled();
       expect(service['generateKeyPair']).toHaveBeenCalled();
       expect(service['exportKeyPairToFile']).toHaveBeenCalled();
+    });
+
+    it('should not generate keys if both are defined', async () => {
+      service['_publicKey'] = {
+        type: 'public',
+      };
+      service['_privateKey'] = {
+        type: 'private',
+      };
+      jest.spyOn(service as never, 'loadKeyPairFromFile').mockImplementation();
+      jest.spyOn(service as never, 'generateKeyPair').mockImplementation();
+      jest.spyOn(service as never, 'exportKeyPairToFile').mockImplementation();
+
+      await service['setupKeysIfUndefined']();
+
+      expect(service['loadKeyPairFromFile']).not.toHaveBeenCalled();
+      expect(service['generateKeyPair']).not.toHaveBeenCalled();
+      expect(service['exportKeyPairToFile']).not.toHaveBeenCalled();
+    });
+
+    it('should not generate if keys are set after being loaded', async () => {
+      service['_publicKey'] = undefined;
+      service['_privateKey'] = undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      jest.spyOn(service as any, 'loadKeyPairFromFile').mockImplementation(() => {
+        service['_publicKey'] = 'publicKey' as unknown as jose.KeyLike;
+        service['_privateKey'] = 'privateKey' as unknown as jose.KeyLike;
+        return Promise.resolve();
+      })
+      jest.spyOn(service as never, 'generateKeyPair').mockImplementation();
+      jest.spyOn(service as never, 'exportKeyPairToFile').mockImplementation();
+
+      await service['setupKeysIfUndefined']();
+
+      expect(service['loadKeyPairFromFile']).toHaveBeenCalled();
+      expect(service['generateKeyPair']).not.toHaveBeenCalled();
+      expect(service['exportKeyPairToFile']).not.toHaveBeenCalled();
     });
   });
 
@@ -111,6 +148,28 @@ describe('LocalCryptoService', () => {
         join(__dirname, 'assets/auth/public-key.pem'),
         'publicKey',
       );
+      expect(writeFileSync).toHaveBeenCalledWith(
+        join(__dirname, 'assets/auth/private-key.pem'),
+        'privateKey',
+      );
+    });
+
+    it('should not create directory if it already exists', async () => {
+      service['_publicKey'] = 'publicKey' as unknown as jose.KeyLike;
+      service['_privateKey'] = 'privateKey' as unknown as jose.KeyLike;
+
+      (existsSync as jest.Mock).mockReturnValue(true);
+      (jose.exportSPKI as jest.Mock).mockResolvedValue('publicKey');
+      (jose.exportPKCS8 as jest.Mock).mockResolvedValue('privateKey');
+
+      await service['exportKeyPairToFile']();
+
+      expect(mkdirSync).not.toHaveBeenCalled();
+      expect(writeFileSync).toHaveBeenCalledWith(
+        join(__dirname, 'assets/auth/public-key.pem'),
+        'publicKey',
+      );
+
       expect(writeFileSync).toHaveBeenCalledWith(
         join(__dirname, 'assets/auth/private-key.pem'),
         'privateKey',

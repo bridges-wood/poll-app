@@ -1,5 +1,4 @@
-import { readFileSync } from 'fs';
-import type { Config } from 'jest';
+const { readFileSync } = require('fs');
 
 // Reading the SWC compilation config and remove the "exclude"
 // for the test files to be compiled by SWC
@@ -18,7 +17,7 @@ if (swcJestConfig.swcrc === undefined) {
 // jest needs EsModule Interop to find the default exported setup/teardown functions
 // swcJestConfig.module.noInterop = false;
 
-const config: Config = {
+const config = {
   displayName: 'graphql',
   preset: '../../jest.preset.js',
   transform: {
@@ -37,4 +36,4 @@ const config: Config = {
   },
 };
 
-export default config;
+module.exports = config;

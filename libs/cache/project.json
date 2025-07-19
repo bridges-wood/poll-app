@@ -10,11 +10,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/cache/jest.config.ts"
+        "jestConfig": "libs/cache/jest.config.js"
       }
     }
   }

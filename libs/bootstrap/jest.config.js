@@ -1,16 +1,15 @@
-import type { Config } from 'jest';
-import { baseConfig } from '../../jest.config.base';
+const { baseConfig } = require('../../jest.config.base');
 
-const config: Config = {
+const config = {
   ...baseConfig,
-  displayName: 'health',
+  displayName: 'bootstrap',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/libs/health',
+  coverageDirectory: '../../coverage/libs/bootstrap',
 };
 
-export default config;
+module.exports = config;

@@ -1,16 +1,15 @@
-import type { Config } from 'jest';
-import { baseConfig } from '../../jest.config.base';
+const { baseConfig } = require('../../jest.config.base');
 
-const config: Config = {
+const config = {
   ...baseConfig,
-  displayName: 'cross-app',
+  displayName: 'firebase',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/libs/cross-app',
+  coverageDirectory: '../../coverage/libs/firebase',
 };
 
-export default config;
+module.exports = config;
