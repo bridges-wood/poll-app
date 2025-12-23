@@ -13,5 +13,6 @@
   ],
   "jest.runMode": {
     "type": "on-save"
-  }
+  },
+  "nxConsole.generateAiAgentRules": true
 }

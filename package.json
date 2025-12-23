@@ -7,7 +7,6 @@
     "postinstall": "husky"
   },
   "dependencies": {
-    "@bridges-wood/graphql-firestore-subscriptions": "^1.1.2",
     "@envelop/core": "^5.3.0",
     "@envelop/extended-validation": "^6.0.0",
     "@graphql-hive/gateway": "^1.15.4",
@@ -81,7 +80,7 @@
     "keyv": "^5.3.4",
     "keyv-lru": "^3.0.4",
     "lodash": "^4.17.21",
-    "next": "16.0.9",
+    "next": "16.1.1",
     "next-themes": "^0.4.6",
     "node-fetch": "^3.3.2",
     "nookies": "^2.5.2",
@@ -93,9 +92,9 @@
     "postcss": "8.5.6",
     "prop-types": "^15.8.1",
     "quick-lru": "^7.0.1",
-    "react": "19.1.0",
+    "react": "19.2.3",
     "react-aria": "^3.41.1",
-    "react-dom": "19.1.0",
+    "react-dom": "19.2.3",
     "react-error-boundary": "^4.1.2",
     "react-hook-form": "^7.58.1",
     "react-redux": "^9.2.0",
@@ -133,7 +132,7 @@
     "@graphql-codegen/typescript-urql": "^4.0.1",
     "@nestjs/schematics": "11.0.5",
     "@nestjs/testing": "^11.1.5",
-    "@next/bundle-analyzer": "^15.3.4",
+    "@next/bundle-analyzer": "16.1.1",
     "@nx-tools/container-metadata": "^6.8.0",
     "@nx-tools/nx-container": "^6.8.0",
     "@nx/cypress": "22.3.3",
@@ -169,8 +168,8 @@
     "@types/passport-local": "^1.0.38",
     "@types/portscanner": "^2.1.4",
     "@types/prop-types": "^15.7.15",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
     "@typescript-eslint/parser": "8.37.0",
     "babel-jest": "30.0.4",
     "babel-plugin-dynamic-import-node": "^2.3.3",
@@ -211,6 +210,8 @@
   "repository": "https://github.com/bridges-wood/poll-app.git",
   "author": "Max Wood <bridges.wood@gmail.com>",
   "resolutions": {
-    "@nx/js@npm:19.0.4": "patch:@nx/js@npm%3A19.0.4#~/.yarn/patches/@nx-js-npm-19.0.4-ceeb17d9af.patch"
+    "@nx/js@npm:19.0.4": "patch:@nx/js@npm%3A19.0.4#~/.yarn/patches/@nx-js-npm-19.0.4-ceeb17d9af.patch",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3"
   }
 }
