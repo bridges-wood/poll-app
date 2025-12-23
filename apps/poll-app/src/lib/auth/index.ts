@@ -7,7 +7,7 @@ import {
   ValidateTokenQueryVariables,
 } from '@org/graphql';
 import { NextRequest } from 'next/server';
-import { client } from '../api/middleware-client';
+import { client } from '../api/proxy-client';
 
 export const authenticate = async (req: NextRequest): Promise<boolean> => {
   // Extract the token from the request

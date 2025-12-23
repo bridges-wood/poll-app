@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
+import { PubSub } from "graphql-subscriptions";
 import { FactoryProvider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BaseLogger } from '@org/log';

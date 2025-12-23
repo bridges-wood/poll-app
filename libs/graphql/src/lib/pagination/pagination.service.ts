@@ -75,6 +75,13 @@ export class PaginationService<
   AppModelType extends Node,
   DbModelType extends DocumentData = DocumentData,
 > {
+  /**
+   *
+   * @param classRef A class reference or an array of class references that extend Node. This is used to determine the fields available for sorting and pagination.
+   * @param logger A logger instance for logging debug information.
+   * @param collectionRef Optional. A Firestore collection reference to use for pagination queries. If not provided, an override must be provided on each method call.
+   * @param chunkSize Optional. The size of chunks to use when querying by IDs. Defaults to 30, which is the maximum number of IDs allowed in a Firestore "in" query.
+   */
   constructor(
     readonly classRef: Type<AppModelType> | readonly [Type<AppModelType>],
     protected readonly logger: BaseLogger,

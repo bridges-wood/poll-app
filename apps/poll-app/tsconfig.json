@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": "../../",
     "jsx": "preserve",
     "allowJs": true,
     "esModuleInterop": true,
@@ -44,7 +45,7 @@
     "../../dist/apps/poll-app/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
-  ],
+, "tailwind.config.mjs"  ],
   "exclude": [
     "node_modules",
     "jest.config.ts",

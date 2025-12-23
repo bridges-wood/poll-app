@@ -44,6 +44,12 @@ module.exports = [
     // Override or add rules here
     rules: {},
   },
+  {
+    files: ['**/next-env.d.ts'],
+    rules: {
+      '@nx/enforce-module-boundaries': 'off',
+    },
+  },
   ...compat
     .config({
       env: {

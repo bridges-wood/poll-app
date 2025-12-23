@@ -3,6 +3,7 @@ const { baseConfig } = require('../../jest.config.base');
 
 // Reading the SWC compilation config and remove the "exclude"
 // for the test files to be compiled by SWC
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { exclude: _, ...swcJestConfig } = JSON.parse(
   readFileSync(`${__dirname}/.swcrc`, 'utf-8'),
 );

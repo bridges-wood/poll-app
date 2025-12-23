@@ -44,9 +44,15 @@ export class ExecutorFactory {
       operationName,
       extensions,
       context,
+      operationType,
     }) => {
       const query = print(document);
       const completeExtensions = this.addAuthExtensions(extensions, context);
+
+      if (operationType === 'subscription') {
+        // TODO implement gateway-level subscriptions
+        throw new Error('Subscriptions are not supported in remote executors');
+      }
 
       const fetchResult = await fetch(url, {
         method: 'POST',

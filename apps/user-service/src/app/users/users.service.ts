@@ -1,16 +1,13 @@
-import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { NotFoundError } from '@org/errors';
 import { FirebaseService } from '@org/firebase';
 import { BaseLogger } from '@org/log';
-import { PubSubTokens } from '@org/pubsub';
 import {
   doc,
   documentId,
   getDoc,
   getDocs,
-  onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -24,7 +21,6 @@ import { UserDbModel } from './models/user.model-mapper';
 @Injectable()
 export class UsersService extends FirebaseService<User, UserDbModel>(User) {
   constructor(
-    @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
     moduleRef: ModuleRef,
     readonly logger: BaseLogger,
   ) {
@@ -42,18 +38,8 @@ export class UsersService extends FirebaseService<User, UserDbModel>(User) {
     return docSnap.data() as User;
   }
 
-  streamUser(id: string): AsyncIterator<User> {
-    this.pubSub.registerHandler(`userUpdated:${id}`, (broadcast) => {
-      const docRef = doc(this.collectionRef, id);
-
-      return onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-          broadcast(docSnap.data() as User);
-        }
-      });
-    });
-
-    return this.pubSub.asyncIterator(`userUpdated:${id}`);
+  streamUser(id: string): AsyncIterableIterator<User> {
+    return this.subscribeById(id);
   }
 
   /**

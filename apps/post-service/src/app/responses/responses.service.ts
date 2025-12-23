@@ -1,4 +1,3 @@
-import PubSub from '@bridges-wood/graphql-firestore-subscriptions';
 import { Inject, Injectable } from '@nestjs/common';
 import { NotFoundError } from '@org/errors';
 import {
@@ -8,7 +7,7 @@ import {
 } from '@org/firebase';
 import { PaginationArgs, PaginationService } from '@org/graphql/pagination';
 import { BaseLogger } from '@org/log';
-import { PubSubTokens } from '@org/pubsub';
+import { FirestorePubSubEngine, PubSubTokens } from '@org/pubsub';
 import { PostContentType } from '@org/typings';
 import {
   collection,
@@ -41,7 +40,7 @@ export class ResponsesService extends PaginationService<
 > {
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
-    @Inject(PubSubTokens.PUBSUB) private readonly pubSub: PubSub,
+    @Inject(PubSubTokens.PUBSUB) private readonly pubSub: FirestorePubSubEngine,
     private readonly responseModelMapper: ResponseModelMapper,
     override readonly logger: BaseLogger,
   ) {

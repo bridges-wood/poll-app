@@ -71,9 +71,6 @@ import { UsersModule } from './users/users.module';
           autoSchemaFile: { path: schemaConfig.schemaFile, federation: 2 },
           sortSchema: true,
           formatError: errorFormatter.format,
-          subscriptions: {
-            'graphql-ws': true,
-          },
           transformAutoSchemaFile: true,
           transformSchema: prepareSchemaForFederation((schema) =>
             addTypes(schema, [

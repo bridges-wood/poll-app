@@ -13,6 +13,7 @@ import { CreateUserArgs } from './models/create-user.args';
 import { UpdateUserArgs } from './models/update-user.args';
 import { User, UserConnection } from './models/user.model';
 import { UsersService } from './users.service';
+import { BaseLogger } from '@org/log';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -42,13 +43,15 @@ export class UsersResolver {
 
   @Subscription((returns) => User, {
     description: 'Subscribe to all changes on a user by id',
+    resolve: (payload: User) => payload,
+    filter: (payload, variables) => payload.id === variables.id,
   })
   userUpdated(
     @Args('id', {
       description: 'The id of the user to subscribe to changes on',
     })
     id: string,
-  ) {
+  ): AsyncIterableIterator<User> {
     return this.usersService.streamUser(id);
   }
 

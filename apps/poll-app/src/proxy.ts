@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getTokenExpirationDate } from './lib/actions/utils';
 import { authenticate, refreshToken } from './lib/auth';
 
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
   try {
     const isAuthenticated = await authenticate(request);
 
