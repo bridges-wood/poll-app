@@ -1,4 +1,4 @@
-import { AsyncExecutor } from '@graphql-tools/utils';
+import { AsyncExecutor, ExecutionResult } from '@graphql-tools/utils';
 import { Inject, Injectable } from '@nestjs/common';
 import HmacConfigFactory, { HmacConfig } from '@org/config/hmac.config.factory';
 import {
@@ -8,7 +8,8 @@ import {
 import { BaseLogger } from '@org/log';
 import { DecodedIdToken, TrustedRequestExtensions } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
-import { print } from 'graphql';
+import { OperationTypeNode, print } from 'graphql';
+import { GraphQLParams } from 'graphql-yoga';
 
 @Injectable()
 export class ExecutorFactory {
@@ -49,35 +50,53 @@ export class ExecutorFactory {
       const query = print(document);
       const completeExtensions = this.addAuthExtensions(extensions, context);
 
-      if (operationType === 'subscription') {
-        // TODO implement gateway-level subscriptions
-        throw new Error('Subscriptions are not supported in remote executors');
+      switch (operationType) {
+        case OperationTypeNode.SUBSCRIPTION:
+          // TODO implement gateway-level subscriptions
+          throw new Error(
+            'Subscriptions are not supported in remote executors',
+          );
+        case OperationTypeNode.QUERY:
+        case OperationTypeNode.MUTATION:
+        default:
+          return this.buildFetchBasedExecutor(url, {
+            query,
+            variables,
+            operationName,
+            extensions: completeExtensions,
+          });
       }
-
-      const fetchResult = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          variables,
-          operationName,
-          extensions: {
-            ...completeExtensions,
-            [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
-              { query, variables, extensions: completeExtensions },
-              this.hmacConfig.secret,
-            ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
-          },
-        }),
-      });
-      return fetchResult.json();
     };
 
     this.addExecutorToCache(url, executor);
     return executor;
+  }
+
+  private async buildFetchBasedExecutor(
+    url: string,
+    { query, variables, operationName, extensions }: GraphQLParams,
+  ): Promise<ExecutionResult> {
+    const fetchResult = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables,
+        operationName,
+        extensions: {
+          ...extensions,
+          [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
+            { query, variables, extensions },
+            this.hmacConfig.secret,
+          ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
+        },
+      }),
+    });
+
+    return fetchResult.json();
   }
 
   private addAuthExtensions(

@@ -3,7 +3,7 @@ import { Injectable, OnModuleDestroy, Optional } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { BaseLogger } from '@org/log';
 import { backOff } from 'exponential-backoff';
-import { parse } from 'graphql';
+import { OperationTypeNode, parse } from 'graphql';
 import { isAsyncIterable } from 'graphql-yoga';
 import { defaultTo } from 'lodash';
 import { BehaviorSubject, debounceTime, Subscription } from 'rxjs';
@@ -138,6 +138,7 @@ export abstract class EndpointLoader implements OnModuleDestroy {
         () =>
           fetcher({
             document: parse('{ _service { _sdl } }'),
+            operationType: OperationTypeNode.QUERY,
           }),
         { numOfAttempts: 10 },
       );
