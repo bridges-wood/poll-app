@@ -1,3 +1,4 @@
+import { ExecutionResult } from '@graphql-tools/utils';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import HmacConfigFactory from '@org/config/hmac.config.factory';
@@ -5,7 +6,7 @@ import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
 import { DecodedIdToken } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
-import { parse, print } from 'graphql';
+import { OperationTypeNode, parse, print } from 'graphql';
 import { ExecutorFactory } from './executor-factory';
 
 jest.mock('@whatwg-node/fetch', () => ({
@@ -20,6 +21,15 @@ jest.mock('@org/graphql/plugins', () => {
     computeHmacSignature: jest.fn().mockReturnValue('test-signature'),
   };
 });
+jest.mock('graphql-sse', () => ({
+  createClient: jest.fn().mockReturnValue({
+    iterate: jest.fn().mockReturnValue(
+      (async function* () {
+        yield { data: { hello: 'world' } };
+      })(),
+    ),
+  }),
+}));
 
 describe('ExecutorFactory', () => {
   let executorFactory: ExecutorFactory;
@@ -45,6 +55,29 @@ describe('ExecutorFactory', () => {
     expect(executorFactory).toBeDefined();
   });
 
+  it('should create an sse executor if operation is subscription', async () => {
+    const url = 'http://example.com/graphql';
+    const executor = executorFactory.getExecutor(url);
+
+    expect(executor).toBeDefined();
+
+    const query = parse(`{ hello }`);
+
+    const result = await executor({
+      document: query,
+      operationType: OperationTypeNode.SUBSCRIPTION,
+    });
+
+    expect(result[Symbol.asyncIterator]).toBeDefined();
+
+    // Simulate async iteration
+    const asyncIterator = result as AsyncIterable<ExecutionResult>;
+    const iterator = asyncIterator[Symbol.asyncIterator]();
+
+    const firstResult = await iterator.next();
+    expect(firstResult.value).toEqual({ data: { hello: 'world' } });
+  });
+
   it('should create a new executor if not cached', () => {
     const url = 'http://example.com/graphql';
     const executor = executorFactory.getExecutor(url);
@@ -63,6 +96,7 @@ describe('ExecutorFactory', () => {
 
     const result = await executor({
       document: query,
+      operationType: OperationTypeNode.QUERY,
     });
 
     expect(result).toEqual({ data: { hello: 'world' } });
@@ -81,6 +115,22 @@ describe('ExecutorFactory', () => {
         },
       }),
     });
+  });
+
+  it('should throw error for unsupported operation type', () => {
+    const url = 'http://example.com/graphql';
+    const executor = executorFactory.getExecutor(url);
+
+    const query = parse(`{ hello }`);
+
+    expect(() =>
+      executor({
+        document: query,
+        operationType: 'INVALID_OPERATION' as OperationTypeNode,
+      }),
+    ).rejects.toThrow(
+      `Unsupported operation type: INVALID_OPERATION for executor at ${url}`,
+    );
   });
 
   it('should return cached executor if exists', () => {
@@ -110,7 +160,9 @@ describe('ExecutorFactory', () => {
     const context: { jwt?: { payload: DecodedIdToken } } = {
       jwt: { payload: { sub: 'user1', roles: ['admin'] } },
     } as { jwt?: { payload: DecodedIdToken } };
-    const result = executorFactory['addAuthExtensions'](extensions, context);
+    const result = executorFactory['addAuthExtensions'](extensions, {
+      context,
+    });
 
     expect(result).toEqual({
       ...extensions,

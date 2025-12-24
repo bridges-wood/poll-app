@@ -1,4 +1,8 @@
-import { AsyncExecutor, ExecutionResult } from '@graphql-tools/utils';
+import {
+  AsyncExecutor,
+  ExecutionRequest,
+  ExecutionResult,
+} from '@graphql-tools/utils';
 import { Inject, Injectable } from '@nestjs/common';
 import HmacConfigFactory, { HmacConfig } from '@org/config/hmac.config.factory';
 import {
@@ -6,9 +10,10 @@ import {
   HMAC_SIGNATURE_EXTENSION,
 } from '@org/graphql/plugins';
 import { BaseLogger } from '@org/log';
-import { DecodedIdToken, TrustedRequestExtensions } from '@org/typings';
+import { TrustedRequestExtensions } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { OperationTypeNode, print } from 'graphql';
+import { createClient, RequestParams } from 'graphql-sse';
 import { GraphQLParams } from 'graphql-yoga';
 
 @Injectable()
@@ -39,37 +44,101 @@ export class ExecutorFactory {
 
   private initializeExecutor(url: string): AsyncExecutor {
     this.logger.debug(`Creating executor for endpoint: ${url}`);
+
     const executor: AsyncExecutor = async ({
       document,
       variables,
       operationName,
-      extensions,
+      extensions: baseExtensions = {},
       context,
       operationType,
     }) => {
       const query = print(document);
-      const completeExtensions = this.addAuthExtensions(extensions, context);
+
+      const extensionsWithAuth = this.addAuthExtensions(baseExtensions, {
+        context,
+      });
+
+      const extensions = this.addSignatureExtensions(extensionsWithAuth, {
+        document,
+        variables,
+      });
+
+      // TODO cleanup extension enrichment
 
       switch (operationType) {
         case OperationTypeNode.SUBSCRIPTION:
-          // TODO implement gateway-level subscriptions
-          throw new Error(
-            'Subscriptions are not supported in remote executors',
-          );
+          return this.buildSseExecutor(url, {
+            query,
+            variables,
+            operationName,
+            extensions,
+          });
         case OperationTypeNode.QUERY:
         case OperationTypeNode.MUTATION:
-        default:
           return this.buildFetchBasedExecutor(url, {
             query,
             variables,
             operationName,
-            extensions: completeExtensions,
+            extensions,
           });
+        default:
+          throw new Error(
+            `Unsupported operation type: ${operationType} for executor at ${url}`,
+          );
       }
     };
 
     this.addExecutorToCache(url, executor);
     return executor;
+  }
+  addSignatureExtensions(
+    extensions: ExecutionRequest['extensions'],
+    {
+      document,
+      variables,
+    }: Pick<ExecutionRequest, 'document' | 'variables'> &
+      Partial<ExecutionRequest>,
+  ): ExecutionRequest['extensions'] {
+    const query = print(document);
+    return {
+      ...extensions,
+      [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
+        { query, variables, extensions },
+        this.hmacConfig.secret,
+      ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
+    };
+  }
+
+  private buildSseExecutor(
+    url: string,
+    { query, variables, operationName, extensions }: RequestParams,
+  ): AsyncIterable<ExecutionResult> {
+    const client = createClient({
+      url: url.toString(),
+      fetchFn: fetch,
+      retryAttempts: 0, // Disable retries to surface errors immediately
+      headers: {
+        accept: 'text/event-stream',
+      },
+    });
+
+    return client.iterate(
+      {
+        query,
+        variables,
+        operationName,
+        extensions,
+      },
+      {
+        connecting: () => {
+          this.logger.debug(`Connecting to SSE endpoint: ${url}`);
+        },
+        connected: () => {
+          this.logger.debug(`Connected to SSE endpoint: ${url}`);
+        },
+      },
+    );
   }
 
   private async buildFetchBasedExecutor(
@@ -86,13 +155,7 @@ export class ExecutorFactory {
         query,
         variables,
         operationName,
-        extensions: {
-          ...extensions,
-          [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
-            { query, variables, extensions },
-            this.hmacConfig.secret,
-          ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
-        },
+        extensions,
       }),
     });
 
@@ -100,9 +163,9 @@ export class ExecutorFactory {
   }
 
   private addAuthExtensions(
-    extensions: Record<string, unknown> | undefined,
-    context: { jwt?: { payload: DecodedIdToken } } | undefined,
-  ) {
+    extensions: ExecutionRequest['extensions'],
+    { context }: Pick<ExecutionRequest, 'context'> & Partial<ExecutionRequest>,
+  ): ExecutionRequest['extensions'] {
     const jwt = context?.jwt;
 
     if (jwt) {

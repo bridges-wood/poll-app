@@ -70,6 +70,7 @@
     "graphql": "^16.11.0",
     "graphql-firestore-subscriptions": "^1.0.1",
     "graphql-scalars": "^1.24.2",
+    "graphql-sse": "^2.6.0",
     "graphql-subscriptions": "^3.0.0",
     "graphql-tag": "^2.12.6",
     "graphql-yoga": "^5.15.1",

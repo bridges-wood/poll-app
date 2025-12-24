@@ -9488,6 +9488,7 @@ __metadata:
     graphql: "npm:^16.11.0"
     graphql-firestore-subscriptions: "npm:^1.0.1"
     graphql-scalars: "npm:^1.24.2"
+    graphql-sse: "npm:^2.6.0"
     graphql-subscriptions: "npm:^3.0.0"
     graphql-tag: "npm:^2.12.6"
     graphql-yoga: "npm:^5.15.1"
@@ -22052,6 +22053,15 @@ __metadata:
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 10c0/1d207da58ce0ad29de70cd579372c112de4eeff051eba7ba90efc031c05d4967dfcba89760545a9621f4d4eb74b0355e49ac946ef491d7816874eeaf88fc6472
+  languageName: node
+  linkType: hard
+
+"graphql-sse@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "graphql-sse@npm:2.6.0"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 10c0/e05f0b5c8539d61e5ce34af8e0bb418c02bf922d6a7f9232a9abd53c77df5654684ca14f674ac771645c8fba9c37ce666c5d06f46eef54ea07e63653468065b0
   languageName: node
   linkType: hard
 
