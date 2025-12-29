@@ -8,6 +8,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SigningKeyProvider } from '@org/auth';
 import EnvironmentConfigFactory from '@org/config/environment.config.factory';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { useSchema } from 'graphql-yoga';
@@ -20,7 +21,8 @@ import { LocalSigningKeyProvider } from './crypto/local-signing-key-provider';
 import { EndpointsModule } from './endpoints/endpoints.module';
 import { SchemaStitcher } from './schema/schema-stitcher';
 import { SchemaModule } from './schema/schema.module';
-import { SigningKeyProvider } from '@org/auth';
+
+const DOWNSTREAM_SERVICE_ERROR_CODE = 'DOWNSTREAM_SERVICE_ERROR';
 
 @Module({
   imports: [
@@ -92,9 +94,6 @@ import { SigningKeyProvider } from '@org/auth';
               rules: [OneOfInputObjectsRule],
             }),
           ],
-          subscriptions: {
-            'graphql-ws': true,
-          },
           batching: true,
           path: 'graphql',
         };
