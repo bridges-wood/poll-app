@@ -98,23 +98,12 @@ export class ExecutorFactory {
       },
     });
 
-    // TODO improve error reporting from SSE
-    return client.iterate(
-      {
-        query,
-        variables,
-        operationName,
-        extensions,
-      },
-      {
-        connecting: () => {
-          this.logger.debug(`Connecting to SSE endpoint: ${url}`);
-        },
-        connected: () => {
-          this.logger.debug(`Connected to SSE endpoint: ${url}`);
-        },
-      },
-    );
+    return client.iterate({
+      query,
+      variables,
+      operationName,
+      extensions,
+    });
   }
 
   private async buildFetchBasedExecutor(
