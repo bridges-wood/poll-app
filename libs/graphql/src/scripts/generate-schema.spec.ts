@@ -15,6 +15,7 @@ class TestResolver {
 jest.mock('fs');
 
 jest.mock('@graphql-tools/utils', () => ({
+  ...jest.requireActual('@graphql-tools/utils'),
   printSchemaWithDirectives: jest.fn().mockReturnValue('schema-string'),
 }));
 
