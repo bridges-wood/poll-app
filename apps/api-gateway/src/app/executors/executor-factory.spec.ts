@@ -4,9 +4,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import HmacConfigFactory from '@org/config/hmac.config.factory';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
-import { DecodedIdToken } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { OperationTypeNode, parse, print } from 'graphql';
+import { AuthVisitor } from '../extensions/auth.visitor';
+import { SignatureVisitor } from '../extensions/signature.visitor';
 import { ExecutorFactory } from './executor-factory';
 
 jest.mock('@whatwg-node/fetch', () => ({
@@ -39,7 +40,14 @@ describe('ExecutorFactory', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forFeature(HmacConfigFactory)],
       providers: [
-        ExecutorFactory,
+        AuthVisitor,
+        SignatureVisitor,
+        {
+          provide: ExecutorFactory,
+          inject: [AuthVisitor, SignatureVisitor, BaseLogger],
+          useFactory: (authVisitor, signatureVisitor, logger) =>
+            new ExecutorFactory([authVisitor, signatureVisitor], logger),
+        },
         {
           provide: BaseLogger,
           useClass: TestLogger,
@@ -153,31 +161,6 @@ describe('ExecutorFactory', () => {
     expect(logger.debug).toHaveBeenCalledWith(
       `Invalidating executor for endpoint: ${url}`,
     );
-  });
-
-  it('should add auth extensions if jwt is present', () => {
-    const extensions = {};
-    const context: { jwt?: { payload: DecodedIdToken } } = {
-      jwt: { payload: { sub: 'user1', roles: ['admin'] } },
-    } as { jwt?: { payload: DecodedIdToken } };
-    const result = executorFactory['addAuthExtensions'](extensions, {
-      context,
-    });
-
-    expect(result).toEqual({
-      ...extensions,
-      trusted: true,
-      sub: 'user1',
-      roles: ['admin'],
-    });
-  });
-
-  it('should not add auth extensions if jwt is not present', () => {
-    const extensions = {};
-    const context = {};
-    const result = executorFactory['addAuthExtensions'](extensions, context);
-
-    expect(result).toEqual(extensions);
   });
 
   afterAll(() => {

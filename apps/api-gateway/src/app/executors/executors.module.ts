@@ -2,7 +2,9 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import HmacConfigFactory from '@org/config/hmac.config.factory';
-import { LogModule } from '@org/log';
+import { BaseLogger, LogModule } from '@org/log';
+import { AuthVisitor } from '../extensions/auth.visitor';
+import { SignatureVisitor } from '../extensions/signature.visitor';
 import { ExecutorFactory } from './executor-factory';
 
 const ConfigModules: DynamicModule[] = [
@@ -11,7 +13,16 @@ const ConfigModules: DynamicModule[] = [
 
 @Module({
   imports: [LogModule, ...ConfigModules],
-  providers: [ExecutorFactory],
+  providers: [
+    AuthVisitor,
+    SignatureVisitor,
+    {
+      provide: ExecutorFactory,    
+      inject: [AuthVisitor, SignatureVisitor, BaseLogger],
+      useFactory: (authVisitor, signatureVisitor, logger) =>
+        new ExecutorFactory([authVisitor, signatureVisitor], logger),
+    },
+  ],
   exports: [ExecutorFactory, ...ConfigModules],
 })
 export class ExecutorsModule {}

@@ -20,7 +20,6 @@ import { LocalEndpointLoader } from './loaders/local-endpoint-loader';
   providers: [
     EndpointsResolver,
     EndpointsService,
-    ExecutorFactory,
     {
       provide: EndpointLoader,
       useFactory: (

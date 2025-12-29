@@ -37,7 +37,12 @@ describe('EndpointLoader', () => {
           provide: BaseLogger,
           useClass: TestLogger,
         },
-        ExecutorFactory,
+        {
+          provide: ExecutorFactory,
+          useValue: {
+            getExecutor: jest.fn(),
+          },
+        },
         {
           provide: EndpointLoader,
           useClass: TestEndpointLoader,

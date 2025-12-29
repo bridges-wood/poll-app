@@ -1,28 +1,18 @@
-import {
-  AsyncExecutor,
-  ExecutionRequest,
-  ExecutionResult,
-} from '@graphql-tools/utils';
-import { Inject, Injectable } from '@nestjs/common';
-import HmacConfigFactory, { HmacConfig } from '@org/config/hmac.config.factory';
-import {
-  computeHmacSignature,
-  HMAC_SIGNATURE_EXTENSION,
-} from '@org/graphql/plugins';
+import { AsyncExecutor, ExecutionResult } from '@graphql-tools/utils';
+import { Injectable } from '@nestjs/common';
 import { BaseLogger } from '@org/log';
-import { TrustedRequestExtensions } from '@org/typings';
 import { fetch } from '@whatwg-node/fetch';
 import { OperationTypeNode, print } from 'graphql';
 import { createClient, RequestParams } from 'graphql-sse';
 import { GraphQLParams } from 'graphql-yoga';
+import { ExtensionVisitor } from '../extensions/extension.visitor';
 
 @Injectable()
 export class ExecutorFactory {
   private executorCache = new Map<string, AsyncExecutor>();
 
   constructor(
-    @Inject(HmacConfigFactory.KEY)
-    private readonly hmacConfig: HmacConfig,
+    private readonly extensionVisitors: ExtensionVisitor[],
     private readonly logger: BaseLogger,
   ) {
     this.logger.setContext(ExecutorFactory.name);
@@ -55,16 +45,18 @@ export class ExecutorFactory {
     }) => {
       const query = print(document);
 
-      const extensionsWithAuth = this.addAuthExtensions(baseExtensions, {
-        context,
-      });
-
-      const extensions = this.addSignatureExtensions(extensionsWithAuth, {
-        document,
-        variables,
-      });
-
-      // TODO cleanup extension enrichment
+      // Apply extension visitors to enrich extensions
+      const extensions = this.extensionVisitors.reduce(
+        (exts, visitor) =>
+          visitor.visit(exts, {
+            document,
+            variables,
+            operationName,
+            context,
+            operationType,
+          }),
+        baseExtensions,
+      );
 
       switch (operationType) {
         case OperationTypeNode.SUBSCRIPTION:
@@ -92,23 +84,6 @@ export class ExecutorFactory {
     this.addExecutorToCache(url, executor);
     return executor;
   }
-  addSignatureExtensions(
-    extensions: ExecutionRequest['extensions'],
-    {
-      document,
-      variables,
-    }: Pick<ExecutionRequest, 'document' | 'variables'> &
-      Partial<ExecutionRequest>,
-  ): ExecutionRequest['extensions'] {
-    const query = print(document);
-    return {
-      ...extensions,
-      [HMAC_SIGNATURE_EXTENSION]: computeHmacSignature(
-        { query, variables, extensions },
-        this.hmacConfig.secret,
-      ), // ! This has to be done here because the stitched schema is implemented with custom resolvers, not plugins
-    };
-  }
 
   private buildSseExecutor(
     url: string,
@@ -123,6 +98,7 @@ export class ExecutorFactory {
       },
     });
 
+    // TODO improve error reporting from SSE
     return client.iterate(
       {
         query,
@@ -160,25 +136,6 @@ export class ExecutorFactory {
     });
 
     return fetchResult.json();
-  }
-
-  private addAuthExtensions(
-    extensions: ExecutionRequest['extensions'],
-    { context }: Pick<ExecutionRequest, 'context'> & Partial<ExecutionRequest>,
-  ): ExecutionRequest['extensions'] {
-    const jwt = context?.jwt;
-
-    if (jwt) {
-      // Mark the request as trusted and add the user data
-      return {
-        ...extensions,
-        trusted: true,
-        sub: jwt.payload.sub,
-        roles: jwt.payload.roles,
-      } as TrustedRequestExtensions;
-    } else {
-      return extensions;
-    }
   }
 
   private addExecutorToCache(url: string, executor: AsyncExecutor): void {
