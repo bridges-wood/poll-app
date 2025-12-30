@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { BaseLogger } from '@org/log';
-import * as jose from 'jose';
+import { generateKeyPair, exportSPKI, exportPKCS8 } from 'jose';
 import { CryptoService } from './crypto.service';
 
 @Injectable()
 export class DynamicCryptoService implements CryptoService {
   public readonly alg: string;
-  private _publicKey!: jose.KeyLike;
-  private _privateKey!: jose.KeyLike;
+  private _publicKey!: CryptoKey;
+  private _privateKey!: CryptoKey;
 
   constructor(private readonly logger: BaseLogger) {
     this.logger.setContext(DynamicCryptoService.name);
@@ -15,7 +15,7 @@ export class DynamicCryptoService implements CryptoService {
   }
 
   private async generateKeyPair() {
-    const keyPair = await jose.generateKeyPair(this.alg, {
+    const keyPair = await generateKeyPair(this.alg, {
       extractable: true,
     });
     this.logger.debug(`Successfully generated key pair with alg:${this.alg}`);
@@ -40,11 +40,11 @@ export class DynamicCryptoService implements CryptoService {
 
   public async exportPublicKey() {
     await this.generateKeysIfUndefined();
-    return jose.exportSPKI(this._publicKey);
+    return exportSPKI(this._publicKey);
   }
 
   public async exportPrivateKey() {
     await this.generateKeysIfUndefined();
-    return jose.exportPKCS8(this._privateKey);
+    return exportPKCS8(this._privateKey);
   }
 }

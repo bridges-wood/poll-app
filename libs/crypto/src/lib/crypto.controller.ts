@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import * as jose from 'jose';
+import { exportJWK } from 'jose';
 import { CryptoService } from './crypto.service';
 
 @Controller()
@@ -9,7 +9,7 @@ export class CryptoController {
   @Get('.well-known/jwks.json')
   public async getJwks() {
     return {
-      keys: [await jose.exportJWK(this.cryptoService.publicKey)],
+      keys: [await exportJWK(this.cryptoService.publicKey)],
     };
   }
 }

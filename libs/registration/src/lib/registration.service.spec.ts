@@ -10,6 +10,10 @@ import StandaloneConfigFactory from './config/factories/standalone.config.factor
 import { CrossAppRegistrationService } from './cross-app/cross-app.registration.service';
 import { RegistrationService } from './registration.service';
 
+jest.mock('jose', () => ({
+  exportJWK: jest.fn(),
+}));
+
 describe('RegistrationService', () => {
   let service: RegistrationService;
   let crossAppRegistrationService: CrossAppRegistrationService;

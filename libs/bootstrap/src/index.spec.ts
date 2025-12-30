@@ -27,6 +27,8 @@ jest.mock('./helpers/get-https-options', () => ({
   getHttpsOptions: jest.fn().mockReturnValue({}),
 }));
 
+jest.mock('jose', () => ({}));
+
 class MockModule {
   constructor() {
     // Mock implementation if needed

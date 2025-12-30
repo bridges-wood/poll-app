@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RegistrationResolver } from './registration.resolver';
 import { RegistrationService } from './registration.service';
 
+jest.mock('jose', () => ({
+  exportJWK: jest.fn(),
+}));
+
 describe('RegistrationResolver', () => {
   let resolver: RegistrationResolver;
   let service: RegistrationService;

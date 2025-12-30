@@ -47,6 +47,9 @@ describe('LocalCryptoService', () => {
       service['_publicKey'] = undefined;
       service['_privateKey'] = {
         type: 'private',
+        algorithm: { name: 'PS256' },
+        extractable: true,
+        usages: ['sign'],
       };
 
       expect(() => service['publicKey']).toThrow();
@@ -55,6 +58,9 @@ describe('LocalCryptoService', () => {
     it('should return the public key', async () => {
       service['_publicKey'] = {
         type: 'public',
+        algorithm: { name: 'PS256' },
+        extractable: true,
+        usages: ['verify'],
       };
 
       expect(service['publicKey']).toBe(service['_publicKey']);
@@ -65,6 +71,9 @@ describe('LocalCryptoService', () => {
     it('should generate and export keys if public key is not defined', async () => {
       service['_privateKey'] = {
         type: 'private',
+        algorithm: { name: 'PS256' },
+        extractable: true,
+        usages: ['sign'],
       };
       jest.spyOn(service as never, 'loadKeyPairFromFile').mockImplementation();
       jest.spyOn(service as never, 'generateKeyPair').mockImplementation();
@@ -80,6 +89,9 @@ describe('LocalCryptoService', () => {
     it('should generate and export keys if private key is not defined', async () => {
       service['_publicKey'] = {
         type: 'public',
+        algorithm: { name: 'PS256' },
+        extractable: true,
+        usages: ['verify'],
       };
       jest.spyOn(service as never, 'loadKeyPairFromFile').mockImplementation();
       jest.spyOn(service as never, 'generateKeyPair').mockImplementation();
@@ -95,9 +107,15 @@ describe('LocalCryptoService', () => {
     it('should not generate keys if both are defined', async () => {
       service['_publicKey'] = {
         type: 'public',
+        algorithm: { name: 'PS256' },
+        extractable: true,
+        usages: ['verify'],
       };
       service['_privateKey'] = {
         type: 'private',
+        algorithm: { name: 'PS256' },
+        extractable: true,
+        usages: ['sign'],
       };
       jest.spyOn(service as never, 'loadKeyPairFromFile').mockImplementation();
       jest.spyOn(service as never, 'generateKeyPair').mockImplementation();
@@ -113,12 +131,15 @@ describe('LocalCryptoService', () => {
     it('should not generate if keys are set after being loaded', async () => {
       service['_publicKey'] = undefined;
       service['_privateKey'] = undefined;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      jest.spyOn(service as any, 'loadKeyPairFromFile').mockImplementation(() => {
-        service['_publicKey'] = 'publicKey' as unknown as jose.KeyLike;
-        service['_privateKey'] = 'privateKey' as unknown as jose.KeyLike;
-        return Promise.resolve();
-      })
+       
+      jest
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .spyOn(service as any, 'loadKeyPairFromFile')
+        .mockImplementation(() => {
+          service['_publicKey'] = 'publicKey' as unknown as CryptoKey;
+          service['_privateKey'] = 'privateKey' as unknown as CryptoKey;
+          return Promise.resolve();
+        });
       jest.spyOn(service as never, 'generateKeyPair').mockImplementation();
       jest.spyOn(service as never, 'exportKeyPairToFile').mockImplementation();
 
@@ -132,8 +153,8 @@ describe('LocalCryptoService', () => {
 
   describe('exportKeyPairToFile', () => {
     it('should create directory and write keys to files', async () => {
-      service['_publicKey'] = 'publicKey' as unknown as jose.KeyLike;
-      service['_privateKey'] = 'privateKey' as unknown as jose.KeyLike;
+      service['_publicKey'] = 'publicKey' as unknown as CryptoKey;
+      service['_privateKey'] = 'privateKey' as unknown as CryptoKey;
 
       (existsSync as jest.Mock).mockReturnValue(false);
       (jose.exportSPKI as jest.Mock).mockResolvedValue('publicKey');
@@ -155,8 +176,8 @@ describe('LocalCryptoService', () => {
     });
 
     it('should not create directory if it already exists', async () => {
-      service['_publicKey'] = 'publicKey' as unknown as jose.KeyLike;
-      service['_privateKey'] = 'privateKey' as unknown as jose.KeyLike;
+      service['_publicKey'] = 'publicKey' as unknown as CryptoKey;
+      service['_privateKey'] = 'privateKey' as unknown as CryptoKey;
 
       (existsSync as jest.Mock).mockReturnValue(true);
       (jose.exportSPKI as jest.Mock).mockResolvedValue('publicKey');
@@ -216,7 +237,7 @@ describe('LocalCryptoService', () => {
 
   describe('exportPublicKey', () => {
     it('should export the public key', async () => {
-      service['_publicKey'] = 'publicKey' as unknown as jose.KeyLike;
+      service['_publicKey'] = 'publicKey' as unknown as CryptoKey;
       jest.spyOn(service as never, 'setupKeysIfUndefined').mockImplementation();
       (jose.exportSPKI as jest.Mock).mockResolvedValue('publicKey');
 
@@ -229,7 +250,7 @@ describe('LocalCryptoService', () => {
 
   describe('exportPrivateKey', () => {
     it('should export the private key', async () => {
-      service['_privateKey'] = 'privateKey' as unknown as jose.KeyLike;
+      service['_privateKey'] = 'privateKey' as unknown as CryptoKey;
       jest.spyOn(service as never, 'setupKeysIfUndefined').mockImplementation();
       (jose.exportPKCS8 as jest.Mock).mockResolvedValue('privateKey');
 

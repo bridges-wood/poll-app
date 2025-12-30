@@ -1,21 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BaseLogger } from '@org/log';
 import { TestLogger } from '@org/log/test';
-import { generateKeyPair } from 'jose';
+import { generateKeyPair, exportSPKI, exportPKCS8 } from 'jose';
 import { DynamicCryptoService } from './dynamic.crypto.service';
 
-jest.mock('jose', () => {
-  const jose = jest.requireActual('jose');
-  return {
-    ...jose,
-    generateKeyPair: jest.fn().mockImplementation(jose.generateKeyPair),
-  };
-});
+jest.mock('jose', () => ({
+  generateKeyPair: jest.fn(),
+  exportSPKI: jest.fn(),
+  exportPKCS8: jest.fn(),
+}));
 
 describe('DynamicCryptoService', () => {
   let service: DynamicCryptoService;
 
   beforeEach(async () => {
+    (generateKeyPair as jest.Mock).mockResolvedValue({
+      publicKey: 'mockPublicKey',
+      privateKey: 'mockPrivateKey',
+    });
+    (exportSPKI as jest.Mock).mockResolvedValue('-----BEGIN PUBLIC KEY-----\nMOCK\n-----END PUBLIC KEY-----');
+    (exportPKCS8 as jest.Mock).mockResolvedValue('-----BEGIN PRIVATE KEY-----\nMOCK\n-----END PRIVATE KEY-----');
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DynamicCryptoService,
