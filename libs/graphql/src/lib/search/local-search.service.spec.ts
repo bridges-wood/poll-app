@@ -48,6 +48,14 @@ describe('LocalSearchService', () => {
     expect(result).toEqual([{ name: 'Alice', age: 25, active: true }]);
   });
 
+  it('should filter items by string field with like arg', () => {
+    const filter: ISearchFilter<TestItem> = {
+      name: { like: new RegExp('^A') },
+    };
+    const result = service.search(items, filter);
+    expect(result).toEqual([{ name: 'Alice', age: 25, active: true }]);
+  });
+
   it('should filter items by number field with less than arg', () => {
     const filter: ISearchFilter<TestItem> = {
       age: { lt: 30 },

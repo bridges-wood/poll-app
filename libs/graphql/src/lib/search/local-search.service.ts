@@ -1,5 +1,4 @@
-import { StringFieldFilterArgs } from './fields';
-import { NumberFieldFilterArgs } from './fields/number-field';
+import { NumberFieldFilterArgs, StringFieldFilterArgs } from './fields';
 import { ISearchFilter } from './searchable';
 
 export class LocalSearchService<T> {
@@ -71,6 +70,9 @@ export class LocalSearchService<T> {
   ): boolean {
     if (filterArgs.eq && value !== filterArgs.eq) return false;
     if (filterArgs.in && !filterArgs.in.includes(value)) return false;
+    // TODO optimize RegExp usage
+    if (filterArgs.like && !new RegExp(filterArgs.like).test(value))
+      return false;
     return true;
   }
 

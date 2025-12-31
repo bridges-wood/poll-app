@@ -10,34 +10,42 @@ import {
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
-import { NumberFieldFilterArgs } from './fields/number-field';
-import { StringFieldFilterArgs } from './fields/string-field';
+import { NumberFieldFilterArgs, StringFieldFilterArgs } from './fields';
 
-type StringKey<T> = Exclude<
-  {
-    [K in keyof T]: T[K] extends string | undefined ? K : never;
-  }[keyof T],
-  '__typename'
->;
-
-type NumberKey<T> = {
-  [K in keyof T]: T[K] extends number | undefined ? K : never;
+/**
+ * Utility type to extract keys of a specific type from a given type T.
+ * @arguments T - The type to extract keys from.
+ * @arguments V - The value type to match keys against.
+ *
+ * @example
+ * type Example = {
+ *   name: string;
+ *   age: number;
+ *   isActive: boolean;
+ *   address?: string;
+ * };
+ *
+ * type StringKeys = TypeKey<Example, string>; // "name" | "address"
+ * type NumberKeys = TypeKey<Example, number>; // "age"
+ * type BooleanKeys = TypeKey<Example, boolean>; // "isActive"
+ */
+type TypeKey<T, V> = {
+  [K in keyof T]: T[K] extends V | undefined ? K : never;
 }[keyof T];
 
-type BooleanKey<T> = {
-  [K in keyof T]: T[K] extends boolean | undefined ? K : never;
-}[keyof T];
-
-type SupportedKey<T> = StringKey<T> | NumberKey<T> | BooleanKey<T>;
+type StringKeys<T> = Exclude<TypeKey<T, string>, '__typename'>;
+type NumberKeys<T> = TypeKey<T, number>;
+type BooleanKeys<T> = TypeKey<T, boolean>;
+type SupportedKeys<T> = StringKeys<T> | NumberKeys<T> | BooleanKeys<T>;
 
 export type ISearchFilter<T> = {
-  [key in StringKey<T>]?: StringFieldFilterArgs;
+  [key in StringKeys<T>]?: StringFieldFilterArgs;
 } & {
-  [key in NumberKey<T>]?: NumberFieldFilterArgs;
+  [key in NumberKeys<T>]?: NumberFieldFilterArgs;
 } & {
-  [key in BooleanKey<T>]?: boolean;
+  [key in BooleanKeys<T>]?: boolean;
 } & {
-  has?: SupportedKey<T>[]; // Enum
+  has?: SupportedKeys<T>[]; // Enum
 };
 
 export function Searchable<T>(classRef: Type<T>): Type<ISearchFilter<T>> {
