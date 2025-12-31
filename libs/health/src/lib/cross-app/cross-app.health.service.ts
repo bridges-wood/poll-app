@@ -24,12 +24,13 @@ export class CrossAppHealthService {
   }
 
   async checkIn(): Promise<boolean> {
-    this.logger.debug(`Checking in with ${this.restClient.url}/health`);
+    this.logger.debug(`Checking in with ${this.restClient.url}/health...`);
     const { status } = await this.restClient.query('/health');
 
     if (status !== 200)
       throw new Error(`Cross-app health check failed with status ${status}`);
 
+    this.logger.debug('✅ Cross-app REST health check passed, checking registration...');
     const response = await this.graphqlClient.query<
       SelfRegisteredQuery,
       SelfRegisteredQueryVariables
@@ -37,6 +38,7 @@ export class CrossAppHealthService {
 
     if (isEmpty(response.endpoints)) throw new Error('No registration found');
 
+    this.logger.debug('✅ Cross-app GraphQL registration check passed');
     return true;
   }
 }
