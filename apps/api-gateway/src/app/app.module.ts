@@ -22,8 +22,6 @@ import { EndpointsModule } from './endpoints/endpoints.module';
 import { SchemaStitcher } from './schema/schema-stitcher';
 import { SchemaModule } from './schema/schema.module';
 
-const DOWNSTREAM_SERVICE_ERROR_CODE = 'DOWNSTREAM_SERVICE_ERROR';
-
 @Module({
   imports: [
     ConfigModule.forRoot({

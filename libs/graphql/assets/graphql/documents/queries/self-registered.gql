@@ -1,0 +1,5 @@
+query SelfRegistered($name: String!) {
+  endpoints(filter: { name: { eq: $name } }) {
+    lastReload
+  }
+}
