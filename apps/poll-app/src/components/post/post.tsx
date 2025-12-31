@@ -7,11 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@org/ui-kit/ui/dropdown-menu';
-import { HoverCard, HoverCardTrigger } from '@org/ui-kit/ui/hover-card';
 import RelativeTime from '@org/ui-kit/ui/relative-time';
 import useUser from '@poll-app/lib/hooks/queries/use-user';
 import { useAuth } from '@poll-app/lib/hooks/use-auth';
-import { HoverCardContent } from '@radix-ui/react-hover-card';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
@@ -19,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { ComponentPropsWithoutRef, FC } from 'react';
 import { withErrorBoundary } from 'react-error-boundary';
 import { twMerge } from 'tailwind-merge';
-import ProfileHoverCard from '../profile/profile-hover-card';
+import { withProfileHoverCard } from '../profile/profile-hover-card';
 import ProfileIcon from '../profile/profile-icon/profile-icon';
 import MultipleChoicePostBody, {
   FeedMultipleChoicePost,
@@ -58,9 +56,12 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
         </h2>
         <span className="col-span-5 row-start-2 text-sm">
           Asked by{' '}
-          <Link href={`/users/${btoa(post.author.id)}`} className="font-bold">
-            {isAuthor ? 'you' : `@${post.author.displayName}`}
-          </Link>
+          {withProfileHoverCard(
+            <Link href={`/users/${btoa(post.author.id)}`} className="font-bold">
+              {isAuthor ? 'you' : `@${post.author.displayName}`}
+            </Link>,
+            post.author,
+          )}
           {!hasResponded && (
             <>
               <span> &#183; </span>
@@ -80,6 +81,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
+                className="cursor-pointer"
                 onSelect={(e) => {
                   e.stopPropagation();
                   router.push(`/posts/${btoa(post.id)}`);
@@ -89,6 +91,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
               </DropdownMenuItem>
               {isAuthor && (
                 <DropdownMenuItem
+                  className="cursor-pointer"
                   onSelect={(e) => {
                     e.stopPropagation();
                     router.push(`/posts/${btoa(post.id)}/edit`);
@@ -101,19 +104,15 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
           </DropdownMenu>
         </span>
         <div id="author" className="col-start-7 self-center justify-self-end">
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <Link href={`/users/${btoa(post.author.id)}`}>
-                <Button variant="outline" size="icon">
-                  <ProfileIcon data={post.author} />
-                  <span className="sr-only">Profile menu</span>
-                </Button>
-              </Link>
-            </HoverCardTrigger>
-            <HoverCardContent className="z-20 mt-2 [&[data-side=bottom]]:animate-slide-down [&[data-side=top]]:animate-slide-up">
-              <ProfileHoverCard user={post.author} />
-            </HoverCardContent>
-          </HoverCard>
+          {withProfileHoverCard(
+            <Link href={`/users/${btoa(post.author.id)}`}>
+              <Button variant="outline" size="icon">
+                <ProfileIcon data={post.author} />
+                <span className="sr-only">Profile menu</span>
+              </Button>
+            </Link>,
+            post.author,
+          )}
         </div>
       </div>
       <div id="body" className="mb-3 w-full">
