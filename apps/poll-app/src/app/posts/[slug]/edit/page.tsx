@@ -3,11 +3,10 @@ import {
   FetchPostQuery,
   FetchPostQueryVariables,
 } from '@org/graphql';
-import { default as PostComponent } from '@poll-app/components/post/post';
 import getClient from '@poll-app/lib/api/registered-client';
-import { PostsParams } from './params';
+import { PostsParams } from '../params';
 
-export default async function Post(props: { params: PostsParams }) {
+export default async function EditPostPage(props: { params: PostsParams }) {
   const slug = (await props.params).slug;
   const { data } = await getClient().query<
     FetchPostQuery,
@@ -18,5 +17,5 @@ export default async function Post(props: { params: PostsParams }) {
 
   if (!data) throw new Error('Post not found');
 
-  return data && <PostComponent post={data?.post} />;
+  return data && <div>Edit Post: {data?.post?.content.question}</div>;
 }

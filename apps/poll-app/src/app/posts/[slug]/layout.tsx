@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 
 const PostLayout: FC<PropsWithChildren> = ({ children }) => {
-  return <div>PostLayout {children}</div>;
+  return <div>{children}</div>;
 };
 
 export default PostLayout;
