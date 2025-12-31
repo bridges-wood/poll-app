@@ -40,6 +40,10 @@ const AuthButton = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
+          <Link href={`/users/${btoa(result.data.me.id)}`}>My Profile</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
           <Link href="/profile">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem disabled>
