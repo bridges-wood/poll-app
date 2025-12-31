@@ -23,7 +23,7 @@ export type AccountUpdateFormProps = {
 };
 
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   givenName: z.string().optional(),
   profilePicture: z.string().optional(),
 });
