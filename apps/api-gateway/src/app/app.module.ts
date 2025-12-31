@@ -13,7 +13,7 @@ import EnvironmentConfigFactory from '@org/config/environment.config.factory';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { useSchema } from 'graphql-yoga';
 import { firstValueFrom } from 'rxjs';
-import DefaultQueriesFactory, {
+import DefaultQueriesConfigFactory, {
   DefaultQueriesConfig,
 } from './config/factories/default-queries.config.factory';
 import { CryptoModule } from './crypto/crypto.module';
@@ -33,12 +33,12 @@ import { SchemaModule } from './schema/schema.module';
     ScheduleModule.forRoot(),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       imports: [
-        ConfigModule.forFeature(DefaultQueriesFactory),
+        ConfigModule.forFeature(DefaultQueriesConfigFactory),
         SchemaModule,
         CryptoModule,
       ],
       inject: [
-        DefaultQueriesFactory.KEY,
+        DefaultQueriesConfigFactory.KEY,
         SchemaStitcher,
         LocalSigningKeyProvider,
       ],
@@ -47,55 +47,53 @@ import { SchemaModule } from './schema/schema.module';
         defaultQueriesConfig: DefaultQueriesConfig,
         schemaStitcher: SchemaStitcher,
         signingKeyProvider: SigningKeyProvider,
-      ) => {
-        return {
-          healthCheckEndpoint: '/health',
-          introspection: true,
-          graphiql: {
-            defaultTabs: defaultQueriesConfig.queries.map((query) => ({
-              query,
-            })),
-            shouldPersistHeaders: true,
-          },
-          autoSchemaFile: true,
-          transformAutoSchemaFile: true,
-          buildSchemaOptions: {
-            directives: [
-              new GraphQLDirective({
-                name: 'search',
-                locations: [DirectiveLocation.FIELD_DEFINITION],
-              }),
-            ],
-          },
-          transformSchema: async (localSchema) => {
-            return await schemaStitcher.stitchWithRemotes(localSchema);
-          },
-          plugins: [
-            useSchema(() => firstValueFrom(schemaStitcher.stitchedSchema$)),
-            useJWT({
-              signingKeyProviders: [signingKeyProvider.build()],
-              tokenLookupLocations: [
-                extractFromHeader({ name: 'authorization', prefix: 'Bearer' }),
-              ],
-              tokenVerification: {
-                issuer: 'poll-app:auth',
-                algorithms: ['PS256'],
-                audience: 'poll-app:api',
-              },
-              extendContext: true,
-              reject: {
-                missingToken: false,
-                invalidToken: true,
-              },
-            }),
-            useExtendedValidation({
-              rules: [OneOfInputObjectsRule],
+      ) => ({
+        healthCheckEndpoint: '/health',
+        introspection: true,
+        graphiql: {
+          defaultTabs: defaultQueriesConfig.queries.map((query) => ({
+            query,
+          })),
+          shouldPersistHeaders: true,
+        },
+        autoSchemaFile: true,
+        transformAutoSchemaFile: true,
+        buildSchemaOptions: {
+          directives: [
+            new GraphQLDirective({
+              name: 'search',
+              locations: [DirectiveLocation.FIELD_DEFINITION],
             }),
           ],
-          batching: true,
-          path: 'graphql',
-        };
-      },
+        },
+        transformSchema: async (localSchema) => {
+          return await schemaStitcher.stitchWithRemotes(localSchema);
+        },
+        plugins: [
+          useSchema(() => firstValueFrom(schemaStitcher.stitchedSchema$)),
+          useJWT({
+            signingKeyProviders: [signingKeyProvider.build()],
+            tokenLookupLocations: [
+              extractFromHeader({ name: 'authorization', prefix: 'Bearer' }),
+            ],
+            tokenVerification: {
+              issuer: 'poll-app:auth',
+              algorithms: ['PS256'],
+              audience: 'poll-app:api',
+            },
+            extendContext: true,
+            reject: {
+              missingToken: false,
+              invalidToken: true,
+            },
+          }),
+          useExtendedValidation({
+            rules: [OneOfInputObjectsRule],
+          }),
+        ],
+        batching: true,
+        path: 'graphql',
+      }),
     }),
   ],
 })

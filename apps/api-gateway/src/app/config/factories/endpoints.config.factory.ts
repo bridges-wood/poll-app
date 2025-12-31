@@ -4,6 +4,7 @@ import * as yaml from 'js-yaml';
 import { join } from 'path';
 import { z } from 'zod';
 import { GatewayConfigTokens } from '../tokens';
+import { DefaultLogger } from '@org/log';
 
 export const EndpointsConfigValidator = z
   .object({
@@ -22,6 +23,9 @@ export const EndpointsConfigValidator = z
   .optional();
 
 const EndpointsConfigFactory = registerAs(GatewayConfigTokens.ENDPOINTS, () => {
+  const logger = new DefaultLogger();
+  logger.setContext('EndpointsConfigFactory');
+
   const configPath = join(
     __dirname,
     process.env.CONFIG_PATH || 'assets/config.yml',
@@ -30,6 +34,10 @@ const EndpointsConfigFactory = registerAs(GatewayConfigTokens.ENDPOINTS, () => {
 
   const configFile = readFileSync(configPath, 'utf8');
   const loadedConfig = EndpointsConfigValidator.parse(yaml.load(configFile));
+
+  logger.debug(
+    `Loaded ${loadedConfig?.endpoints?.length || 0} endpoints from ${configPath}`,
+  );
   return {
     endpoints: loadedConfig?.endpoints || [],
   };
