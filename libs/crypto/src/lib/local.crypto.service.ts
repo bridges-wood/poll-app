@@ -102,8 +102,6 @@ export class LocalCryptoService implements CryptoService {
     await this.setupKeysIfUndefined();
     assert(this._privateKey, 'Private key was not set');
 
-    console.log(this._privateKey);
-
     return exportPKCS8(this._privateKey);
   }
 }
