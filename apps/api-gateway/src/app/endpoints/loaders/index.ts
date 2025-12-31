@@ -10,6 +10,7 @@ import { BehaviorSubject, debounceTime, Subscription } from 'rxjs';
 import { ExecutorFactory } from '../../executors/executor-factory';
 import { Endpoint } from '../models/endpoint.model';
 import { LoadedEndpoint } from '../models/loaded-endpoint.model';
+import { NotFoundError } from '@org/errors';
 
 @Injectable()
 export abstract class EndpointLoader implements OnModuleDestroy {
@@ -51,7 +52,7 @@ export abstract class EndpointLoader implements OnModuleDestroy {
     const index = this.endpoints$.value.findIndex(
       (e) => e.name === endpoint.name,
     );
-    if (index === -1) return;
+    if (index === -1) throw new NotFoundError(`Endpoint not found: '${endpoint.name}'`);
 
     const endpoints = [...this.endpoints$.value];
     const removed = endpoints.splice(index, 1)[0];

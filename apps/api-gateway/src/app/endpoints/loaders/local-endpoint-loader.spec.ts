@@ -68,10 +68,10 @@ describe('LocalEndpointLoader', () => {
       );
     });
 
-    it('should return undefined if endpoint is not removed', async () => {
-      const result = await service.removeEndpoint({ name: 'test2' });
-
-      expect(result).toBeUndefined();
+    it('should throw is not removed', async () => {
+      expect(() => service.removeEndpoint({ name: 'test2' })).rejects.toThrow(
+        new Error("Endpoint not found: 'test2'"),
+      );
     });
   });
 

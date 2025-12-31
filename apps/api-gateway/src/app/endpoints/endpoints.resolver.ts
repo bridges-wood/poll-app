@@ -43,7 +43,7 @@ export class EndpointsResolver {
     })
     name: string,
   ): Promise<RemoveEndpointResult> {
-    this.logger.debug(`Removing endpoint ${name}`);
+    this.logger.debug(`Removing endpoint '${name}'`);
     return this.endpointsService.removeEndpoint(name);
   }
 

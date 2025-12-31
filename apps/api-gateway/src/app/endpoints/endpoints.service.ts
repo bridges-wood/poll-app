@@ -48,17 +48,10 @@ export class EndpointsService
   }
 
   async removeEndpoint(name: Endpoint['name']): Promise<RemoveEndpointResult> {
-    try {
       await this.endpointLoader.removeEndpoint({ name });
       return {
         success: true,
       };
-    } catch (error) {
-      this.logger.error(error);
-      return {
-        success: false,
-      };
-    }
   }
 
   async reloadAllEndpoints(): Promise<ReloadAllEndpointsResult> {

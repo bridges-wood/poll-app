@@ -111,12 +111,11 @@ describe('EndpointsService', () => {
 
     it('should handle errors when removing an endpoint', async () => {
       const name = 'test';
-      const result: RemoveEndpointResult = { success: false };
       jest
         .spyOn(endpointLoader, 'removeEndpoint')
         .mockRejectedValue(new Error('error'));
 
-      expect(await service.removeEndpoint(name)).toEqual(result);
+      expect(() => service.removeEndpoint(name)).rejects.toThrow(new Error('error'));
     });
   });
 
