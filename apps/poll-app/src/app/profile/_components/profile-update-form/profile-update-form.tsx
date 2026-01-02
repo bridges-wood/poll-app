@@ -58,9 +58,10 @@ const ProfileUpdateForm: FC<ProfileUpdateFormProps> = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      displayName: data?.me.displayName || '',
+      displayName: data?.me.displayName,
     },
     mode: 'onTouched',
+    disabled: skeleton,
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
