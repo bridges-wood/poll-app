@@ -42,7 +42,7 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
     <div
       {...props}
       className={twMerge(
-        'flex flex-col rounded-lg border-thick border-border-neutral-muted p-4',
+        'border-thick border-border-neutral-muted grid auto-rows-min grid-cols-[repeat(6,1fr)_40px_40px] gap-x-4 rounded-lg p-4',
         className,
       )}
       onClick={(e) => {
@@ -50,60 +50,44 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
         router.push(`/posts/${btoa(post.id)}`);
       }}
     >
-      <div id="header" className="mb-2 grid auto-rows-auto grid-cols-7">
-        <h2 id="title" className="col-span-5 row-start-1 self-center text-xl">
+      <div id="header" className="col-span-full grid grid-cols-subgrid">
+        <h2 id="title" className="col-span-6 self-center text-xl">
           {post.content.question}
         </h2>
-        <span className="col-span-5 row-start-2 text-sm">
-          Asked by{' '}
-          {withProfileHoverCard(
-            <Link href={`/users/${btoa(post.author.id)}`} className="font-bold">
-              {isAuthor ? 'you' : `@${post.author.displayName}`}
-            </Link>,
-            post.author,
-          )}
-          {!hasResponded && (
-            <>
-              <span> &#183; </span>
-              <span className="ml-auto text-sm text-foreground-muted">
-                Vote to see results
-              </span>
-            </>
-          )}
-        </span>
-        <span className="col-start-7 row-start-2 self-center justify-self-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <span className="sr-only">Post options</span>
-                &#x22EE;
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            asChild
+            className="col-start-7 self-center justify-self-end"
+          >
+            <Button variant="outline" size="icon">
+              <span className="sr-only">Post options</span>
+              &#x22EE;
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={(e) => {
+                e.stopPropagation();
+                router.push(`/posts/${btoa(post.id)}`);
+              }}
+            >
+              View Post
+            </DropdownMenuItem>
+            {isAuthor && (
               <DropdownMenuItem
                 className="cursor-pointer"
                 onSelect={(e) => {
                   e.stopPropagation();
-                  router.push(`/posts/${btoa(post.id)}`);
+                  router.push(`/posts/${btoa(post.id)}/edit`);
                 }}
               >
-                View Post
+                Edit Post
               </DropdownMenuItem>
-              {isAuthor && (
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onSelect={(e) => {
-                    e.stopPropagation();
-                    router.push(`/posts/${btoa(post.id)}/edit`);
-                  }}
-                >
-                  Edit Post
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </span>
-        <div id="author" className="col-start-7 self-center justify-self-end">
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <div id="author" className="col-start-8 self-center justify-self-end">
           {withProfileHoverCard(
             <Link href={`/users/${btoa(post.author.id)}`}>
               <Button variant="outline" size="icon">
@@ -115,11 +99,33 @@ const Post: FC<PostProps & ComponentPropsWithoutRef<'div'>> = ({
           )}
         </div>
       </div>
-      <div id="body" className="mb-3 w-full">
+      <div
+        id="byline"
+        className="col-span-full mb-2 grid grid-cols-subgrid grid-rows-subgrid"
+      >
+        <span className="col-span-full">
+          Asked by{' '}
+          {withProfileHoverCard(
+            <Link href={`/users/${btoa(post.author.id)}`} className="font-bold">
+              {isAuthor ? 'you' : `@${post.author.displayName}`}
+            </Link>,
+            post.author,
+          )}
+          {!hasResponded && (
+            <>
+              <span> &#183; </span>
+              <span className="text-foreground-muted ml-auto text-sm">
+                Vote to see results
+              </span>
+            </>
+          )}
+        </span>
+      </div>
+      <div id="body" className="col-span-full mb-3 w-full">
         <PostBody post={post} />
       </div>
-      <div id="footer" className="mt-auto flex w-full flex-row items-baseline">
-        <div className="ml-auto w-min whitespace-nowrap text-sm text-foreground-muted">
+      <div id="footer" className="col-span-full mt-auto grid grid-cols-subgrid">
+        <div className="text-foreground-muted col-span-2 col-start-7 w-min text-sm whitespace-nowrap">
           <RelativeTime date={new Date(post.createdAt)} timeZoneName="short" />
         </div>
       </div>
@@ -138,11 +144,11 @@ const PostBody: FC<{ post: FeedPostFragment }> = ({ post }) => {
 
 const SafePost = withErrorBoundary(Post, {
   fallback: (
-    <div className="mb-4 w-full rounded-lg border-thick border-border-severe-emphasis bg-background-severe-muted p-4 shadow-resting-md last:mb-0">
+    <div className="border-thick border-border-severe-emphasis bg-background-severe-muted shadow-resting-md mb-4 w-full rounded-lg p-4 last:mb-0">
       <div id="header" className="mb-2 grid auto-rows-auto grid-cols-7">
         <h2
           id="title"
-          className="text-fore col-span-5 row-start-1 self-center text-xl text-foreground-severe"
+          className="text-fore text-foreground-severe col-span-5 row-start-1 self-center text-xl"
         >
           <ExclamationTriangleIcon
             height={20}
@@ -161,7 +167,7 @@ const SafePost = withErrorBoundary(Post, {
         </div>
       </div>
       <div id="footer" className="mt-3 w-full">
-        <div className="text-foreground-severe ml-auto w-min whitespace-nowrap text-sm">
+        <div className="text-foreground-severe ml-auto w-min text-sm whitespace-nowrap">
           just now
         </div>
       </div>

@@ -23,12 +23,12 @@ const Profile: FC<ProfileProps> = ({ user }) => {
           </h2>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {user.posts.edges?.map((post) => (
           <Post
             key={post?.node.id}
             post={post?.node}
-            className="mb-4 h-full w-full last:mb-0"
+            className="mb-4 last:mb-0"
           />
         ))}
       </div>
