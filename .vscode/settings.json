@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "Booleanish",
+    "color",
     "cssmodule",
     "Firestore",
     "labelable",
@@ -9,7 +10,8 @@
     "subcollection",
     "Subschema",
     "subschemas",
-    "unsub"
+    "unsub",
+    "upsell"
   ],
   "jest.runMode": {
     "type": "on-save"

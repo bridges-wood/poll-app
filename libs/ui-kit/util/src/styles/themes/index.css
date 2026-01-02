@@ -1,0 +1,94 @@
+@import './light.css';
+@import './dark.css';
+
+@theme {
+  --color-*: initial;
+}
+
+@theme inline {
+  --color-foreground: var(--fgColor-default);
+  --color-foreground-muted: var(--fgColor-muted);
+  --color-foreground-emphasis: var(--fgColor-emphasis);
+  --color-foreground-inverse: var(--fgColor-inverse);
+  --color-foreground-white: var(--fgColor-white);
+  --color-foreground-black: var(--fgColor-black);
+  --color-foreground-disabled: var(--fgColor-disabled);
+  --color-foreground-link: var(--fgColor-link);
+  --color-foreground-neutral: var(--fgColor-neutral);
+  --color-foreground-accent: var(--fgColor-accent);
+  --color-foreground-success: var(--fgColor-success);
+  --color-foreground-open: var(--fgColor-open);
+  --color-foreground-attention: var(--fgColor-attention);
+  --color-foreground-severe: var(--fgColor-severe);
+  --color-foreground-danger: var(--fgColor-danger);
+  --color-foreground-closed: var(--fgColor-closed);
+  --color-foreground-done: var(--fgColor-done);
+  --color-foreground-upsell: var(--fgColor-upsell);
+
+  --color-background: var(--bgColor-default);
+  --color-background-muted: var(--bgColor-muted);
+  --color-background-inset: var(--bgColor-inset);
+  --color-background-emphasis: var(--bgColor-emphasis);
+  --color-background-inverse: var(--bgColor-inverse);
+  --color-background-white: var(--bgColor-white);
+  --color-background-black: var(--bgColor-black);
+  --color-background-disabled: var(--bgColor-disabled);
+  --color-background-transparent: var(--bgColor-transparent);
+  --color-background-neutral-muted: var(--bgColor-neutral-muted);
+  --color-background-neutral-emphasis: var(--bgColor-neutral-emphasis);
+  --color-background-accent-muted: var(--bgColor-accent-muted);
+  --color-background-accent-emphasis: var(--bgColor-accent-emphasis);
+  --color-background-success-muted: var(--bgColor-success-muted);
+  --color-background-success-emphasis: var(--bgColor-success-emphasis);
+  --color-background-open-muted: var(--bgColor-open-muted);
+  --color-background-open-emphasis: var(--bgColor-open-emphasis);
+  --color-background-attention-muted: var(--bgColor-attention-muted);
+  --color-background-attention-emphasis: var(--bgColor-attention-emphasis);
+  --color-background-severe-muted: var(--bgColor-severe-muted);
+  --color-background-severe-emphasis: var(--bgColor-severe-emphasis);
+  --color-background-danger-muted: var(--bgColor-danger-muted);
+  --color-background-danger-emphasis: var(--bgColor-danger-emphasis);
+  --color-background-closed-muted: var(--bgColor-closed-muted);
+  --color-background-closed-emphasis: var(--bgColor-closed-emphasis);
+  --color-background-done-muted: var(--bgColor-done-muted);
+  --color-background-done-emphasis: var(--bgColor-done-emphasis);
+  --color-background-upsell-muted: var(--bgColor-upsell-muted);
+  --color-background-upsell-emphasis: var(--bgColor-upsell-emphasis);
+  --color-background-sponsors-muted: var(--bgColor-sponsors-muted);
+  --color-background-sponsors-emphasis: var(--bgColor-sponsors-emphasis);
+
+  --color-border: var(--borderColor-default);
+  --color-border-muted: var(--borderColor-muted);
+  --color-border-emphasis: var(--borderColor-emphasis);
+  --color-border-disabled: var(--borderColor-disabled);
+  --color-border-transparent: var(--borderColor-transparent);
+  --color-border-translucent: var(--borderColor-translucent);
+  --color-border-neutral-muted: var(--borderColor-neutral-muted);
+  --color-border-neutral-emphasis: var(--borderColor-neutral-emphasis);
+  --color-border-accent-muted: var(--borderColor-accent-muted);
+  --color-border-accent-emphasis: var(--borderColor-accent-emphasis);
+  --color-border-success-muted: var(--borderColor-success-muted);
+  --color-border-success-emphasis: var(--borderColor-success-emphasis);
+  --color-border-open-muted: var(--borderColor-open-muted);
+  --color-border-open-emphasis: var(--borderColor-open-emphasis);
+  --color-border-attention-muted: var(--borderColor-attention-muted);
+  --color-border-attention-emphasis: var(--borderColor-attention-emphasis);
+  --color-border-severe-muted: var(--borderColor-severe-muted);
+  --color-border-severe-emphasis: var(--borderColor-severe-emphasis);
+  --color-border-danger-muted: var(--borderColor-danger-muted);
+  --color-border-danger-emphasis: var(--borderColor-danger-emphasis);
+  --color-border-closed-muted: var(--borderColor-closed-muted);
+  --color-border-closed-emphasis: var(--borderColor-closed-emphasis);
+  --color-border-done-muted: var(--borderColor-done-muted);
+  --color-border-done-emphasis: var(--borderColor-done-emphasis);
+  --color-border-upsell-muted: var(--borderColor-upsell-muted);
+  --color-border-upsell-emphasis: var(--borderColor-upsell-emphasis);
+  --color-border-sponsors-muted: var(--borderColor-sponsors-muted);
+  --color-border-sponsors-emphasis: var(--borderColor-sponsors-emphasis);
+
+  --color-overlay-background: var(--overlay-bgColor);
+  --color-overlay-border: var(--overlay-borderColor);
+  --color-overlay-backdrop: var(--overlay-backdrop-bgColor);
+
+  --color-ring: var(--focus-outlineColor);
+}

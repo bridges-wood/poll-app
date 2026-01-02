@@ -1,4 +1,4 @@
-@layer base {
+@layer theme {
   :root {
     /* Foreground */
     --fgColor-default: #1f2328;
@@ -91,17 +91,25 @@
     --border-width-thin: 0.0625rem;
     --border-width-thick: 0.125rem;
     --border-width-thicker: 0.25rem;
-    
+
     /* Shadow */
     --shadow-inset: inset 0px 1px 0px 0px #1f23280a;
-  --shadow-resting-xsmall: 0px 1px 0px 0px #1f23281a;
-  --shadow-resting-small: 0px 1px 0px 0px #1f23280a;
-  --shadow-resting-medium: 0px 3px 6px 0px #25292e1f;
-  --shadow-floating-small: 0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f;
-  --shadow-floating-medium: 0px 0px 0px 1px #d1d9e0, 0px 8px 16px -4px #25292e14, 0px 4px 32px -4px #25292e14, 0px 24px 48px -12px #25292e14, 0px 48px 96px -24px #25292e14;
-  --shadow-floating-large: 0px 0px 0px 1px #d1d9e0, 0px 40px 80px 0px #25292e3d;
-  --shadow-floating-xlarge: 0px 0px 0px 1px #d1d9e0, 0px 56px 112px 0px #25292e52;
-  --shadow-floating-legacy: 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f;
+    --shadow-resting-xsmall: 0px 1px 0px 0px #1f23281a;
+    --shadow-resting-small: 0px 1px 0px 0px #1f23280a;
+    --shadow-resting-medium: 0px 3px 6px 0px #25292e1f;
+    --shadow-floating-small:
+      0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a,
+      0px 6px 18px 0px #25292e1f;
+    --shadow-floating-medium:
+      0px 0px 0px 1px #d1d9e0, 0px 8px 16px -4px #25292e14,
+      0px 4px 32px -4px #25292e14, 0px 24px 48px -12px #25292e14,
+      0px 48px 96px -24px #25292e14;
+    --shadow-floating-large:
+      0px 0px 0px 1px #d1d9e0, 0px 40px 80px 0px #25292e3d;
+    --shadow-floating-xlarge:
+      0px 0px 0px 1px #d1d9e0, 0px 56px 112px 0px #25292e52;
+    --shadow-floating-legacy:
+      0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f;
 
     /* Focus */
     --focus-outlineColor: #0969da;

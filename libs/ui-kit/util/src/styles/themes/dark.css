@@ -1,5 +1,5 @@
-@layer base {
-  .dark {
+@layer theme {
+  :root.dark {
     /* Foreground */
     --fgColor-default: #f0f6fc;
     --fgColor-muted: #9198a1;
@@ -89,11 +89,18 @@
     --shadow-resting-xsmall: 0px 1px 0px 0px #010409cc;
     --shadow-resting-small: 0px 1px 0px 0px #01040966;
     --shadow-resting-medium: 0px 3px 6px 0px #010409cc;
-    --shadow-floating-small: 0px 0px 0px 1px #3d444d, 0px 6px 12px -3px #01040966, 0px 6px 18px 0px #01040966;
-    --shadow-floating-medium: 0px 0px 0px 1px #3d444d, 0px 8px 16px -4px #01040966, 0px 4px 32px -4px #01040966, 0px 24px 48px -12px #01040966, 0px 48px 96px -24px #01040966;
+    --shadow-floating-small:
+      0px 0px 0px 1px #3d444d, 0px 6px 12px -3px #01040966,
+      0px 6px 18px 0px #01040966;
+    --shadow-floating-medium:
+      0px 0px 0px 1px #3d444d, 0px 8px 16px -4px #01040966,
+      0px 4px 32px -4px #01040966, 0px 24px 48px -12px #01040966,
+      0px 48px 96px -24px #01040966;
     --shadow-floating-large: 0px 0px 0px 1px #3d444d, 0px 24px 48px 0px #010409;
-    --shadow-floating-xlarge: 0px 0px 0px 1px #3d444d, 0px 32px 64px 0px #010409;
-    --shadow-floating-legacy: 0px 6px 12px -3px #01040966, 0px 6px 18px 0px #01040966;
+    --shadow-floating-xlarge:
+      0px 0px 0px 1px #3d444d, 0px 32px 64px 0px #010409;
+    --shadow-floating-legacy:
+      0px 6px 12px -3px #01040966, 0px 6px 18px 0px #01040966;
 
     /* Focus */
     --focus-outlineColor: #1f6feb;
