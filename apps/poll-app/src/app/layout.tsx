@@ -20,7 +20,7 @@ export default function RootLayout({
         <Providers>
           <div className="relative flex flex-col" id="app-container">
             <AppHeader />
-            <main className="container mx-auto max-w-7xl flex-grow px-6 min-h-[calc(100vh-64px)]">
+            <main className="container mx-auto max-w-7xl grow px-6 min-h-[calc(100vh-64px)]">
               {children}
             </main>
             <Toaster />

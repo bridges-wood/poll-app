@@ -161,7 +161,7 @@ const SafePost = withErrorBoundary(Post, {
         </div>
       </div>
       <div id="footer" className="mt-3 w-full">
-        <div className="text-foreground-severe/100 ml-auto w-min whitespace-nowrap text-sm">
+        <div className="text-foreground-severe ml-auto w-min whitespace-nowrap text-sm">
           just now
         </div>
       </div>

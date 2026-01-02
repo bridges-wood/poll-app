@@ -56,7 +56,7 @@ const NewPostPage = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((data) => console.log(data))}
-        className="h-full w-full max-w-screen-xl"
+        className="h-full w-full max-w-(--breakpoint-xl)"
       >
         <h1 className="text-5xl">New Post</h1>
         <Separator className="mb-4 mt-2" />
@@ -129,7 +129,7 @@ const NewPostContent: FC<{
                 <FormLabel>Options</FormLabel>
                 <div
                   id="options-list"
-                  className="mb-2 flex max-w-md flex-col gap-2 rounded-sm py-2 pl-3 shadow-sm"
+                  className="mb-2 flex max-w-md flex-col gap-2 rounded-sm py-2 pl-3 shadow-xs"
                 >
                   <AnimatePresence>
                     {field.value.length > 0 ? (
@@ -147,7 +147,7 @@ const NewPostContent: FC<{
                             control={form.control}
                             name={`content.options.${index}`}
                             render={({ field }) => (
-                              <FormItem className="flex-grow">
+                              <FormItem className="grow">
                                 <FormControl>
                                   <Input {...field} id={`Option-${index}`} />
                                 </FormControl>
@@ -177,7 +177,7 @@ const NewPostContent: FC<{
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex flex-grow items-center gap-[0.8ex]"
+                  className="flex grow items-center gap-[0.8ex]"
                   onClick={() =>
                     form.setValue('content.options', [...options, ''])
                   }

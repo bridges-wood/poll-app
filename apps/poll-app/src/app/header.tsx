@@ -23,7 +23,7 @@ const AppHeader = () => {
   return (
     <NavigationMenu className="w-full max-w-none p-4 [&>div:nth-child(2)]:left-auto [&>div:nth-child(2)]:right-8 [&>div:nth-child(2)]:top-16">
       <NavigationMenuList className="w-[calc(100vw-2rem)] max-w-7xl justify-between">
-        <NavigationMenuItem className="flex-grow basis-0">
+        <NavigationMenuItem className="grow basis-0">
           <NavigationMenuLink
             href="/"
             className={twMerge(navigationMenuTriggerStyle(), 'h-auto')}
@@ -41,7 +41,7 @@ const AppHeader = () => {
         </NavigationMenuItem>
         <NavigationMenuItem
           id="end-group"
-          className="flex flex-grow basis-0 items-center justify-end gap-2"
+          className="flex grow basis-0 items-center justify-end gap-2"
         >
           <div className="h-9 max-sm:hidden">
             <AuthButton />

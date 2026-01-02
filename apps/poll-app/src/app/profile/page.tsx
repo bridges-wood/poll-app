@@ -4,7 +4,7 @@ import ProfileTabs from './_components/profile-tabs';
 
 const ProfilePage = () => {
   return (
-    <div className="h-[calc(100vh_-_64px)] w-full max-w-4xl pt-8 2xl:h-[calc(84vh_-_64px)]">
+    <div className="h-[calc(100vh-64px)] w-full max-w-4xl pt-8 2xl:h-[calc(84vh-64px)]">
       <h1 className="mb-2 text-5xl">Settings</h1>
       <p className="text-md text-muted-foreground">
         Manage your account settings and set preferences.

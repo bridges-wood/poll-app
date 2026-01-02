@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const Index = async () => {
   return (
-    <section className="grid h-[calc(100vh_-_64px)] place-items-center">
+    <section className="grid h-[calc(100vh-64px)] place-items-center">
       <div className="flex flex-col gap-2">
         <h1 className="text-8xl font-extralight sm:text-9xl">Pollstr</h1>
         <p className="mb-7 leading-7">What will you ask?</p>

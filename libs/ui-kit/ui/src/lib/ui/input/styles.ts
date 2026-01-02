@@ -6,13 +6,13 @@ import { dataFocusVisibleClasses } from '../../utils/classes';
  */
 const input = tv({
   slots: {
-    base: 'group flex flex-col h-9 rounded-sm border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors data-[focus=true]:ring-1 data-[focus=true]:ring-ring data-[focus=true]:outline-none',
+    base: 'group flex flex-col h-9 rounded-sm border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors data-[focus=true]:ring-1 data-[focus=true]:ring-ring data-[focus=true]:outline-hidden',
     mainWrapper: 'h-full',
     inputWrapper:
       'relative w-full inline-flex tap-highlight flex-row items-center px-3 gap-3',
     innerWrapper: 'inline-flex w-full items-center h-full box-border',
     input: [
-      'w-full font-normal bg-transparent !outline-none',
+      'w-full font-normal bg-transparent outline-hidden!',
       'data-[has-start-content=true]:ps-1.5',
       'data-[has-end-content=true]:pe-1.5',
     ],
@@ -26,12 +26,12 @@ const input = tv({
       'rtl:right-auto',
       'rtl:left-2',
       'appearance-none',
-      'outline-none',
+      'outline-hidden',
       'select-none',
       'opacity-0',
-      'hover:!opacity-100',
+      'hover:opacity-100!',
       'cursor-pointer',
-      'active:!opacity-70',
+      'active:opacity-70!',
       'rounded-full',
       // focus ring
       ...dataFocusVisibleClasses,
@@ -61,7 +61,7 @@ const input = tv({
     isMultiline: {
       true: {
         label: 'relative',
-        inputWrapper: '!h-auto',
+        inputWrapper: 'h-auto!',
         innerWrapper: 'items-start group-data-[has-label=true]:items-start',
         input: 'resize-none data-[hide-scroll=true]:scrollbar-hide',
       },
@@ -74,11 +74,11 @@ const input = tv({
       },
       false: {
         inputWrapper:
-          'transition-background motion-reduce:transition-none !duration-150',
+          'transition-background motion-reduce:transition-none duration-150!',
         label: [
           'will-change-auto',
-          '!duration-200',
-          '!ease-out',
+          'duration-200!',
+          'ease-out!',
           'motion-reduce:transition-none',
           'transition-[transform,color,left,opacity]',
         ],
@@ -97,7 +97,7 @@ const input = tv({
       isMultiline: true,
       disableAnimation: false,
       class: {
-        input: 'transition-height !duration-100 motion-reduce:transition-none',
+        input: 'transition-height duration-100! motion-reduce:transition-none',
       },
     },
   ],

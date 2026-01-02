@@ -46,7 +46,7 @@ export const withProfileHoverCard = (
 ) => (
   <HoverCard openDelay={400}>
     <HoverCardTrigger asChild>{child}</HoverCardTrigger>
-    <HoverCardContent className="z-20 mt-2 bg-background-inset [&[data-side=bottom]]:animate-slide-down [&[data-side=top]]:animate-slide-up">
+    <HoverCardContent className="z-20 mt-2 bg-background-inset data-[side=bottom]:animate-slide-down data-[side=top]:animate-slide-up">
       <ProfileHoverCard user={user} />
     </HoverCardContent>
   </HoverCard>
