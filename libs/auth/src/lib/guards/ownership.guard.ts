@@ -96,8 +96,9 @@ export class OwnershipGuard implements CanActivate {
       if (error instanceof ForbiddenException) {
         throw error;
       }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(
-        `Error checking ownership for ${resourceType} ${resourceId}: ${error.message}`,
+        `Error checking ownership for ${resourceType} ${resourceId}: ${errorMessage}`,
       );
       throw new ForbiddenException('Unable to verify resource ownership');
     }

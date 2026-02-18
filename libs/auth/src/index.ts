@@ -8,6 +8,7 @@ export * from './lib/guards/distributed-auth.guard';
 export * from './lib/guards/ownership.guard';
 export * from './lib/guards/resource-ownership.interface';
 export * from './lib/guards/resource-ownership.registry';
+export * from './lib/guards/resource-type.enum';
 export * from './lib/guards/roles.guard';
 export * from './lib/signing';
 export * from './lib/utils';

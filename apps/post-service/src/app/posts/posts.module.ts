@@ -1,5 +1,5 @@
 import { Module, OnModuleInit, forwardRef } from '@nestjs/common';
-import { AuthGuardModule, ResourceOwnershipRegistry } from '@org/auth';
+import { AuthGuardModule, ResourceOwnershipRegistry, ResourceType } from '@org/auth';
 import { FirebaseModule } from '@org/firebase';
 import { LogModule } from '@org/log';
 import { PubSubModule } from '@org/pubsub';
@@ -30,6 +30,6 @@ export class PostsModule implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.resourceRegistry.register('post', this.postsService);
+    this.resourceRegistry.register(ResourceType.POST, this.postsService);
   }
 }

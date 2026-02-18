@@ -1,3 +1,5 @@
+import { ResourceTypeName } from './resource-type.enum';
+
 export interface OwnedResource {
   id: string;
   author: {
@@ -33,10 +35,10 @@ export const RESOURCE_OWNERSHIP_REGISTRY = Symbol(
 export interface ResourceOwnershipRegistry {
   /**
    * Register a resource ownership provider
-   * @param resourceType - The type of resource (e.g., 'post', 'comment')
+   * @param resourceType - The type of resource (e.g., ResourceType.POST)
    * @param provider - The service that provides ownership information
    */
-  register(resourceType: string, provider: ResourceOwnershipProvider): void;
+  register(resourceType: ResourceTypeName, provider: ResourceOwnershipProvider): void;
 
   /**
    * Get a resource by type and ID
@@ -45,5 +47,5 @@ export interface ResourceOwnershipRegistry {
    * @returns The resource with ownership information
    * @throws Error if resource type is not registered
    */
-  getResource(resourceType: string, id: string): Promise<OwnedResource>;
+  getResource(resourceType: ResourceTypeName, id: string): Promise<OwnedResource>;
 }

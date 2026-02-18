@@ -8,7 +8,7 @@ import {
     Subscription,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { CurrentUser, OwnershipGuard, ResourceOwner } from '@org/auth';
+import { CurrentUser, OwnershipGuard, ResourceOwner, ResourceType } from '@org/auth';
 import { PaginationArgs } from '@org/graphql/pagination';
 import { InternalUser, User } from '../users/models/user.stub';
 import { UsersService } from '../users/users.service';
@@ -74,7 +74,7 @@ export class PostsResolver {
   }
 
   @UseGuards(OwnershipGuard)
-  @ResourceOwner('post', 'id')
+  @ResourceOwner(ResourceType.POST, 'id')
   @Mutation((returns) => Post, {
     nullable: true,
     description: 'Update a post by id',
@@ -87,7 +87,7 @@ export class PostsResolver {
   }
 
   @UseGuards(OwnershipGuard)
-  @ResourceOwner('post', 'id')
+  @ResourceOwner(ResourceType.POST, 'id')
   @Mutation((returns) => Boolean, {
     description: 'Delete a post by id',
   })
