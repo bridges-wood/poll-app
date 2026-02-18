@@ -1,11 +1,11 @@
 import {
-  Args,
-  Field,
-  Mutation,
-  Parent,
-  Query,
-  Resolver,
-  Subscription,
+    Args,
+    Field,
+    Mutation,
+    Parent,
+    Query,
+    Resolver,
+    Subscription,
 } from '@nestjs/graphql';
 import { CurrentUser } from '@org/auth';
 import { PaginationArgs } from '@org/graphql/pagination';
@@ -83,13 +83,13 @@ export class PostsResolver {
     return this.postsService.updateOne(id, args);
   }
 
-  // TODO add guard to only allow the author to delete their own posts
   @Mutation((returns) => Boolean, {
     description: 'Delete a post by id',
   })
   async deletePost(
     @Args('id', { description: 'The id of the post to delete' }) id: string,
+    @CurrentUser() user: Pick<User, 'id'>,
   ): Promise<boolean> {
-    return this.postsService.deleteOne(id);
+    return this.postsService.deleteOne(id, user.id);
   }
 }

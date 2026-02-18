@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
   FirebaseService,
@@ -97,7 +97,7 @@ export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
     };
   }
 
-  async deleteOne(id: string): Promise<boolean> {
+  async deleteOne(id: string, userId: string): Promise<boolean> {
     return await runTransaction(this.database, async (transaction) => {
       const postRef = doc(this.collectionRef.withConverter(null), id); // Get raw document reference
       const postDoc = await transaction.get(postRef);
@@ -107,11 +107,15 @@ export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
         return false;
       }
 
+      const post = postDoc.data();
+      if (post.author !== userId) {
+        throw new ForbiddenException('Only the author can delete this post');
+      }
+
       // Delete post
       transaction.delete(postRef);
 
       // Remove post from user's posts array
-      const post = postDoc.data();
       const userRef = doc(this.database, USERS_COLLECTION, post.author);
       transaction.update(userRef, {
         posts: arrayRemove(postRef),
