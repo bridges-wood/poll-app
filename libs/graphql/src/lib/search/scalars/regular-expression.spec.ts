@@ -1,4 +1,5 @@
 import { Kind, ValueNode } from 'graphql';
+import { MAX_REGEX_PATTERN_LENGTH } from './regex-policy';
 import { RegularExpressionScalar } from './regular-expression';
 
 describe('RegularExpressionScalar', () => {
@@ -12,6 +13,11 @@ describe('RegularExpressionScalar', () => {
     const str = 'test';
     const result = RegularExpressionScalar.parseValue(str);
     expect(result).toEqual(new RegExp(str));
+  });
+
+  it('should parse slash-delimited regex with allowed flags', () => {
+    const result = RegularExpressionScalar.parseValue('/test/im');
+    expect(result).toEqual(new RegExp('test', 'im'));
   });
 
   it('should parse literal to RegExp', () => {
@@ -42,6 +48,54 @@ describe('RegularExpressionScalar', () => {
     };
     expect(() => RegularExpressionScalar.parseLiteral(ast, {})).toThrow(
       'RegExp can only parse string values',
+    );
+  });
+
+  it('should throw error when parsing unsafe regex pattern', () => {
+    expect(() => RegularExpressionScalar.parseValue('(a+)+$')).toThrow(
+      'RegExp pattern is unsafe',
+    );
+  });
+
+  it('should throw error when parsing regex pattern longer than allowed', () => {
+    const longPattern = 'a'.repeat(MAX_REGEX_PATTERN_LENGTH + 1);
+
+    expect(() => RegularExpressionScalar.parseValue(longPattern)).toThrow(
+      `RegExp pattern must be at most ${MAX_REGEX_PATTERN_LENGTH} characters`,
+    );
+  });
+
+  it('should throw error for unsafe regex literal pattern', () => {
+    const ast: ValueNode = {
+      kind: Kind.STRING,
+      value: '(a+)+$',
+    };
+
+    expect(() => RegularExpressionScalar.parseLiteral(ast, {})).toThrow(
+      'RegExp pattern is unsafe',
+    );
+  });
+
+  it('should throw error for disallowed regex flags', () => {
+    expect(() => RegularExpressionScalar.parseValue('/test/g')).toThrow(
+      'RegExp flags may only include: i, m, s',
+    );
+  });
+
+  it('should throw error for duplicate regex flags', () => {
+    expect(() => RegularExpressionScalar.parseValue('/test/ii')).toThrow(
+      'RegExp flags must not contain duplicates',
+    );
+  });
+
+  it('should throw error for disallowed regex flags in literal', () => {
+    const ast: ValueNode = {
+      kind: Kind.STRING,
+      value: '/test/gy',
+    };
+
+    expect(() => RegularExpressionScalar.parseLiteral(ast, {})).toThrow(
+      'RegExp flags may only include: i, m, s',
     );
   });
 });
