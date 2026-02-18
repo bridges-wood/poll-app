@@ -16,5 +16,7 @@
   "jest.runMode": {
     "type": "on-save"
   },
-  "nxConsole.generateAiAgentRules": true
+  "chat.tools.terminal.autoApprove": {
+    "yarn nx": true
+  }
 }
