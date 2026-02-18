@@ -10793,6 +10793,7 @@ __metadata:
     redux: "npm:^5.0.1"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
+    safe-regex2: "npm:^5.0.0"
     sonner: "npm:^1.7.4"
     swc-loader: "npm:^0.2.6"
     tailwind-merge: "npm:^2.6.0"
@@ -31579,6 +31580,15 @@ __metadata:
   dependencies:
     ret: "npm:~0.5.0"
   checksum: 10c0/faebf910036228868e83b4a33a84405b04e8e89f01283efe847e17e96b6b4658cc65c6560cef11de3bd5aef3b28b58dffac48744df67ca2ae46e073f668cb71d
+  languageName: node
+  linkType: hard
+
+"safe-regex2@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "safe-regex2@npm:5.0.0"
+  dependencies:
+    ret: "npm:~0.5.0"
+  checksum: 10c0/83d5b1b60a5a97cb71a6e615518ec4a47761b3600aba389089be59a417498185250db2368080afc2f5e91237d68809c6c634b97a2e1cc8bd56a4c7eef2eeb6cf
   languageName: node
   linkType: hard
 

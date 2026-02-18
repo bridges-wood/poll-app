@@ -7,7 +7,8 @@ export abstract class StringFieldFilterArgs {
   eq?: string;
   @Field(() => RegularExpressionScalar, {
     nullable: true,
-    description: 'Matches the given pattern',
+    description:
+      'Matches a regex pattern. Supports plain patterns ("^test") or slash-delimited syntax ("/^test/im"). Allowed flags: i, m, s.',
   })
   like?: RegExp;
   @Field((type) => [String], {
