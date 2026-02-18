@@ -3,84 +3,113 @@ import { ISearchFilter } from './searchable';
 
 export class LocalSearchService<T> {
   public search(items: T[], filter: ISearchFilter<T>): T[] {
-    return items
-      .filter((item) => this.filterHasField(item, filter))
-      .filter((item) => this.filterFields(item, filter));
+    const hasPredicate = this.createHasPredicate(filter);
+    const fieldsPredicate = this.createFieldsPredicate(filter);
+
+    return items.filter((item) => hasPredicate(item) && fieldsPredicate(item));
   }
 
-  private filterFields(item: T, filter: ISearchFilter<T>) {
+  private createFieldsPredicate(
+    filter: ISearchFilter<T>,
+  ): (item: T) => boolean {
     const filterKeys: (keyof T)[] = Object.keys(filter).filter(
       (key) => key !== 'has',
     ) as (keyof T)[];
-    return filterKeys.reduce(
-      (acc, key) => acc && this.filterField(item, key, filter),
-      true,
+
+    if (!filterKeys.length) {
+      return () => true;
+    }
+
+    const fieldPredicates = filterKeys.map((key) =>
+      this.createFieldPredicate(key, filter),
     );
+
+    return (item: T) => {
+      for (const predicate of fieldPredicates) {
+        if (!predicate(item)) return false;
+      }
+      return true;
+    };
   }
 
-  private filterField<T>(
-    item: T,
+  private createFieldPredicate(
     key: keyof T,
     filter: ISearchFilter<T>,
-  ): boolean {
-    switch (typeof item[key]) {
-      case 'string':
-        return this.filterStringField(
-          item[key] as string,
-          filter[key] as StringFieldFilterArgs,
-        );
-      case 'number':
-        return this.filterNumberField(
-          item[key] as number,
-          filter[key] as NumberFieldFilterArgs,
-        );
-      case 'boolean':
-        return this.filterBooleanField(
-          item[key] as boolean,
-          filter[key] as boolean,
-        );
-      default:
-        return true;
-    }
+  ): (item: T) => boolean {
+    return (item: T) => {
+      switch (typeof item[key]) {
+        case 'string':
+          return this.createStringFieldPredicate(
+            (filter[key] ?? {}) as StringFieldFilterArgs
+          )(item[key] as string);
+        case 'number':
+          return this.createNumberFieldPredicate(
+            (filter[key] ?? {}) as NumberFieldFilterArgs
+          )(item[key] as number);
+        case 'boolean':
+          return this.createBooleanFieldPredicate(
+            filter[key] as boolean
+          )(item[key] as boolean);
+        default:
+          return true;
+      }
+    };
   }
 
-  private filterBooleanField(value: boolean, filterArgs: boolean): boolean {
-    return value === filterArgs;
+  private createBooleanFieldPredicate(
+    filterArgs: boolean,
+  ): (value: boolean) => boolean {
+    return (value: boolean) => value === filterArgs;
   }
 
-  private filterNumberField(
-    value: number,
+  private createNumberFieldPredicate(
     filterArgs: NumberFieldFilterArgs,
-  ): boolean {
-    if (filterArgs.lt && value >= filterArgs.lt) return false;
-    if (filterArgs.lte && value > filterArgs.lte) return false;
-    if (filterArgs.eq && value !== filterArgs.eq) return false;
-    if (filterArgs.in && !filterArgs.in.includes(value)) return false;
-    if (filterArgs.between) {
-      const { min, max } = filterArgs.between;
-      if (min && value < min.valueOf()) return false;
-      if (max && value > max.valueOf()) return false;
-    }
-    return true;
+  ): (value: number) => boolean {
+    const inSet = filterArgs.in ? new Set(filterArgs.in) : undefined;
+
+    return (value: number) => {
+      if (filterArgs.lt && value >= filterArgs.lt) return false;
+      if (filterArgs.lte && value > filterArgs.lte) return false;
+      if (filterArgs.eq && value !== filterArgs.eq) return false;
+      if (inSet && !inSet.has(value)) return false;
+      if (filterArgs.between) {
+        const { min, max } = filterArgs.between;
+        if (min && value < min.valueOf()) return false;
+        if (max && value > max.valueOf()) return false;
+      }
+      return true;
+    };
   }
 
-  private filterStringField(
-    value: string,
+  private createStringFieldPredicate(
     filterArgs: StringFieldFilterArgs,
-  ): boolean {
-    if (filterArgs.eq && value !== filterArgs.eq) return false;
-    if (filterArgs.in && !filterArgs.in.includes(value)) return false;
-    // TODO optimize RegExp usage
-    if (filterArgs.like && !new RegExp(filterArgs.like).test(value))
-      return false;
-    return true;
+  ): (value: string) => boolean {
+    const inSet = filterArgs.in ? new Set(filterArgs.in) : undefined;
+    const regex = filterArgs.like;
+
+    return (value: string) => {
+      if (filterArgs.eq && value !== filterArgs.eq) return false;
+      if (inSet && !inSet.has(value)) return false;
+      if (regex) {
+        regex.lastIndex = 0;
+        if (!regex.test(value)) return false;
+      }
+      return true;
+    };
   }
 
-  private filterHasField(item: T, filter: ISearchFilter<T>): boolean {
-    if (!filter.has) return true;
-    return filter.has.reduce(
-      (acc, val) => acc && Boolean(item[val as keyof T]),
-      true,
-    );
+  private createHasPredicate(filter: ISearchFilter<T>): (item: T) => boolean {
+    if (!filter.has) {
+      return () => true;
+    }
+
+    const hasFields = filter.has as (keyof T)[];
+
+    return (item: T) => {
+      for (const field of hasFields) {
+        if (!item[field]) return false;
+      }
+      return true;
+    };
   }
 }
