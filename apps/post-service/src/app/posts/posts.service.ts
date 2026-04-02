@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { ResourceOwnershipProvider } from '@org/auth';
 import {
   FirebaseService,
   FirebaseTokens,
@@ -25,7 +26,10 @@ import { InitialPost, PostDbModel } from './models/post.model-mapper';
 import { UpdatePostArgs } from './models/update-post.args';
 
 @Injectable()
-export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
+export class PostsService
+  extends FirebaseService<Post, PostDbModel>(Post)
+  implements ResourceOwnershipProvider
+{
   constructor(
     @Inject(FirebaseTokens.DATABASE) private readonly database: Firestore,
     moduleRef: ModuleRef,
@@ -99,7 +103,7 @@ export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
 
   async deleteOne(id: string): Promise<boolean> {
     return await runTransaction(this.database, async (transaction) => {
-      const postRef = doc(this.collectionRef.withConverter(null), id); // Get raw document reference
+      const postRef = doc(this.collectionRef.withConverter(null), id);
       const postDoc = await transaction.get(postRef);
 
       if (!postDoc.exists()) {
@@ -107,11 +111,10 @@ export class PostsService extends FirebaseService<Post, PostDbModel>(Post) {
         return false;
       }
 
-      // Delete post
+      const post = postDoc.data();
+
       transaction.delete(postRef);
 
-      // Remove post from user's posts array
-      const post = postDoc.data();
       const userRef = doc(this.database, USERS_COLLECTION, post.author);
       transaction.update(userRef, {
         posts: arrayRemove(postRef),

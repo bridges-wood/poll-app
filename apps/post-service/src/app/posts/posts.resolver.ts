@@ -1,13 +1,14 @@
 import {
-  Args,
-  Field,
-  Mutation,
-  Parent,
-  Query,
-  Resolver,
-  Subscription,
+    Args,
+    Field,
+    Mutation,
+    Parent,
+    Query,
+    Resolver,
+    Subscription,
 } from '@nestjs/graphql';
-import { CurrentUser } from '@org/auth';
+import { UseGuards } from '@nestjs/common';
+import { CurrentUser, OwnershipGuard, ResourceOwner, ResourceType } from '@org/auth';
 import { PaginationArgs } from '@org/graphql/pagination';
 import { InternalUser, User } from '../users/models/user.stub';
 import { UsersService } from '../users/users.service';
@@ -72,6 +73,8 @@ export class PostsResolver {
     return this.postsService.createOne(args, user);
   }
 
+  @UseGuards(OwnershipGuard)
+  @ResourceOwner(ResourceType.POST, 'id')
   @Mutation((returns) => Post, {
     nullable: true,
     description: 'Update a post by id',
@@ -83,7 +86,8 @@ export class PostsResolver {
     return this.postsService.updateOne(id, args);
   }
 
-  // TODO add guard to only allow the author to delete their own posts
+  @UseGuards(OwnershipGuard)
+  @ResourceOwner(ResourceType.POST, 'id')
   @Mutation((returns) => Boolean, {
     description: 'Delete a post by id',
   })
